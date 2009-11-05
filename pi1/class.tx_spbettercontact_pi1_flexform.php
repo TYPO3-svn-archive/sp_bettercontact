@@ -26,19 +26,19 @@
 	/**
 	 * Class that adds the flexform configuration.
 	 *
-	 * @author	Kai Vogel <kai.vogel ( at ) speedprogs.de>
-	 * @package	TYPO3
-	 * @subpackage	tx_spbettercontact
+	 * @author      Kai Vogel <kai.vogel ( at ) speedprogs.de>
+	 * @package     TYPO3
+	 * @subpackage  tx_spbettercontact
 	 */
 	class tx_spbettercontact_pi1_flexform {
-		public $sWizardIcon		= 'EXT:sp_bettercontact/res/images/popup.gif';
-		public $sLabelFile		= 'EXT:sp_bettercontact/locallang.php';
+		public $sWizardIcon     = 'EXT:sp_bettercontact/res/images/popup.gif';
+		public $sLabelFile      = 'EXT:sp_bettercontact/locallang.php';
 
 
 		/**
 		 * Get flexform belonging to server configuration
 		 *
-		 * @return String with flexform content
+		 * @return  String with flexform content
 		 */
 		public function sGetFlexForm () {
 			// Get max width of fields belonging to current TYPO3 version
@@ -61,14 +61,14 @@
 			}
 
 			// Add elements to tab "default"
-			$this->vAddInput($aTabs['sDEF'], 'redirectPage', $iMaxWidth, '', true, 'page', '');
-			$this->vAddCheckBox($aTabs['sDEF'], 'redirectToAnchor', true);
-			$this->vAddCheckBox($aTabs['sDEF'], 'highlightFields', false);
-			$this->vAddCheckBox($aTabs['sDEF'], 'useDefaultTemplates', true);
-			$this->vAddInput($aTabs['sDEF'], 'formTemplate', $iMaxWidth, '', true, 'file', 'html,tmpl');
-			$this->vAddInput($aTabs['sDEF'], 'emailTemplate', $iMaxWidth, '', true, 'file', 'html,tmpl');
-			$this->vAddInput($aTabs['sDEF'], 'stylesheetFile', $iMaxWidth, '', true, 'file', 'css');
-			$this->vAddInput($aTabs['sDEF'], 'locallangFile', $iMaxWidth, '', true, 'file', 'xml');
+			$this->vAddInput($aTabs['sDEF'], 'redirectPage', $iMaxWidth, '', TRUE, 'page', '');
+			$this->vAddCheckBox($aTabs['sDEF'], 'redirectToAnchor', TRUE);
+			$this->vAddCheckBox($aTabs['sDEF'], 'highlightFields', FALSE);
+			$this->vAddCheckBox($aTabs['sDEF'], 'useDefaultTemplates', TRUE);
+			$this->vAddInput($aTabs['sDEF'], 'formTemplate', $iMaxWidth, '', TRUE, 'file', 'html,tmpl');
+			$this->vAddInput($aTabs['sDEF'], 'emailTemplate', $iMaxWidth, '', TRUE, 'file', 'html,tmpl');
+			$this->vAddInput($aTabs['sDEF'], 'stylesheetFile', $iMaxWidth, '', TRUE, 'file', 'css');
+			$this->vAddInput($aTabs['sDEF'], 'locallangFile', $iMaxWidth, '', TRUE, 'file', 'xml');
 
 			// Add elements to tab "email"
 			$this->vAddInput($aTabs['sEMAIL'], 'emailRecipients', $iMaxWidth);
@@ -87,7 +87,7 @@
 			$this->vAddDropDown($aTabs['sSPAM'], 'captchaSupport', array('','sr_freecap','jm_recaptcha','captcha'));
 			$this->vAddDropDown($aTabs['sSPAM'], 'showMaliciousInput', array('','none','clean','all'));
 			$this->vAddDropDown($aTabs['sSPAM'], 'adminMails', array('','none','bot','user','both'));
-			$this->vAddCheckBox($aTabs['sSPAM'], 'useRefererCheck', true);
+			$this->vAddCheckBox($aTabs['sSPAM'], 'useRefererCheck', TRUE);
 			$this->vAddInput($aTabs['sSPAM'], 'messageCount', 5, '10');
 			$this->vAddInput($aTabs['sSPAM'], 'waitingTime', 5, '60');
 
@@ -98,13 +98,13 @@
 		/**
 		 * Create the XML structure for a new tab
 		 *
-		 * @return Object of the "el" child
+		 * @return  Object of the "el" child
 		 */
 		protected function oGetTab ($poSheets, $psName) {
 			$oTab = $poSheets->addChild($psName);
 			$oRoot = $oTab->addChild('ROOT');
 			$oTCEforms = $oRoot->addChild('TCEforms');
-			$oTCEforms->addChild('sheetTitle', 'LLL:'.$this->sLabelFile.':tt_content.flexform_pi1.'.$psName);
+			$oTCEforms->addChild('sheetTitle', 'LLL:' . $this->sLabelFile . ':tt_content.flexform_pi1.' . $psName);
 			$oType = $oRoot->addChild('type', 'array');
 
 			return $oRoot->addChild('el');
@@ -115,10 +115,10 @@
 		 * Add a single line input field
 		 *
 		 */
-		protected function vAddInput ($poTab, $psName, $piWidth=40, $psDefault='', $pbWizard=false, $psType='file', $psExtensions='') {
+		protected function vAddInput ($poTab, $psName, $piWidth=40, $psDefault='', $pbWizard=FALSE, $psType='file', $psExtensions='') {
 			$oElement = $poTab->addChild($psName);
 			$oTCEforms = $oElement->addChild('TCEforms');
-			$oTCEforms->addChild('label', 'LLL:'.$this->sLabelFile.':tt_content.flexform_pi1.'.$psName);
+			$oTCEforms->addChild('label', 'LLL:' . $this->sLabelFile . ':tt_content.flexform_pi1.' . $psName);
 			$oConfig = $oTCEforms->addChild('config');
 			$oConfig->addChild('type', 'input');
 			$oConfig->addChild('size', $piWidth);
@@ -126,16 +126,16 @@
 			$oConfig->addChild('default', $psDefault);
 
 			if ($pbWizard) {
-				$sOptions = trim(str_replace($psType.',', '', 'mail,page,file,spec,url,folder,'), ',');
+				$sOptions = trim(str_replace($psType . ',', '', 'mail,page,file,spec,url,folder,'), ',');
 				$oWizard = $oConfig->addChild('wizards');
 				$oWizard->addAttribute('type', 'array');
 				$oWizard->addChild('_PADDING', '2');
 				$oLink = $oWizard->addChild('link');
 				$oLink->addAttribute('type', 'array');
 				$oLink->addChild('type', 'popup');
-				$oLink->addChild('title', 'LLL:'.$this->sLabelFile.':tt_content.flexform_pi1.wizard');
+				$oLink->addChild('title', 'LLL:' . $this->sLabelFile . ':tt_content.flexform_pi1.wizard');
 				$oLink->addChild('icon', $this->sWizardIcon);
-				$oLink->addChild('script', 'browse_links.php?mode=wizard&amp;act='.$psType);
+				$oLink->addChild('script', 'browse_links.php?mode=wizard&amp;act=' . $psType);
 				$oLink->addChild('JSopenParams', 'height=300,width=500,status=0,menubar=0,scrollbars=1');
 				$oParams = $oLink->addChild('params');
 				$oParams->addAttribute('type', 'array');
@@ -149,10 +149,10 @@
 		 * Add a check box field
 		 *
 		 */
-		protected function vAddCheckBox ($poTab, $psName, $pbDefault=true) {
+		protected function vAddCheckBox ($poTab, $psName, $pbDefault=TRUE) {
 			$oElement = $poTab->addChild($psName);
 			$oTCEforms = $oElement->addChild('TCEforms');
-			$oTCEforms->addChild('label', 'LLL:'.$this->sLabelFile.':tt_content.flexform_pi1.'.$psName);
+			$oTCEforms->addChild('label', 'LLL:' . $this->sLabelFile . ':tt_content.flexform_pi1.' . $psName);
 			$oConfig = $oTCEforms->addChild('config');
 			$oConfig->addChild('type', 'check');
 			$oConfig->addChild('default', (int) $pbDefault);
@@ -166,7 +166,7 @@
 		protected function vAddDropDown ($poTab, $psName, $paItems) {
 			$oElement = $poTab->addChild($psName);
 			$oTCEforms = $oElement->addChild('TCEforms');
-			$oTCEforms->addChild('label', 'LLL:'.$this->sLabelFile.':tt_content.flexform_pi1.'.$psName);
+			$oTCEforms->addChild('label', 'LLL:' . $this->sLabelFile . ':tt_content.flexform_pi1.' . $psName);
 			$oConfig = $oTCEforms->addChild('config');
 			$oConfig->addChild('type', 'select');
 			$oConfig->addChild('default', $psDefault);
@@ -180,7 +180,7 @@
 				$oOption = $oItems->addChild('numIndex');
 				$oOption->addAttribute('index', $iKey);
 				$oOption->addAttribute('type', 'array');
-				$oLabel = $oOption->addChild('numIndex', 'LLL:'.$this->sLabelFile.':tt_content.flexform_pi1.'.$psName.'.'.$iKey);
+				$oLabel = $oOption->addChild('numIndex', 'LLL:' . $this->sLabelFile . ':tt_content.flexform_pi1.' . $psName . '.' . $iKey);
 				$oLabel->addAttribute('index', '0');
 				$oValue = $oOption->addChild('numIndex', $sValue);
 				$oValue->addAttribute('index', '1');

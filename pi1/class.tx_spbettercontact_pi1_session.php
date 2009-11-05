@@ -26,54 +26,54 @@
 	/**
 	 * Session class for the 'sp_bettercontact' extension.
 	 *
-	 * @author		Kai Vogel <kai.vogel ( at ) speedprogs.de>
-	 * @package		TYPO3
-	 * @subpackage	tx_spbettercontact
+	 * @author      Kai Vogel <kai.vogel ( at ) speedprogs.de>
+	 * @package     TYPO3
+	 * @subpackage  tx_spbettercontact
 	 */
 	class tx_spbettercontact_pi1_session {
-		public $aConfig			= array();
-		public $aFields			= array();
-		public $aPiVars			= array();
-		public $aLL				= array();
-		public $sExtKey			= '';
-		public $iCount			= 0;
-		public $iWaitingTime	= 0;
+		public $aConfig         = array();
+		public $aFields         = array();
+		public $aPiVars         = array();
+		public $aLL             = array();
+		public $sExtKey         = '';
+		public $iCount          = 0;
+		public $iWaitingTime    = 0;
 
 		/**
 		 * Set configuration for session object
 		 *
-		 * @param	object	$poParent: Instance of the parent object
+		 * @param   object   $poParent: Instance of the parent object
 		 */
 		public function __construct ($poParent) {
-			$this->aConfig 	= $poParent->aConfig;
-			$this->aFields	= $poParent->aFields;
-			$this->aPiVars	= $poParent->piVars;
-			$this->aLL 		= $poParent->aLL;
-			$this->sExtKey	= $poParent->extKey;
+			$this->aConfig  = $poParent->aConfig;
+			$this->aFields  = $poParent->aFields;
+			$this->aPiVars  = $poParent->piVars;
+			$this->aLL      = $poParent->aLL;
+			$this->sExtKey  = $poParent->extKey;
 		}
 
 
 		/**
 		 * Check session if form was allready sent
 		 *
-		 * @return	True if current fe user has already sent a lot of emails
+		 * @return  TRUE if current fe user has already sent a lot of emails
 		 */
 		public function bHasAlreadySent () {
-			$aSessionContent = unserialize($GLOBALS['TSFE']->fe_user->getKey('ses', $this->sExtKey.$GLOBALS['TSFE']->id));
+			$aSessionContent = unserialize($GLOBALS['TSFE']->fe_user->getKey('ses', $this->sExtKey . $GLOBALS['TSFE']->id));
 
 			if (!is_array($aSessionContent)) {
-				return false;
+				return FALSE;
 			}
 
-			$this->aConfig['messageCount']	= ($this->aConfig['messageCount'] > 0)	? $this->aConfig['messageCount']	: 1;
-			$this->aConfig['waitingTime']	= ($this->aConfig['waitingTime'] > 0)	? $this->aConfig['waitingTime']		: 1;
+			$this->aConfig['messageCount']  = ($this->aConfig['messageCount'] > 0)  ? $this->aConfig['messageCount']    : 1;
+			$this->aConfig['waitingTime']   = ($this->aConfig['waitingTime'] > 0)   ? $this->aConfig['waitingTime']     : 1;
 
 			// Set counter
 			$this->iCount = $aSessionContent['cnt'];
 
 			// Check for message count
 			if ($aSessionContent['cnt'] < $this->aConfig['messageCount']) {
-				return false;
+				return FALSE;
 			}
 
 			// Check waiting time
@@ -81,13 +81,13 @@
 
 			if (time() < $iLockEnd) {
 				$this->iWaitingTime = ($iLockEnd - time());
-    			return true;
+    			return TRUE;
 			}
 
 			// Reset counter
 			$this->iCount = 0;
 
-			return false;
+			return FALSE;
 		}
 
 
@@ -97,11 +97,11 @@
 		 * @return	Array of messages form session check
 		 */
 		public function aGetMessages () {
-			$sWrapNegative	= $this->aConfig['infoWrapNegative'] ? $this->aConfig['infoWrapNegative'] : '|';
-			$iTime 			= ($this->iWaitingTime > 60) ? ($this->iWaitingTime / 60) : 1;
-			$iCount 		= ($this->iCount <= $this->aConfig['messageCount']) ? $this->iCount : $this->aConfig['messageCount']; // bugfix
-			$sMessage		= sprintf($this->aLL['msg_already_sent'], $iCount, $iTime);
-			$sMessage		= str_replace('|', $sMessage, $sWrapNegative);
+			$sWrapNegative  = $this->aConfig['infoWrapNegative'] ? $this->aConfig['infoWrapNegative'] : '|';
+			$iTime          = ($this->iWaitingTime > 60) ? ($this->iWaitingTime / 60) : 1;
+			$iCount         = ($this->iCount <= $this->aConfig['messageCount']) ? $this->iCount : $this->aConfig['messageCount']; // bugfix
+			$sMessage       = sprintf($this->aLL['msg_already_sent'], $iCount, $iTime);
+			$sMessage       = str_replace('|', $sMessage, $sWrapNegative);
 
 			return array('###INFO###' => $sMessage);
 		}
@@ -114,11 +114,11 @@
 		public function vSave () {
 			$this->iCount++;
 			$aSessionContent = array(
-				'tstmp'	=> time(),
-				'cnt'	=> $this->iCount,
+				'tstmp' => time(),
+				'cnt'   => $this->iCount,
 			);
 
-			$GLOBALS['TSFE']->fe_user->setKey('ses', $this->sExtKey.$GLOBALS['TSFE']->id, serialize($aSessionContent));
+			$GLOBALS['TSFE']->fe_user->setKey('ses', $this->sExtKey . $GLOBALS['TSFE']->id, serialize($aSessionContent));
 			$GLOBALS['TSFE']->storeSessionData();
 		}
 

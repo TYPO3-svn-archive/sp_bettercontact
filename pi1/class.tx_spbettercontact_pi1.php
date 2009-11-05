@@ -23,38 +23,38 @@
 	***************************************************************/
 
 
-	require_once(PATH_tslib.'class.tslib_pibase.php');
+	require_once(PATH_tslib . 'class.tslib_pibase.php');
 
 
 	/**
 	 * Plugin 'Better Contact Form' for the 'sp_bettercontact' extension.
 	 *
-	 * @author		Kai Vogel <kai.vogel ( at ) speedprogs.de>
-	 * @package		TYPO3
-	 * @subpackage	tx_spbettercontact
+	 * @author      Kai Vogel <kai.vogel ( at ) speedprogs.de>
+	 * @package     TYPO3
+	 * @subpackage  tx_spbettercontact
 	 */
 	class tx_spbettercontact_pi1 extends tslib_pibase {
-		public $prefixId		= 'tx_spbettercontact_pi1';
-		public $scriptRelPath	= 'pi1/class.tx_spbettercontact_pi1.php';
-		public $extKey			= 'sp_bettercontact';
-		public $sEmailCharset	= 'iso-8859-1';
-		public $sFormCharset	= 'iso-8859-1';
-		public $aLL				= array();
-		public $aConfig			= array();
-		public $aFields			= array();
-		public $oTemplate		= NULL;
-		public $oSession		= NULL;
-		public $oCheck			= NULL;
-		public $oEmail			= NULL;
-		public $cObj			= NULL;
+		public $prefixId        = 'tx_spbettercontact_pi1';
+		public $scriptRelPath   = 'pi1/class.tx_spbettercontact_pi1.php';
+		public $extKey          = 'sp_bettercontact';
+		public $sEmailCharset   = 'iso-8859-1';
+		public $sFormCharset    = 'iso-8859-1';
+		public $aLL             = array();
+		public $aConfig         = array();
+		public $aFields         = array();
+		public $oTemplate       = NULL;
+		public $oSession        = NULL;
+		public $oCheck          = NULL;
+		public $oEmail          = NULL;
+		public $cObj            = NULL;
 
 
 		/**
 		 * The main method of the PlugIn
 		 *
-		 * @param	string		$content: The PlugIn content
-		 * @param	array		$conf: The PlugIn configuration
-		 * @return	The content that is displayed on the website
+		 * @param   string      $content: The PlugIn content
+		 * @param   array       $conf: The PlugIn configuration
+		 * @return  The content that is displayed on the website
 		 */
 		public function main ($psContent, $paConf) {
 			$this->pi_USER_INT_obj = 1;
@@ -75,14 +75,14 @@
 			}
 
 			// Get required things...
-			$this->aLL				= $this->aGetLL();
-			$this->aFields			= $this->aGetFields();
-			$this->sEmailCharset	= $this->sGetCharset('email');
-			$this->sFormCharset		= $this->sGetCharset('form');
-			$this->oTemplate		= $this->oMakeInstance('template');
-			$this->oSession			= $this->oMakeInstance('session');
-			$this->oCheck			= $this->oMakeInstance('check');
-			$this->oEmail			= $this->oMakeInstance('email');
+			$this->aLL              = $this->aGetLL();
+			$this->aFields          = $this->aGetFields();
+			$this->sEmailCharset    = $this->sGetCharset('email');
+			$this->sFormCharset     = $this->sGetCharset('form');
+			$this->oTemplate        = $this->oMakeInstance('template');
+			$this->oSession         = $this->oMakeInstance('session');
+			$this->oCheck           = $this->oMakeInstance('check');
+			$this->oEmail           = $this->oMakeInstance('email');
 
 			// Stop here if form was not submitted (ignore $_GET)
 			if (!is_array($_POST) || !count($_POST)) {
@@ -123,7 +123,7 @@
 
 			// Redirect if set
 			if (strlen($this->aConfig['redirectPage'])) {
-				Header('Location: '.$this->sGetRedirectURL());
+				Header('Location: ' . $this->sGetRedirectURL());
 				exit();
 			}
 
@@ -159,15 +159,15 @@
 		/**
 		 * Get the charset for the form and emails
 		 *
-		 * @param	string		$psType: Type of media which needs the charset
-		 * @return	The character encoding
+		 * @param   string      $psType: Type of media which needs the charset
+		 * @return  The character encoding
 		 */
 		protected function sGetCharset ($psType='form') {
-			$sType = strtolower(trim($psType)).'Charset';
+			$sType = strtolower(trim($psType)) . 'Charset';
 
-			$sCharset	= $GLOBALS['LANG']->charSet			? $GLOBALS['LANG']->charSet			: 'iso-8859-1';
-			$sCharset	= $GLOBALS['TSFE']->renderCharset	? $GLOBALS['TSFE']->renderCharset	: $sCharset;
-			$sCharset	= $GLOBALS['TSFE']->metaCharset		? $GLOBALS['TSFE']->metaCharset		: $sCharset;
+			$sCharset   = $GLOBALS['LANG']->charSet         ? $GLOBALS['LANG']->charSet         : 'iso-8859-1';
+			$sCharset   = $GLOBALS['TSFE']->renderCharset   ? $GLOBALS['TSFE']->renderCharset   : $sCharset;
+			$sCharset   = $GLOBALS['TSFE']->metaCharset     ? $GLOBALS['TSFE']->metaCharset     : $sCharset;
 
 			if (strlen($this->aConfig[$sType])) {
 				$sCharset = $this->aConfig[$sType];
@@ -182,20 +182,20 @@
 		 *
 		 */
 		protected function vSetDefaultTemplates () {
-			$this->aConfig['formTemplate'] 		= 'EXT:'.$this->extKey.'/res/templates/form.html';
-			$this->aConfig['emailTemplate']		= 'EXT:'.$this->extKey.'/res/templates/email.html';
-			$this->aConfig['stylesheetFile']	= 'EXT:'.$this->extKey.'/res/templates/stylesheet.css';
+			$this->aConfig['formTemplate']      = 'EXT:' . $this->extKey . '/res/templates/form.html';
+			$this->aConfig['emailTemplate']     = 'EXT:' . $this->extKey . '/res/templates/email.html';
+			$this->aConfig['stylesheetFile']    = 'EXT:' . $this->extKey . '/res/templates/stylesheet.css';
 		}
 
 
 		/**
 		 * Get user language array
 		 *
-		 * @return	Array of user localized labels
+		 * @return  Array of user localized labels
 		 */
 		protected function aGetUserLabels ($psLang='default') {
-			$sFile		= t3lib_div::getFileAbsFileName($this->aConfig['locallangFile']);
-			$aOwnLabels	= array();
+			$sFile      = t3lib_div::getFileAbsFileName($this->aConfig['locallangFile']);
+			$aOwnLabels = array();
 
 			if (strlen($sFile)) {
 				$aXML = t3lib_div::xml2array(t3lib_div::getUrl($sFile));
@@ -221,15 +221,15 @@
 		/**
 		 * Get whole language array
 		 *
-		 * @return	Array of all localized labels
+		 * @return  Array of all localized labels
 		 */
 		protected function aGetLL() {
 			$this->pi_loadLL();
 
-			$sLangKey		= (strtolower($this->LLkey) == 'en') ? 'default' : $this->LLkey;
-			$aLocalLang		= $this->LOCAL_LANG[$sLangKey];
-			$aOtherLabels	= array(
-				$this->aConfig['_LOCAL_LANG.'][$sLangKey.'.'],
+			$sLangKey       = (strtolower($this->LLkey) == 'en') ? 'default' : $this->LLkey;
+			$aLocalLang     = $this->LOCAL_LANG[$sLangKey];
+			$aOtherLabels   = array(
+				$this->aConfig['_LOCAL_LANG.'][$sLangKey  . '.'],
 				$this->aGetUserLabels($sLangKey),
 			);
 
@@ -255,7 +255,7 @@
 		/**
 		 * Check configuration
 		 *
-		 * @return	True if configuration is ok
+		 * @return  TRUE if configuration is ok
 		 */
 		protected function sCheckConfiguration () {
 			$aMessages = array();
@@ -304,8 +304,7 @@
 
 			// Return a list of error messages
 			if (count($aMessages)) {
-				return	'<strong>Configuration of "Better Contact" is incorrect:</strong><br />'.
-						'<ul><li>'.implode('</li><li>',$aMessages).'</li></ul>';
+				return '<strong>Configuration of "Better Contact" is incorrect:</strong><br /><ul><li>' . implode('</li><li>', $aMessages) . '</li></ul>';
 			}
 
 			return '';
@@ -315,7 +314,7 @@
 		/**
 		 * Get an array of all fields
 		 *
-		 * @return	Array of all formular fields
+		 * @return  Array of all formular fields
 		 */
 		protected function aGetFields () {
 			if (!is_array($this->aConfig['fields.']) || !count($this->aConfig['fields.'])) {
@@ -332,29 +331,29 @@
 				}
 
 				// Get configuration
-				$sName		= strtolower(trim($sKey, ' .{}()'));
-				$sValue		= isset($_POST[$sName]) ? $this->piVars[$sName] : $sDefault;
-				$sUpperName	= strtoupper($sName);
-				$sMultiName	= $sUpperName.'_'.md5($sValue);
+				$sName      = strtolower(trim($sKey, ' .{}()'));
+				$sValue     = isset($_POST[$sName]) ? $this->piVars[$sName] : $sDefault;
+				$sUpperName = strtoupper($sName);
+				$sMultiName = $sUpperName . '_' . md5($sValue);
 
 				// Build the field
 				$aFields[$sName] = array (
-					'markerName'	=> '###'.$sUpperName.'###',
-					'messageName'	=> '###MSG_'.$sUpperName.'###',
-					'errClassName'	=> '###ERR_'.$sUpperName.'###',
-					'valueName'		=> '###VALUE_'.$sUpperName.'###',
-					'labelName'		=> '###LABEL_'.$sUpperName.'###',
-					'checkedName'	=> '###CHECKED_'.$sUpperName.'###',
-					'multiChkName'	=> '###CHECKED_'.$sMultiName.'###',
-					'multiSelName'	=> '###SELECTED_'.$sMultiName.'###',
-					'regex' 		=> $aUserField['regex'] 		? $aUserField['regex'] 		: '',
-					'disallowed'	=> $aUserField['disallowed'] 	? $aUserField['disallowed']	: '',
-					'allowed'		=> $aUserField['allowed'] 		? $aUserField['allowed']	: '',
-					'required' 		=> $aUserField['required'] 		? $aUserField['required'] 	: 0,
-					'minLength'		=> $aUserField['minLength'] 	? $aUserField['minLength']	: 0,
-					'maxLength'		=> $aUserField['maxLength'] 	? $aUserField['maxLength']	: 0,
-					'label'			=> $this->aLL[$sName]			? $this->aLL[$sName]		: ucfirst($sName).':',
-					'value'			=> $sValue,
+					'markerName'    => '###'          . $sUpperName . '###',
+					'messageName'   => '###MSG_'      . $sUpperName . '###',
+					'errClassName'  => '###ERR_'      . $sUpperName . '###',
+					'valueName'     => '###VALUE_'    . $sUpperName . '###',
+					'labelName'     => '###LABEL_'    . $sUpperName . '###',
+					'checkedName'   => '###CHECKED_'  . $sUpperName . '###',
+					'multiChkName'  => '###CHECKED_'  . $sMultiName . '###',
+					'multiSelName'  => '###SELECTED_' . $sMultiName . '###',
+					'regex'         => $aUserField['regex']         ? $aUserField['regex']      : '',
+					'disallowed'    => $aUserField['disallowed']    ? $aUserField['disallowed'] : '',
+					'allowed'       => $aUserField['allowed']       ? $aUserField['allowed']    : '',
+					'required'      => $aUserField['required']      ? $aUserField['required']   : 0,
+					'minLength'     => $aUserField['minLength']     ? $aUserField['minLength']  : 0,
+					'maxLength'     => $aUserField['maxLength']     ? $aUserField['maxLength']  : 0,
+					'label'         => $this->aLL[$sName]           ? $this->aLL[$sName]        : ucfirst($sName) . ':',
+					'value'         => $sValue,
 				);
 			}
 
@@ -365,20 +364,20 @@
 		/**
 		 * Make an instance of any class
 		 *
-		 * @return	Instance of the new object
+		 * @return  Instance of the new object
 		 */
 		protected function oMakeInstance ($psClassPostfix) {
 			if (!strlen($psClassPostfix)) {
 				return NULL;
 			}
 
-			$sClassName	= strtolower($this->prefixId.'_'.$psClassPostfix);
-			$sFileName	= t3lib_extMgm::extPath($this->extKey).'pi1/class.'.$sClassName.'.php';
+			$sClassName = strtolower($this->prefixId . '_' . $psClassPostfix);
+			$sFileName  = t3lib_extMgm::extPath($this->extKey) . 'pi1/class.' . $sClassName . '.php';
 
 			if (@file_exists($sFileName)) {
 				include_once($sFileName);
 
-				$sClass = t3lib_div::makeInstanceClassName($sClassName);
+				$sClass  = t3lib_div::makeInstanceClassName($sClassName);
 				$oResult = new $sClass($this);
 
 				return $oResult;
@@ -391,20 +390,20 @@
 		/**
 		 * Check if form is empty
 		 *
-		 * @return	True if the form is empty
+		 * @return  TRUE if the form is empty
 		 */
 		protected function bIsFormEmpty () {
 			if (!is_array($this->piVars)) {
-				return false;
+				return FALSE;
 			}
 
 			foreach ($this->piVars as $sKey => $sValue) {
 				if (strlen($sValue)) {
-					return false;
+					return FALSE;
 				}
 			}
 
-			return true;
+			return TRUE;
 		}
 
 
@@ -424,7 +423,7 @@
 		/**
 		 * Get redirect url
 		 *
-		 * @return	URL of the page which should be shown after successfully sent mail
+		 * @return  URL of the page which should be shown after successfully sent mail
 		 */
 		protected function sGetRedirectURL () {
 			$sPage = $this->aConfig['redirectPage'];
@@ -445,7 +444,7 @@
 		/**
 		 * Get content
 		 *
-		 * @return	Whole content
+		 * @return  Whole content
 		 */
 		protected function sGetContent () {
 			$sContent = $this->oTemplate->sGetContent();

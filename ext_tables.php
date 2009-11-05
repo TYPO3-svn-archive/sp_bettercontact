@@ -27,7 +27,7 @@
 
 	// Check for required SimpleXML and get flexform
 	if (class_exists('SimpleXMLElement')) {
-		include_once(t3lib_extMgm::extPath('sp_bettercontact').'pi1/class.tx_spbettercontact_pi1_flexform.php');
+		include_once(t3lib_extMgm::extPath('sp_bettercontact') . 'pi1/class.tx_spbettercontact_pi1_flexform.php');
 		$oFlexForm = t3lib_div::makeInstance('tx_spbettercontact_pi1_flexform');
 		$sFlexData = $oFlexForm->sGetFlexForm();
 		unset($oFlexForm);
@@ -45,12 +45,12 @@
 	// Get new flexform field -> method "t3lib_BEfunc::getFlexFormDS" doesn't support CType
 	$aNewFlexField = array(
 		'pi_flexform_CType' => array(
-			'exclude'	=> 1,
-			'label'		=> 'LLL:EXT:cms/locallang_ttc.php:pi_flexform',
-			'config'	=> array(
-				'type'	=> 'flex',
-				'ds'	=> array(
-					'default'	=> $sFlexData,
+			'exclude'   => 1,
+			'label'     => 'LLL:EXT:cms/locallang_ttc.php:pi_flexform',
+			'config'    => array(
+				'type'  => 'flex',
+				'ds'    => array(
+					'default' => $sFlexData,
 				)
 			)
 		)
@@ -62,8 +62,8 @@
 	$TCA['tt_content']['types']['sp_bettercontact_pi1']['showitem'] = 'CType;;4;button,hidden,1-1-1, header;;3;;2-2-2, linkToTop;;;;3-3-3, --div--;LLL:EXT:cms/locallang_ttc.xml:tabs.plugin,pi_flexform_CType;;;;1-1-1, --div--;LLL:EXT:cms/locallang_tca.xml:pages.tabs.access,starttime, endtime, cPos';
 
 	// Add plugin to right position in list
-	$aCTypes	= $TCA['tt_content']['columns']['CType']['config']['items'];
-	$aNewItems	= array();
+	$aCTypes    = $TCA['tt_content']['columns']['CType']['config']['items'];
+	$aNewItems  = array();
 	foreach ($aCTypes as $aValue) {
 		if (substr($aValue[0], -7) == 'special' || $aValue[1] == 'splash') {
 			$aNewItems[] = $aPlugin;

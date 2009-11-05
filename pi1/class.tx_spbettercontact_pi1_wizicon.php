@@ -26,17 +26,17 @@
 	/**
 	 * Class that adds the wizard icon.
 	 *
-	 * @author	Kai Vogel <kai.vogel ( at ) speedprogs.de>
-	 * @package	TYPO3
-	 * @subpackage	tx_spbettercontact
+	 * @author      Kai Vogel <kai.vogel ( at ) speedprogs.de>
+	 * @package     TYPO3
+	 * @subpackage  tx_spbettercontact
 	 */
 	class tx_spbettercontact_pi1_wizicon {
 
 		/**
 		 * Processing the wizard items array
 		 *
-		 * @param	array	$wizardItems: The wizard items
-		 * @return	Modified array with wizard items
+		 * @param   array   $wizardItems: The wizard items
+		 * @return  Modified array with wizard items
 		 */
 		public function proc ($aWizardItems) {
 			if (!is_array($aWizardItems) || !count($aWizardItems)) {
@@ -45,17 +45,17 @@
 
 			// Get configuration
 			global $LANG;
-			$sLangFile			= t3lib_extMgm::extPath('sp_bettercontact').'locallang.xml';
-			$aLL				= t3lib_div::readLLXMLfile($sLangFile, $GLOBALS['LANG']->lang);
-			$sLastKey			= '';
-			$aNewItems			= array();
+			$sLangFile      = t3lib_extMgm::extPath('sp_bettercontact') . 'locallang.xml';
+			$aLL            = t3lib_div::readLLXMLfile($sLangFile, $GLOBALS['LANG']->lang);
+			$sLastKey       = '';
+			$aNewItems      = array();
 
 			// Get plugin
 			$aPlugin = array(
-				'icon'			=> t3lib_extMgm::extRelPath('sp_bettercontact').'res/images/wizard.gif',
-				'title'			=> $LANG->getLLL('pi1_title', $aLL),
-				'description'	=> $LANG->getLLL('pi1_plus_wiz_description', $aLL),
-				'tt_content_defValues'	=> array('CType' => 'sp_bettercontact_pi1'),
+				'icon'                  => t3lib_extMgm::extRelPath('sp_bettercontact') . 'res/images/wizard.gif',
+				'title'                 => $LANG->getLLL('pi1_title', $aLL),
+				'description'           => $LANG->getLLL('pi1_plus_wiz_description', $aLL),
+				'tt_content_defValues'  => array('CType' => 'sp_bettercontact_pi1'),
 			);
 
 			// Add plugin in forms area
@@ -64,8 +64,8 @@
 					$aNewItems['forms_contact'] = $aPlugin;
 				}
 
-				$aNewItems[$sKey]	= $aValue;
-				$sLastKey			= $sKey;
+				$aNewItems[$sKey]   = $aValue;
+				$sLastKey           = $sKey;
 			}
 
 			return $aNewItems;

@@ -26,44 +26,44 @@
 	/**
 	 * Check class for the 'sp_bettercontact' extension.
 	 *
-	 * @author		Kai Vogel <kai.vogel ( at ) speedprogs.de>
-	 * @package		TYPO3
-	 * @subpackage	tx_spbettercontact
+	 * @author      Kai Vogel <kai.vogel ( at ) speedprogs.de>
+	 * @package     TYPO3
+	 * @subpackage  tx_spbettercontact
 	 */
 	class tx_spbettercontact_pi1_check {
-		public $aConfig		= array();
-		public $aLL			= array();
-		public $aPiVars		= array();
-		public $aFields		= array();
-		public $aMarkers	= array();
+		public $aConfig     = array();
+		public $aLL         = array();
+		public $aPiVars     = array();
+		public $aFields     = array();
+		public $aMarkers    = array();
 
 
 		/**
 		 * Set configuration for check object
 		 *
-		 * @param	object	$poParent: Instance of the parent object
+		 * @param   object  $poParent: Instance of the parent object
 		 */
 		public function __construct ($poParent) {
-			$this->aConfig 	= $poParent->aConfig;
-			$this->aFields	= $poParent->aFields;
-			$this->aLL 		= $poParent->aLL;
-			$this->aPiVars	= $poParent->piVars;
+			$this->aConfig  = $poParent->aConfig;
+			$this->aFields  = $poParent->aFields;
+			$this->aLL      = $poParent->aLL;
+			$this->aPiVars  = $poParent->piVars;
 		}
 
 
 		/**
 		 * Check for spam
 		 *
-		 * @return	True if the form was filled by a spam-bot
+		 * @return  TRUE if the form was filled by a spam-bot
 		 */
 		public function bIsSpam () {
-			$bRefererCheck = isset($this->aConfig['useRefererCheck']) ? (bool) $this->aConfig['useRefererCheck'] : true;
+			$bRefererCheck = isset($this->aConfig['useRefererCheck']) ? (bool) $this->aConfig['useRefererCheck'] : TRUE;
 
-			// Check referer (true = form was not sent from this server)
+			// Check referer (TRUE = form was not sent from this server)
 			if ($bRefererCheck) {
 				$sRefererHost = @parse_url(t3lib_div::getIndpEnv('HTTP_REFERER'), PHP_URL_HOST);
 				if ($sRefererHost != t3lib_div::getIndpEnv('HTTP_HOST')) {
-					return true;
+					return TRUE;
 				}
 			}
 
@@ -71,40 +71,40 @@
 			if (is_array($this->aFields)) {
 				foreach ($this->aFields as $sKey => $aField) {
 					if (strlen($_POST[$sKey]) || strlen($_GET[$sKey])) {
-						return true;
+						return TRUE;
 					}
 				}
 			}
 
-			return false;
+			return FALSE;
 		}
 
 
 		/**
 		 * Execute checks and set errors
 		 *
-		 * @return	False if the form has errors
+		 * @return  FALSE if the form has errors
 		 */
 		public function bCheckFields () {
 			// Return if no data was sent
 			if (!is_array($this->aPiVars) || !count($this->aPiVars) || !is_array($this->aFields)) {
-				return true;
+				return TRUE;
 			}
 
-			$bResult = true;
+			$bResult = TRUE;
 			foreach ($this->aFields as $sKey => $aField) {
 
 				// Bypass captcha input, it has its own check routine
 				if (strtolower($sKey) == 'captcha' && !$this->bCheckCaptcha()) {
 					$this->aMarkers[$aField['messageName']] = $this->aLL['msg_captcha'];
-					$bResult = false;
+					$bResult = FALSE;
 					continue;
 				}
 
 				// Required
 				if (!strlen($aField['value']) && (bool) $aField['required']) {
 					$this->aMarkers[$aField['messageName']] = $this->sGetMessage($sKey, 'empty', 'required');
-					$bResult = false;
+					$bResult = FALSE;
 					continue;
 				}
 
@@ -116,14 +116,14 @@
 				// Too short
 				if (strlen($aField['minLength']) && (int) $aField['minLength'] && strlen($aField['value']) < $aField['minLength']) {
 					$this->aMarkers[$aField['messageName']] = $this->sGetMessage($sKey, 'short', 'minLength');
-					$bResult = false;
+					$bResult = FALSE;
 					continue;
 				}
 
 				// Too long
 				if (strlen($aField['maxLength']) && (int) $aField['maxLength'] && strlen($aField['value']) > $aField['maxLength']) {
 					$this->aMarkers[$aField['messageName']] = $this->sGetMessage($sKey, 'long', 'maxLength');
-					$bResult = false;
+					$bResult = FALSE;
 					continue;
 				}
 
@@ -131,7 +131,7 @@
 				if (strlen($aField['disallowed'])) {
 					if ($aField['value'] !== str_replace(str_split($aField['disallowed']), '', $aField['value'])) {
 						$this->aMarkers[$aField['messageName']] = $this->sGetMessage($sKey, 'disallowed', 'disallowed');
-						$bResult = false;
+						$bResult = FALSE;
 						continue;
 					}
 				}
@@ -140,7 +140,7 @@
 				if (strlen($aField['allowed'])) {
 					if (strlen(str_replace(str_split($aField['allowed']), '', $aField['value']))) {
 						$this->aMarkers[$aField['messageName']] = $this->sGetMessage($sKey, 'allowed', 'allowed');
-						$bResult = false;
+						$bResult = FALSE;
 						continue;
 					}
 				}
@@ -149,7 +149,7 @@
 				if (strlen($aField['regex'])) {
 					if (!preg_match($aField['regex'], $aField['value'])) {
 						$this->aMarkers[$aField['messageName']] = $this->sGetMessage($sKey, 'regex', 'regex');
-						$bResult = false;
+						$bResult = FALSE;
 						continue;
 					}
 				}
@@ -170,67 +170,67 @@
 			}
 
 			// Get configuration
-			$psName			= trim($psName);
-			$psIdentifier	= trim($psIdentifier);
-			$psType			= trim($psType);
+			$psName         = trim($psName);
+			$psIdentifier   = trim($psIdentifier);
+			$psType         = trim($psType);
 
 			// Check for defined signes and replace formated
 			if ($sReplace = htmlspecialchars(utf8_decode($this->aFields[$psName][$psType]))) {
-			  return sprintf($this->aLL['msg_'.$psName.'_'.$psIdentifier], $sReplace);
+			  return sprintf($this->aLL['msg_' . $psName . '_' . $psIdentifier], $sReplace);
 			}
 
-			return $this->aLL['msg_'.$psName.'_'.$psIdentifier];
+			return $this->aLL['msg_' . $psName . '_' . $psIdentifier];
 		}
 
 
 		/**
 		 * Check captcha input
 		 *
-		 * @return False if the captcha test failes
+		 * @return FALSE if the captcha test failes
 		 */
 		protected function bCheckCaptcha () {
-			$sExtKey	= strtolower(trim($this->aConfig['captchaSupport']));
-			$sInput		= $this->aPiVars['captcha'];
-			$bResult	= true;
+			$sExtKey    = strtolower(trim($this->aConfig['captchaSupport']));
+			$sInput     = $this->aPiVars['captcha'];
+			$bResult    = TRUE;
 
 			if (!strlen($sExtKey) || !t3lib_extMgm::isLoaded($sExtKey)) {
-				return true;
+				return TRUE;
 			}
 
 			// Check captcha
 			switch ($sExtKey) {
 				case 'sr_freecap' :
 					if (!strlen($sInput)) {
-						$bResult	= false;
+						$bResult    = FALSE;
 					} else {
-						require_once(t3lib_extMgm::extPath($sExtKey).'pi2/class.tx_srfreecap_pi2.php');
-						$oCaptcha	= t3lib_div::makeInstance('tx_srfreecap_pi2');
-						$bResult	= $oCaptcha->checkWord($sInput);
+						require_once(t3lib_extMgm::extPath($sExtKey) . 'pi2/class.tx_srfreecap_pi2.php');
+						$oCaptcha   = t3lib_div::makeInstance('tx_srfreecap_pi2');
+						$bResult    = $oCaptcha->checkWord($sInput);
 					}
 					break;
 				case 'jm_recaptcha' :
 					if (!strlen(t3lib_div::_GP('recaptcha_response_field'))) {
-						$bResult	= false;
+						$bResult    = FALSE;
 					} else {
-						require_once(t3lib_extMgm::extPath($sExtKey).'class.tx_jmrecaptcha.php');
-						$oCaptcha	= t3lib_div::makeInstance('tx_jmrecaptcha');
-						$aResponse	= $oCaptcha->validateReCaptcha();
+						require_once(t3lib_extMgm::extPath($sExtKey) . 'class.tx_jmrecaptcha.php');
+						$oCaptcha   = t3lib_div::makeInstance('tx_jmrecaptcha');
+						$aResponse  = $oCaptcha->validateReCaptcha();
 						if (is_array($aResponse) && count($aResponse)) {
-							$bResult = $aResponse['verified'] ? (bool) $aResponse['verified'] : false;
+							$bResult = $aResponse['verified'] ? (bool) $aResponse['verified'] : FALSE;
 						}
 					}
 					break;
 				case 'captcha' :
 					if (!strlen($sInput)) {
-						$bResult	= false;
+						$bResult    = FALSE;
 					} else {
 						session_start();
-						$sCaptcha	= $_SESSION['tx_captcha_string'];
-						$bResult	= ($sInput === $sCaptcha);
+						$sCaptcha   = $_SESSION['tx_captcha_string'];
+						$bResult    = ($sInput === $sCaptcha);
 					}
 					break;
 				default:
-					return false;
+					return FALSE;
 			}
 
 			return $bResult;
@@ -240,11 +240,11 @@
 		/**
 		 * Get an array of all fields with malicious content
 		 *
-		 * @return	Array of bad fields
+		 * @return  Array of bad fields
 		 */
 		public function aGetBadFields () {
-			$aResult	= array();
-			$sShow		= strtolower($this->aConfig['showMaliciousInput']);
+			$aResult    = array();
+			$sShow      = strtolower($this->aConfig['showMaliciousInput']);
 
 			if ($sShow == 'clean') {
 				foreach($this->aFields as $sKey => $aField) {
@@ -264,7 +264,7 @@
 		/**
 		 * Get an array of error messages from check
 		 *
-		 * @return	Array of all messages
+		 * @return  Array of all messages
 		 */
 		public function aGetMessages () {
 			if (!is_array($this->aPiVars)) {
@@ -286,7 +286,7 @@
 				$sMessage = $this->aMarkers[$this->aFields[$sKey]['messageName']];
 				if (strlen($sMessage)) {
 					// Add message to list
-					$aMessages[] = '<li>'.$sMessage.'</li>';
+					$aMessages[] = '<li>' . $sMessage . '</li>';
 
 					// Add error class
 					if ($this->aConfig['highlightFields']) {
@@ -296,7 +296,7 @@
 			}
 
 			if (count($aMessages)) {
-				$this->aMarkers['###MESSAGES###'] = '<ul>'.implode(PHP_EOL, $aMessages).'</ul>';
+				$this->aMarkers['###MESSAGES###'] = '<ul>' . implode(PHP_EOL, $aMessages) . '</ul>';
 			}
 
 			// Add info text
