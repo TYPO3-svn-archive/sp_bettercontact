@@ -1,0 +1,154 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+	<title>email template</title>
+</head>
+<body>
+<h1>Following markers could be set:</h1>
+
+<h2>General:</h2>
+###URL_SELF###					<br />
+###INFO###						<br />
+###HIDDEN###					<br />
+###SUBMIT###					<br />
+###SUBMIT_VALUE###				<br />
+###CHARSET###					<br />
+								<br />
+
+<h2>Show all messages of all fields as list:</h2>
+###MESSAGES###					<br />
+								<br />
+
+<h2>Show inline messages for each field:</h2>
+###MSG_<FIELDNAME>###			<br />
+								<br />
+
+<h2>Show the value of input fields:</h2>
+###VALUE_<FIELDNAME>###			<br />
+								<br />
+
+<h2>Show state of a checkbox:</h2>
+###CHECKED_<FIELDNAME>###		<br />
+								<br />
+
+<h2>Show labels for the input fields:</h2>
+###LABEL_<FIELDNAME>###			<br />
+								<br />
+
+<h2>Show data from a spam attack:</h2>
+###SPAM_DATE###					<br />
+###SPAM_TIME###					<br />
+###SPAM_IP###					<br />
+###SPAM_METHOD###				<br />
+###SPAM_BROWSER###				<br />
+###SPAM_SYSTEM###				<br />
+###SPAM_AGENT###				<br />
+###SPAM_REFERER###				<br />
+								<br />
+
+<h2>Show the values of the hidden input fields:</h2>
+###SPAM_VALUE_<FIELDNAME>###	<br />
+###SPAM_CHECKED_<FIELDNAME>###	<br />
+								<br />
+
+<h2>Show your own markers (define via TypoScript - see manual):</h2>
+###<NAME_OF_MY_MARKER>###		<br />
+								<br />
+
+<h2>Show your own locallang labels (see manual):</h2>
+###LLL:<label_name_in_xml>###	<br />
+								<br />
+								<br />
+
+
+<!-- ###MAIL_MESSAGE_SENDER### begin -->
+Hello ###VALUE_NAME###,
+
+Thank you for your message.
+We will answer your question as soon as possible.
+
+Best regards,
+
+Your company
+<!-- ###MAIL_MESSAGE_SENDER### end -->
+
+<!-- ###MAIL_MESSAGE_ADMIN### begin -->
+Hello Admin,
+
+Someone has sent a message:
+
+###LABEL_NAME### ###VALUE_NAME###
+###LABEL_TEL### ###VALUE_TEL###
+###LABEL_FAX### ###VALUE_FAX###
+###LABEL_STREET### ###VALUE_STREET###
+###LABEL_CITY### ###VALUE_CITY###
+###LABEL_EMAIL### ###VALUE_EMAIL###
+
+###VALUE_MESSAGE###
+
+Best regards,
+
+Your contact form
+<!-- ###MAIL_MESSAGE_ADMIN### end -->
+
+<!-- ###MAIL_MESSAGE_SPAM### begin -->
+Hello Admin,
+
+Someone has tried to send a message:
+
+
+=============================================
+General data:
+=============================================
+Date:       ###SPAM_DATE###
+Time:       ###SPAM_TIME###
+IP:         ###SPAM_IP###
+Browser:    ###SPAM_BROWSER###
+System:     ###SPAM_SYSTEM###
+Referer:    ###SPAM_REFERER###
+Method:     ###SPAM_METHOD###
+
+=============================================
+Visible fields:
+=============================================
+Name:       ###VALUE_NAME###
+Phone:      ###VALUE_TEL###
+Fax:        ###VALUE_FAX###
+Street:     ###VALUE_STREET###
+City:       ###VALUE_CITY###
+Email:      ###VALUE_EMAIL###
+Message:    ###VALUE_MESSAGE###
+
+=============================================
+Hidden fields:
+=============================================
+Name:       ###SPAM_VALUE_NAME###
+Phone:      ###SPAM_VALUE_TEL###
+Fax:        ###SPAM_VALUE_FAX###
+Street:     ###SPAM_VALUE_STREET###
+City:       ###SPAM_VALUE_CITY###
+Email:      ###SPAM_VALUE_EMAIL###
+Message:    ###SPAM_VALUE_MESSAGE###
+
+
+Best regards,
+
+Your contact form
+<!-- ###MAIL_MESSAGE_SPAM### end -->
+
+<!-- ###MAIL_SUBJECT_SENDER### begin -->
+Thank you for your message
+<!-- ###MAIL_SUBJECT_SENDER### end -->
+
+<!-- ###MAIL_SUBJECT_ADMIN### begin -->
+###VALUE_NAME### has sent an message
+<!-- ###MAIL_SUBJECT_ADMIN### end -->
+
+<!-- ###MAIL_SUBJECT_SPAM### begin -->
+Someone has tried to send a message
+<!-- ###MAIL_SUBJECT_SPAM### end -->
+
+
+</body>
+</html>

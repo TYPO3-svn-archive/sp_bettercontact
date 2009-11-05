@@ -1,0 +1,145 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<T3locallang>
+	<meta type="array">
+		<type>module</type>
+		<description>Language labels for extension 'sp_bettercontact'</description>
+	</meta>
+	<data type="array">
+		<languageKey index="default" type="array">
+			<label index="msg_name_empty">Please enter your name.</label>
+			<label index="msg_tel_empty">Please enter a phone number.</label>
+			<label index="msg_fax_empty">Please enter a fax number.</label>
+			<label index="msg_street_empty">Please enter a street.</label>
+			<label index="msg_city_empty">Please enter a city.</label>
+			<label index="msg_email_empty">Please enter your email address.</label>
+			<label index="msg_message_empty">Please enter a message.</label>
+
+			<label index="msg_name_short">Please enter a name with more than %d characters.</label>
+			<label index="msg_tel_short">Please enter a phone number with more than %d characters.</label>
+			<label index="msg_fax_short">Please enter a fax number with more than %d characters.</label>
+			<label index="msg_street_short">Please enter a street with more than %d characters.</label>
+			<label index="msg_city_short">Please enter a city with more than %d characters.</label>
+			<label index="msg_email_short">Please enter an email address with more than %d characters.</label>
+			<label index="msg_message_short">Please enter a message with more than %d characters.</label>
+
+			<label index="msg_name_long">Please enter a name with less than %d characters.</label>
+			<label index="msg_tel_long">Please enter a phone number with less than %d characters.</label>
+			<label index="msg_fax_long">Please enter a fax number with less than %d characters.</label>
+			<label index="msg_street_long">Please enter a street with less than %d characters.</label>
+			<label index="msg_city_long">Please enter a city with less than %d characters.</label>
+			<label index="msg_email_long">Please enter an email address with less than %d characters.</label>
+			<label index="msg_message_long">Please enter a message with less than %d characters.</label>
+
+			<label index="msg_name_regex">Please enter a name that does not contain %s or other special characters.</label>
+			<label index="msg_tel_regex">Please enter a phone number that does not contain %s or other special characters.</label>
+			<label index="msg_fax_regex">Please enter a fax number that does not contain %s or other special characters.</label>
+			<label index="msg_street_regex">Please enter a valid street.</label>
+			<label index="msg_city_regex">Please enter a valid city.</label>
+			<label index="msg_email_regex">Please enter a valid email address.</label>
+			<label index="msg_message_regex">Please enter a message that does not contain %s or other special characters.</label>
+
+			<label index="msg_name_disallowed">Please enter a name that does not contain: %s.</label>
+			<label index="msg_tel_disallowed">Please enter a phone number that does not contain: %s.</label>
+			<label index="msg_fax_disallowed">Please enter a fax number that does not contain: %s.</label>
+			<label index="msg_street_disallowed">Please enter a street that does not contain: %s.</label>
+			<label index="msg_city_disallowed">Please enter a city that does not contain: %s.</label>
+			<label index="msg_email_disallowed">Please enter a valid email address.</label>
+			<label index="msg_message_disallowed">Please enter a message that does not contain: %s.</label>
+
+			<label index="msg_name_allowed">Please enter a name which contains only these characters: %s.</label>
+			<label index="msg_tel_allowed">Please enter a phone number which contains only these characters: %s.</label>
+			<label index="msg_fax_allowed">Please enter a fax number which contains only these characters: %s.</label>
+			<label index="msg_street_allowed">Please enter a street which contains only these characters: %s.</label>
+			<label index="msg_city_allowed">Please enter a city which contains only these characters: %s.</label>
+			<label index="msg_email_allowed">Please enter a valid email address.</label>
+			<label index="msg_message_allowed">Please enter a message which contains only these characters: %s.</label>
+
+			<label index="msg_email_passed">Your message was sent. Thank you!</label>
+			<label index="msg_email_failed">Message could not be sent. Please try again.</label>
+			<label index="msg_check_passed"></label>
+			<label index="msg_check_failed">A problem has occurred, your input contains errors.</label>
+			<label index="msg_not_allowed">This process is not allowed!</label>
+			<label index="msg_already_sent">You have already sent %d messages. Please wait %d minute(s).</label>
+			<label index="msg_captcha">Please enter the sequence of characters shown in the captcha image.</label>
+
+			<label index="name">Name:</label>
+			<label index="tel">Phone:</label>
+			<label index="fax">Fax:</label>
+			<label index="street">Street:</label>
+			<label index="city">City:</label>
+			<label index="email">Email:</label>
+			<label index="message">Message:</label>
+			<label index="submit">Submit</label>
+			<label index="checked">yes</label>
+			<label index="unchecked">no</label>
+		</languageKey>
+		<languageKey index="de" type="array">
+			<label index="msg_name_empty">Bitte geben Sie Ihren Namen ein.</label>
+			<label index="msg_tel_empty">Bitte geben Sie Ihre Telefonnummer ein.</label>
+			<label index="msg_fax_empty">Bitte geben Sie Ihre Faxnummer ein.</label>
+			<label index="msg_street_empty">Bitte geben Sie eine Straße ein.</label>
+			<label index="msg_city_empty">Bitte geben Sie eine Stadt ein.</label>
+			<label index="msg_email_empty">Bitte geben Sie Ihre E-Mail Adresse ein.</label>
+			<label index="msg_message_empty">Bitte geben Sie eine Nachricht ein.</label>
+
+			<label index="msg_name_short">Bitte geben Sie einen Namen mit mehr als %d Zeichen ein.</label>
+			<label index="msg_tel_short">Bitte geben Sie eine Telefonnummer mit mehr als %d Zeichen ein.</label>
+			<label index="msg_fax_short">Bitte geben Sie eine Faxnummer mit mehr als %d Zeichen ein.</label>
+			<label index="msg_street_short">Bitte geben Sie eine Straße mit mehr als %d Zeichen ein.</label>
+			<label index="msg_city_short">Bitte geben Sie eine Stadt mit mehr als %d Zeichen ein.</label>
+			<label index="msg_email_short">Bitte geben Sie eine E-Mail Adresse mit mehr als %d Zeichen ein.</label>
+			<label index="msg_message_short">Bitte geben Sie eine Nachricht mit mehr als %d Zeichen ein.</label>
+
+			<label index="msg_name_long">Bitte geben Sie einen Namen mit weniger als %d Zeichen ein.</label>
+			<label index="msg_tel_long">Bitte geben Sie eine Telefonnummer mit weniger als %d Zeichen ein.</label>
+			<label index="msg_fax_long">Bitte geben Sie eine Faxnummer mit weniger als %d Zeichen ein.</label>
+			<label index="msg_street_long">Bitte geben Sie eine Straße mit weniger als %d Zeichen ein.</label>
+			<label index="msg_city_long">Bitte geben Sie eine Stadt mit weniger als %d Zeichen ein.</label>
+			<label index="msg_email_long">Bitte geben Sie eine E-Mail Adresse mit weniger als %d Zeichen ein.</label>
+			<label index="msg_message_long">Bitte geben Sie eine Nachricht mit weniger als %d Zeichen ein.</label>
+
+			<label index="msg_name_regex">Bitte geben Sie einen Namen ein, der außer den Zeichen %s keine weiteren Sonderzeichen beinhaltet.</label>
+			<label index="msg_tel_regex">Bitte geben Sie eine Telefonnummer ein, die außer den Zeichen %s keine weiteren Sonderzeichen beinhaltet.</label>
+			<label index="msg_fax_regex">Bitte geben Sie eine Faxnummer ein, die außer den Zeichen %s keine weiteren Sonderzeichen beinhaltet.</label>
+			<label index="msg_street_regex">Bitte geben Sie eine gültige Straße ein.</label>
+			<label index="msg_city_regex">Bitte geben Sie eine gültige Stadt ein.</label>
+			<label index="msg_email_regex">Bitte geben Sie eine gültige E-Mail Adresse ein.</label>
+			<label index="msg_message_regex">Bitte geben Sie eine Nachricht ein, die außer den Zeichen %s keine weiteren Sonderzeichen beinhaltet.</label>
+
+			<label index="msg_name_disallowed">Bitte geben Sie einen Namen ein, der keines dieser Zeichen beinhaltet: %s.</label>
+			<label index="msg_tel_disallowed">Bitte geben Sie eine Telefonnummer ein, die keines dieser Zeichen beinhaltet: %s.</label>
+			<label index="msg_fax_disallowed">Bitte geben Sie eine Faxnummer ein, die keines dieser Zeichen beinhaltet: %s.</label>
+			<label index="msg_street_disallowed">Bitte geben Sie eine Straße ein, die keines dieser Zeichen beinhaltet: %s.</label>
+			<label index="msg_city_disallowed">Bitte geben Sie eine Stadt ein, die keines dieser Zeichen beinhaltet: %s.</label>
+			<label index="msg_email_disallowed">Bitte geben Sie eine gültige E-Mail Adresse ein.</label>
+			<label index="msg_message_disallowed">Bitte geben Sie eine Nachricht ein, die keines dieser Zeichen beinhaltet: %s.</label>
+
+			<label index="msg_name_allowed">Bitte geben Sie einen Namen ein, der nur diese Zeichen beinhaltet: %s.</label>
+			<label index="msg_tel_allowed">Bitte geben Sie eine Telefonnummer ein, die nur diese Zeichen beinhaltet: %s.</label>
+			<label index="msg_fax_allowed">Bitte geben Sie eine Faxnummer ein, die nur diese Zeichen beinhaltet: %s.</label>
+			<label index="msg_street_allowed">Bitte geben Sie eine Straße ein, die nur diese Zeichen beinhaltet: %s.</label>
+			<label index="msg_city_allowed">Bitte geben Sie eine Stadt ein, die nur diese Zeichen beinhaltet: %s.</label>
+			<label index="msg_email_allowed">Bitte geben Sie eine gültige E-Mail Adresse ein.</label>
+			<label index="msg_message_allowed">Bitte geben Sie eine Nachricht ein, die nur diese Zeichen beinhaltet: %s.</label>
+
+			<label index="msg_email_passed">Ihre Nachricht wurde erfolgreich versandt. Vielen Dank.</label>
+			<label index="msg_email_failed">Ihre Nachricht konnte nicht versandt werden. Bitte versuchen Sie es erneut.</label>
+			<label index="msg_check_passed"></label>
+			<label index="msg_check_failed">Bei den Formulareingaben ist ein Problem aufgetreten.</label>
+			<label index="msg_not_allowed">Dieser Prozess ist nicht erlaubt!</label>
+			<label index="msg_already_sent">Sie haben bereits %d Nachrichten versandt. Bitte warten Sie %d Minute(n).</label>
+			<label index="msg_captcha">Bitte übertragen Sie die Zeichen des Captcha-Bildes in das Textfeld.</label>
+
+			<label index="name">Name:</label>
+			<label index="tel">Telefon:</label>
+			<label index="fax">Fax:</label>
+			<label index="street">Straße:</label>
+			<label index="city">Stadt:</label>
+			<label index="email">E-Mail:</label>
+			<label index="message">Nachricht:</label>
+			<label index="submit">Absenden</label>
+			<label index="checked">ja</label>
+			<label index="unchecked">nein</label>
+		</languageKey>
+	</data>
+</T3locallang>

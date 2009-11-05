@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<T3locallang>
+	<meta type="array">
+		<type>module</type>
+		<description>Additional language labels for extension 'sp_bettercontact'</description>
+	</meta>
+	<data type="array">
+		<languageKey index="default" type="array">
+			<label index="msg_salutation_empty">Please enter a salutation</label>
+			<label index="msg_salutation_short">Please enter a salutation with more then %d signs</label>
+			<label index="msg_salutation_long">Please enter a salutation with less then %d signs</label>
+			<label index="msg_salutation_regex">Please enter a valid salutation</label>
+			<label index="msg_salutation_disallowed">Please enter a salutation which contains none of this signs: %s</label>
+			<label index="msg_salutation_allowed">Please enter a salutation which contains only this signs: %s</label>
+
+			<label index="msg_country_empty">Please enter a country</label>
+			<label index="msg_country_short">Please enter a country with more then %d signs</label>
+			<label index="msg_country_long">Please enter a country with less then %d signs</label>
+			<label index="msg_country_regex">Please enter a valid country</label>
+			<label index="msg_country_disallowed">Please enter a country which contains none of this signs: %s</label>
+			<label index="msg_country_allowed">Please enter a country which contains only this signs: %s</label>
+
+			<label index="msg_language_empty">Please enter a language</label>
+			<label index="msg_language_short">Please enter a language with more then %d signs</label>
+			<label index="msg_language_long">Please enter a language with less then %d signs</label>
+			<label index="msg_language_regex">Please enter a valid language</label>
+			<label index="msg_language_disallowed">Please enter a language which contains none of this signs: %s</label>
+			<label index="msg_language_allowed">Please enter a language which contains only this signs: %s</label>
+
+			<label index="msg_www_empty">Please enter an internet address</label>
+			<label index="msg_www_short">Please enter an internet address with more then %d signs</label>
+			<label index="msg_www_long">Please enter an internet address with less then %d signs</label>
+			<label index="msg_www_regex">Please enter an valid internet address</label>
+			<label index="msg_www_disallowed">Please enter an internet address which contains none of this signs: %s</label>
+			<label index="msg_www_allowed">Please enter an internet address which contains only this signs: %s</label>
+
+			<label index="msg_company_empty">Please enter a company</label>
+			<label index="msg_company_short">Please enter a company with more then %d signs</label>
+			<label index="msg_company_long">Please enter a company with less then %d signs</label>
+			<label index="msg_company_regex">Please enter a valid company</label>
+			<label index="msg_company_disallowed">Please enter a company which contains none of this signs: %s</label>
+			<label index="msg_company_allowed">Please enter a company which contains only this signs: %s</label>
+
+			<label index="msg_position_empty">Please enter a position</label>
+			<label index="msg_position_short">Please enter a position with more then %d signs</label>
+			<label index="msg_position_long">Please enter a position with less then %d signs</label>
+			<label index="msg_position_regex">Please enter a valid position</label>
+			<label index="msg_position_disallowed">Please enter a position which contains none of this signs: %s</label>
+			<label index="msg_position_allowed">Please enter a position which contains only this signs: %s</label>
+
+			<label index="msg_job_empty">Please enter a job</label>
+			<label index="msg_job_short">Please enter a job with more then %d signs</label>
+			<label index="msg_job_long">Please enter a job with less then %d signs</label>
+			<label index="msg_job_regex">Please enter a valid job</label>
+			<label index="msg_job_disallowed">Please enter a job which contains none of this signs: %s</label>
+			<label index="msg_job_allowed">Please enter a job which contains only this signs: %s</label>
+
+			<label index="salutation">Salutation:</label>
+			<label index="country">Country:</label>
+			<label index="language">Language:</label>
+			<label index="www">WWW:</label>
+			<label index="company">Company:</label>
+			<label index="position">Position:</label>
+			<label index="job">Job:</label>
+		</languageKey>
+		<languageKey index="de" type="array">
+			<label index="msg_salutation_empty">Bitte geben Sie eine Anrede ein</label>
+			<label index="msg_salutation_short">Bitte geben Sie eine Anrede mit mehr als %d Zeichen ein</label>
+			<label index="msg_salutation_long">Bitte geben Sie eine Anrede mit weniger als %d Zeichen ein</label>
+			<label index="msg_salutation_regex">Bitte geben Sie eine gültige Anrede ein</label>
+			<label index="msg_salutation_disallowed">Bitte geben Sie eine Anrede ein, die keines dieser Zeichen beinhaltet: %s</label>
+			<label index="msg_salutation_allowed">Bitte geben Sie eine Anrede ein, die nur diese Zeichen beinhaltet: %s</label>
+
+			<label index="msg_country_empty">Bitte geben Sie ein Land ein</label>
+			<label index="msg_country_short">Bitte geben Sie ein Land mit mehr als %d Zeichen ein</label>
+			<label index="msg_country_long">Bitte geben Sie ein Land mit weniger als %d Zeichen ein</label>
+			<label index="msg_country_regex">Bitte geben Sie ein gültiges Land ein</label>
+			<label index="msg_country_disallowed">Bitte geben Sie ein Land ein, die keines dieser Zeichen beinhaltet: %s</label>
+			<label index="msg_country_allowed">Bitte geben Sie ein Land ein, die nur diese Zeichen beinhaltet: %s</label>
+
+			<label index="msg_language_empty">Bitte geben Sie eine Sprache ein</label>
+			<label index="msg_language_short">Bitte geben Sie eine Sprache mit mehr als %d Zeichen ein</label>
+			<label index="msg_language_long">Bitte geben Sie eine Sprache mit weniger als %d Zeichen ein</label>
+			<label index="msg_language_regex">Bitte geben Sie eine gültige Sprache ein</label>
+			<label index="msg_language_disallowed">Bitte geben Sie eine Sprache ein, die keines dieser Zeichen beinhaltet: %s</label>
+			<label index="msg_language_allowed">Bitte geben Sie eine Sprache ein, die nur diese Zeichen beinhaltet: %s</label>
+
+			<label index="msg_www_empty">Bitte geben Sie eine Internet Adresse ein</label>
+			<label index="msg_www_short">Bitte geben Sie eine Internet Adresse mit mehr als %d Zeichen ein</label>
+			<label index="msg_www_long">Bitte geben Sie eine Internet Adresse mit weniger als %d Zeichen ein</label>
+			<label index="msg_www_regex">Bitte geben Sie eine gültige Internet Adresse ein</label>
+			<label index="msg_www_disallowed">Bitte geben Sie eine Internet Adresse ein, die keines dieser Zeichen beinhaltet: %s</label>
+			<label index="msg_www_allowed">Bitte geben Sie eine Internet Adresse ein, die nur diese Zeichen beinhaltet: %s</label>
+
+			<label index="msg_company_empty">Bitte geben Sie eine Firma ein</label>
+			<label index="msg_company_short">Bitte geben Sie eine Firma mit mehr als %d Zeichen ein</label>
+			<label index="msg_company_long">Bitte geben Sie eine Firma mit weniger als %d Zeichen ein</label>
+			<label index="msg_company_regex">Bitte geben Sie eine gültige Firma ein</label>
+			<label index="msg_company_disallowed">Bitte geben Sie eine Firma ein, die keines dieser Zeichen beinhaltet: %s</label>
+			<label index="msg_company_allowed">Bitte geben Sie eine Firma ein, die nur diese Zeichen beinhaltet: %s</label>
+
+			<label index="msg_position_empty">Bitte geben Sie eine Position ein</label>
+			<label index="msg_position_short">Bitte geben Sie eine Position mit mehr als %d Zeichen ein</label>
+			<label index="msg_position_long">Bitte geben Sie eine Position mit weniger als %d Zeichen ein</label>
+			<label index="msg_position_regex">Bitte geben Sie eine gültige Position ein</label>
+			<label index="msg_position_disallowed">Bitte geben Sie eine Position ein, die keines dieser Zeichen beinhaltet: %s</label>
+			<label index="msg_position_allowed">Bitte geben Sie eine Position ein, die nur diese Zeichen beinhaltet: %s</label>
+
+			<label index="msg_job_empty">Bitte geben Sie eine Anstellung ein</label>
+			<label index="msg_job_short">Bitte geben Sie eine Anstellung mit mehr als %d Zeichen ein</label>
+			<label index="msg_job_long">Bitte geben Sie eine Anstellung mit weniger als %d Zeichen ein</label>
+			<label index="msg_job_regex">Bitte geben Sie eine gültige Anstellung ein</label>
+			<label index="msg_job_disallowed">Bitte geben Sie eine Anstellung ein, die keines dieser Zeichen beinhaltet: %s</label>
+			<label index="msg_job_allowed">Bitte geben Sie eine Anstellung ein, die nur diese Zeichen beinhaltet: %s</label>
+
+			<label index="salutation">Anrede:</label>
+			<label index="country">Land:</label>
+			<label index="language">Sprache:</label>
+			<label index="www">WWW:</label>
+			<label index="company">Firma:</label>
+			<label index="position">Position:</label>
+			<label index="job">Anstellung:</label>
+		</languageKey>
+	</data>
+</T3locallang>

@@ -1,0 +1,365 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+	<title>sp_bettercontact template</title>
+</head>
+<body>
+<h1>Following markers could be set:</h1>
+
+<h2>General:</h2>
+###URL_SELF###					<br />
+###INFO###						<br />
+###HIDDEN###					<br />
+###SUBMIT###					<br />
+###SUBMIT_VALUE###				<br />
+###CHARSET###					<br />
+###ANCHOR###					<br />
+								<br />
+
+<h2>Show all messages of all fields as list:</h2>
+###MESSAGES###					<br />
+								<br />
+
+<h2>Show inline messages for each field:</h2>
+###MSG_<FIELDNAME>###			<br />
+								<br />
+
+<h2>Add error class to each field:</h2>
+###ERR_<FIELDNAME>###			<br />
+								<br />
+
+<h2>Show the value of input fields:</h2>
+###VALUE_<FIELDNAME>###			<br />
+								<br />
+
+<h2>Set state of a checkbox:</h2>
+###CHECKED_<FIELDNAME>###		<br />
+								<br />
+
+<h2>Set state of a radio button:</h2>
+###CHECKED_<FIELDNAME>_[###<SAME_AS_VALUE>###]###	<br />
+								<br />
+
+<h2>Set state of a select option:</h2>
+###SELECTED_<FIELDNAME>_[###<SAME_AS_VALUE>###]###	<br />
+								<br />
+
+<h2>Show labels for the input fields:</h2>
+###LABEL_<FIELDNAME>###			<br />
+								<br />
+
+<h2>Show your own markers (define via TypoScript - see manual):</h2>
+###<NAME_OF_MY_MARKER>###		<br />
+								<br />
+
+<h2>Show your own locallang labels (see manual):</h2>
+###LLL:<label_name_in_xml>###	<br />
+								<br />
+								<br />
+
+<h2>Show captcha (see manual):</h2>
+###CAPTCHA_DATA###				<br />
+###CAPTCHA_FILE###				<br />
+###SR_FREECAP_NOTICE###			<br />
+###SR_FREECAP_CANT_READ###		<br />
+###SR_FREECAP_IMAGE###			<br />
+###SR_FREECAP_ACCESSIBLE###		<br />
+###CAPTCHA_FIELD###				<br />
+								<br />
+								<br />
+
+<h2>Show data from a spam attack:</h2>
+###SPAM_DATE###					<br />
+###SPAM_TIME###					<br />
+###SPAM_IP###					<br />
+###SPAM_METHOD###				<br />
+###SPAM_BROWSER###				<br />
+###SPAM_SYSTEM###				<br />
+###SPAM_AGENT###				<br />
+###SPAM_REFERER###				<br />
+								<br />
+
+<h2>Show the values of the hidden input fields:</h2>
+###SPAM_VALUE_<FIELDNAME>###	<br />
+###SPAM_CHECKED_<FIELDNAME>###	<br />
+								<br />
+
+
+<p>Please add this TypoScript to your configuration / Bitte folgendes TypoScript zur Konfiguration hinzufügen:</p>
+<div style="font-family: monospace; font-size:11px; background:#d5e4f4; border:1px dashed #000000;">
+<pre>
+plugin.tx_spbettercontact_pi1 {
+	fields {
+		gender {
+			required	= 1
+		}
+		reason {
+			required	= 1
+			default		= TEXT
+			default.data	= LLL:EXT:sp_bettercontact/pi1/locallang.xml:support
+		}
+		privacy {
+			required	= 1
+			default		= 1
+		}
+	}
+
+	_LOCAL_LANG.default {
+		msg_privacy_empty	= You need to accept the Privacy Policy.
+		privacy			= I accept the Privacy Policy.
+		checked			= yes
+		unchecked		= no
+		male			= Mr.
+		female			= Ms.
+		general			= General
+		support			= Support
+	}
+	_LOCAL_LANG.de {
+		msg_privacy_empty	= Sie müssen die Datenschutzbestimmungen akzeptieren.
+		privacy			= Ich akzeptiere die Datenschutzbestimmungen.
+		checked			= ja
+		unchecked		= nein
+		male			= Herr
+		female			= Frau
+		general			= Allgemein
+		support			= Support
+	}
+}
+</pre>
+</div>
+
+<!-- ###TEMPLATE### begin -->
+	###ANCHOR###
+	<form action="###URL_SELF###" method="post" name="tx_spbettercontact_form" accept-charset="###CHARSET###">
+		<!--
+			Show message if mail is sent
+		-->
+		<p class="tx_spbettercontact_info">###INFO###</p>
+		<!--
+			Field for gender (radio buttons)
+		-->
+		<p class="tx_spbettercontact_gender">###MSG_GENDER###</p>
+		<input type="radio" id="tx_spbettercontact_input_gender_male" name="###GENDER###" value="###LLL:male###" ###CHECKED_GENDER_[###LLL:male###]### />
+		<label for="tx_spbettercontact_input_gender_male" class="tx_spbettercontact_label">###LLL:male###</label>
+		<input type="radio" id="tx_spbettercontact_input_gender_female" name="###GENDER###" value="###LLL:female###" ###CHECKED_GENDER_[###LLL:female###]### />
+		<label for="tx_spbettercontact_input_gender_female" class="tx_spbettercontact_label">###LLL:female###</label>
+		<br />
+		<!--
+			Field for name
+		-->
+		<p class="tx_spbettercontact_message">###MSG_NAME###</p>
+		<label for="tx_spbettercontact_input_name" class="tx_spbettercontact_label">###LABEL_NAME###</label>
+		<input type="text" id="tx_spbettercontact_input_name" name="###NAME###" value="###VALUE_NAME###" />
+		<br />
+		<!--
+			Field for phone
+		-->
+		<p class="tx_spbettercontact_message">###MSG_TEL###</p>
+		<label for="tx_spbettercontact_input_tel" class="tx_spbettercontact_label">###LABEL_TEL###</label>
+		<input type="text" id="tx_spbettercontact_input_tel" name="###TEL###" value="###VALUE_TEL###" />
+		<br />
+		<!--
+			Field for fax
+		-->
+		<p class="tx_spbettercontact_message">###MSG_FAX###</p>
+		<label for="tx_spbettercontact_input_fax" class="tx_spbettercontact_label">###LABEL_FAX###</label>
+		<input type="text" id="tx_spbettercontact_input_fax" name="###FAX###" value="###VALUE_FAX###" />
+		<br />
+		<!--
+			Field for street
+		-->
+		<p class="tx_spbettercontact_message">###MSG_STREET###</p>
+		<label for="tx_spbettercontact_input_street" class="tx_spbettercontact_label">###LABEL_STREET###</label>
+		<input type="text" id="tx_spbettercontact_input_street" name="###STREET###" value="###VALUE_STREET###" />
+		<br />
+		<!--
+			Field for city
+		-->
+		<p class="tx_spbettercontact_message">###MSG_CITY###</p>
+		<label for="tx_spbettercontact_input_city" class="tx_spbettercontact_label">###LABEL_CITY###</label>
+		<input type="text" id="tx_spbettercontact_input_city" name="###CITY###" value="###VALUE_CITY###" />
+		<br />
+		<!--
+			Field for email
+		-->
+		<p class="tx_spbettercontact_message">###MSG_EMAIL###</p>
+		<label for="tx_spbettercontact_input_email" class="tx_spbettercontact_label">###LABEL_EMAIL###</label>
+		<input type="text" id="tx_spbettercontact_input_email" name="###EMAIL###" value="###VALUE_EMAIL###" />
+		<br />
+		<!--
+			Field for message
+		-->
+		<p class="tx_spbettercontact_message">###MSG_MESSAGE###</p>
+		<label for="tx_spbettercontact_input_message" class="tx_spbettercontact_label">###LABEL_MESSAGE###</label>
+		<textarea id="tx_spbettercontact_input_message" name="###MESSAGE###" rows="10" cols="30">###VALUE_MESSAGE###</textarea>
+		<br />
+		<!--
+			Field for contact reason (select)
+		-->
+		<p class="tx_spbettercontact_reason">###MSG_REASON###</p>
+		<label for="tx_spbettercontact_input_reason" class="tx_spbettercontact_label">###LABEL_REASON###</label>
+		<select id="tx_spbettercontact_input_reason" name="###REASON###">
+			<option ###SELECTED_REASON_[###LLL:general###]###>###LLL:general###</option>
+			<option ###SELECTED_REASON_[###LLL:support###]###>###LLL:support###</option>
+		</select>
+		<br />
+		<!--
+			Field for privacy policy (checkbox)
+		-->
+		<p class="tx_spbettercontact_privacy">###MSG_PRIVACY###</p>
+		<input type="checkbox" id="tx_spbettercontact_input_privacy" name="###PRIVACY###" ###CHECKED_PRIVACY### />
+		<label for="tx_spbettercontact_input_privacy" class="tx_spbettercontact_label">###LABEL_PRIVACY###</label>
+		<br />
+		<!--
+			Add captcha from sub-templates below if configured
+		-->
+		###CAPTCHA_FIELD###
+		<!--
+			Submit button
+		-->
+		<p class="tx_spbettercontact_button"><input type="submit" name="###SUBMIT###" value="###SUBMIT_VALUE###" /></p>
+		<!--
+			Hidden fields for bot test
+		-->
+		<span class="tx_spbettercontact_hidden" style="visibility:hidden; display:none;">###HIDDEN###</span>
+	</form>
+<!-- ###TEMPLATE### end -->
+
+
+<!-- ###SUB_TEMPLATE_SR_FREECAP### begin -->
+<p class="tx_spbettercontact_message">###MSG_CAPTCHA###</p>
+<label for="tx_spbettercontact_input_captcha" class="tx_spbettercontact_label">###LABEL_CAPTCHA###</label>
+<input type="text" id="tx_spbettercontact_input_captcha" name="###CAPTCHA###" value="" />
+<br />
+<div class="tx_spbettercontact_captcha">
+	<div class="tx_spbettercontact_captcha_image">###SR_FREECAP_IMAGE###</div>
+	<div class="tx_spbettercontact_captcha_cant_read">###SR_FREECAP_CANT_READ###</div>
+	<div class="tx_spbettercontact_captcha_accessible">###SR_FREECAP_ACCESSIBLE###</div>
+</div>
+<br />
+<!-- ###SUB_TEMPLATE_SR_FREECAP### end -->
+
+
+<!-- ###SUB_TEMPLATE_JM_RECAPTCHA### begin -->
+<p class="tx_spbettercontact_message">###MSG_CAPTCHA###</p>
+<label for="tx_spbettercontact_input_captcha" class="tx_spbettercontact_label">###LABEL_CAPTCHA###</label>
+<div class="tx_spbettercontact_captcha">
+	###CAPTCHA_DATA###
+</div>
+<br />
+<!-- ###SUB_TEMPLATE_JM_RECAPTCHA### end -->
+
+
+<!-- ###SUB_TEMPLATE_CAPTCHA### begin -->
+<p class="tx_spbettercontact_message">###MSG_CAPTCHA###</p>
+<label for="tx_spbettercontact_input_captcha" class="tx_spbettercontact_label">###LABEL_CAPTCHA###</label>
+<input type="text" id="tx_spbettercontact_input_captcha" name="###CAPTCHA###" value="" />
+<br />
+<div class="tx_spbettercontact_captcha">
+	<div class="tx_spbettercontact_captcha_image">
+		<img src="###CAPTCHA_FILE###" alt="captcha image" />
+	</div>
+</div>
+<br />
+<!-- ###SUB_TEMPLATE_CAPTCHA### end -->
+
+
+<!-- ###MAIL_MESSAGE_SENDER### begin -->
+Hello ###VALUE_NAME###,
+
+Thank you for your message.
+We will answer your question as soon as possible.
+
+Best regards,
+
+Your company
+<!-- ###MAIL_MESSAGE_SENDER### end -->
+
+<!-- ###MAIL_MESSAGE_ADMIN### begin -->
+Hello Admin,
+
+Someone has sent a message:
+
+###LABEL_NAME### ###VALUE_GENDER### ###VALUE_NAME###
+###LABEL_TEL### ###VALUE_TEL###
+###LABEL_FAX### ###VALUE_FAX###
+###LABEL_STREET### ###VALUE_STREET###
+###LABEL_CITY### ###VALUE_CITY###
+###LABEL_EMAIL### ###VALUE_EMAIL###
+###LABEL_REASON### ###VALUE_REASON###
+###LABEL_PRIVACY### ###CHECKED_PRIVACY###
+
+###VALUE_MESSAGE###
+
+Best regards,
+
+Your contact form
+<!-- ###MAIL_MESSAGE_ADMIN### end -->
+
+<!-- ###MAIL_MESSAGE_SPAM### begin -->
+Hello Admin,
+
+Someone has tried to send a message:
+
+
+=============================================
+General data:
+=============================================
+Date:       ###SPAM_DATE###
+Time:       ###SPAM_TIME###
+IP:         ###SPAM_IP###
+Browser:    ###SPAM_BROWSER###
+System:     ###SPAM_SYSTEM###
+Referer:    ###SPAM_REFERER###
+Method:     ###SPAM_METHOD###
+
+=============================================
+Visible fields:
+=============================================
+Gender:     ###VALUE_GENDER###
+Name:       ###VALUE_NAME###
+Phone:      ###VALUE_TEL###
+Fax:        ###VALUE_FAX###
+Street:     ###VALUE_STREET###
+City:       ###VALUE_CITY###
+Email:      ###VALUE_EMAIL###
+Message:    ###VALUE_MESSAGE###
+Reason:     ###VALUE_REASON###
+Privacy:    ###CHECKED_PRIVACY###
+
+=============================================
+Hidden fields:
+=============================================
+Gender:     ###VALUE_GENDER###
+Name:       ###SPAM_VALUE_NAME###
+Phone:      ###SPAM_VALUE_TEL###
+Fax:        ###SPAM_VALUE_FAX###
+Street:     ###SPAM_VALUE_STREET###
+City:       ###SPAM_VALUE_CITY###
+Email:      ###SPAM_VALUE_EMAIL###
+Message:    ###SPAM_VALUE_MESSAGE###
+Reason:     ###VALUE_REASON###
+Privacy:    ###SPAM_CHECKED_PRIVACY###
+
+
+Best regards,
+
+Your contact form
+<!-- ###MAIL_MESSAGE_SPAM### end -->
+
+<!-- ###MAIL_SUBJECT_SENDER### begin -->
+Thank you for your message
+<!-- ###MAIL_SUBJECT_SENDER### end -->
+
+<!-- ###MAIL_SUBJECT_ADMIN### begin -->
+###VALUE_NAME### has sent an message
+<!-- ###MAIL_SUBJECT_ADMIN### end -->
+
+<!-- ###MAIL_SUBJECT_SPAM### begin -->
+Someone has tried to send a message
+<!-- ###MAIL_SUBJECT_SPAM### end -->
+
+
+</body>
+</html>

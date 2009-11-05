@@ -1,0 +1,311 @@
+# ==============================================================================
+# Default configuration for sp_bettercontact
+# ==============================================================================
+plugin.tx_spbettercontact_pi1 {
+
+	## Basic configuration (see manual for details)
+	redirectPage		=
+	formTemplate		=
+	emailTemplate		=
+	stylesheetFile		=
+	locallangFile		=
+	emailRecipients		=
+	emailSender			=
+	emailAdmin			=
+	emailReturnPath		=
+	sendTo				= both
+	replyTo				= user
+	emailCharset		= utf-8
+	showMaliciousInput	= clean
+	adminMails			= bot
+	messageCount		= 10
+	waitingTime			= 60
+	# useRefererCheck	= ## Deaktivate Referer-Check by setting to "0" (Opera Browsers)
+	# captchaSupport	= ## Supported are: sr_freecap, jm_recaptcha and captcha
+	# highlightFields	= ## Activate with "1" to add the class "error" to malicious fields
+	infoWrapPositive	= <span class="tx_spbettercontact_info_positive">|</span>
+	infoWrapNegative	= <span class="tx_spbettercontact_info_negative">|</span>
+	# formCharset		= ## If not set -> auto detection (default iso-8859-1)
+
+
+	## Set some basic fields
+	fields {
+		name {
+			required	= 1
+			minLength	= 3
+			maxLength	= 70
+			regex		=
+			disallowed	= 0123456789<>(){}!?%&§$/*+-\
+			allowed		=
+			default		=
+		}
+
+		tel {
+			required	= 0
+			minLength	= 3
+			maxLength	= 30
+			regex		=
+			disallowed	=
+			allowed		= 0123456789()/+-
+			default		=
+		}
+
+		fax {
+			required	= 0
+			minLength	= 3
+			maxLength	= 30
+			regex		=
+			disallowed	=
+			allowed		= 0123456789()/+-
+			default		=
+		}
+
+		street {
+			required	= 0
+			minLength	= 3
+			maxLength	= 70
+			regex		=
+			disallowed	= <>&
+			allowed		=
+			default		=
+		}
+
+		city {
+			required	= 0
+			minLength	= 3
+			maxLength	= 70
+			regex		=
+			disallowed	= <>&
+			allowed		=
+			default		=
+		}
+
+		## The email field is required and must be configured
+		email {
+			required	= 1
+			minLength	= 5
+			maxLength	= 70
+			regex		= /^[\w-]+(?:\.[\w-]+)*@(?:[\w-]+\.)+[a-zA-Z]{2,7}/
+			disallowed	=
+			allowed		=
+			default		=
+		}
+
+		message {
+			required	= 1
+			minLength	= 10
+			maxLength	= 2000
+			regex		=
+			disallowed	= <>&
+			allowed		=
+			default		=
+		}
+
+		## We need this dummy configuration if captcha is activated
+		captcha {
+			required	=
+			minLength	=
+			maxLength	=
+			regex		=
+			disallowed	=
+			allowed		=
+			default		=
+		}
+	}
+
+
+	## Some demo markers
+	markers {
+		# static_maker = TEXT
+		# static_marker.value = I am a static marker
+
+		# dynamic_marker = TEXT
+		# dynamic_marker.field = title
+	}
+
+
+	## Overwrite or add locallang labels (better use your own locallang.xml)
+	_LOCAL_LANG.default {
+		# msg_email_passed = Message was sent. Thank you.
+		# msg_email_failed = Message could not be sent. Please try again.
+		# msg_check_passed = Check passed. Thank you.
+		# msg_check_failed = A problem has occurred with the entered data.
+		# msg_not_allowed  = This process is not allowed!
+		# msg_already_sent = You have already sent %d messages. Please wait %d minutes.
+		# msg_captcha      = Please enter the sequence of characters shown in the captcha image.
+	}
+
+
+	## Browsers (shows attackers browser in spam notification, see manual for details)
+	browsers {
+		ie {
+			name	= Internet Explorer
+			ident	= MSIE
+		}
+		ie4 {
+			name	= Internet Explorer 4
+			ident	= (MSIE 4\.[0-9]+)
+		}
+		ie5 {
+			name	= Internet Explorer 5
+			ident	= (MSIE 5\.[0-9]+)
+		}
+		ie6 {
+			name	= Internet Explorer 6
+			ident	= (MSIE 6\.[0-9]+)
+		}
+		ie7 {
+			name	= Internet Explorer 7
+			ident	= (MSIE 7\.[0-9]+)
+		}
+		ie8 {
+			name	= Internet Explorer 8
+			ident	= (MSIE 8\.[0-9]+)
+		}
+		mozilla {
+			name	= Mozilla
+			ident	= Gecko
+		}
+		firefox {
+			name	= Mozilla Firefox
+			ident	= (Firebird)|(Firefox)
+		}
+		firefox2 {
+			name	= Mozilla Firefox 2
+			ident	= Firefox/2
+		}
+		firefox30 {
+			name	= Mozilla Firefox 3.0
+			ident	= Firefox/3.0
+		}
+		firefox35 {
+			name	= Mozilla Firefox 3.5
+			ident	= (Firefox/3.1)|(Firefox/3.5)
+		}
+		firefox4 {
+			name	= Mozilla Firefox 4
+			ident	= Firefox/4
+		}
+		galeon {
+			name	= Galeon
+			ident	= Galeon
+		}
+		opera {
+			name	= Opera
+			ident	= Opera
+		}
+		myie {
+			name	= MyIE
+			ident	= MyIE
+		}
+		lynx {
+			name	= Lynx
+			ident	= Lynx
+		}
+		konqueror {
+			name	= Konqueror
+			ident	= Konqueror
+		}
+		safari {
+			name	= Safari
+			ident	= Safari
+		}
+		chrome {
+			name	= Google Chrome
+			ident	= Chrome
+		}
+		crawler {
+			name	= Crawler
+			ident	= (nuhk)|(Googlebot)|(Yammybot)|(Openbot)|(Slurp/cat)|(msnbot)|(ia_archiver)|(bot)|(crawl)
+		}
+	}
+
+
+	## Systems (shows attackers system in spam notification, see manual for details)
+	systems {
+		windows {
+			name	= Windows
+			ident	= Win
+		}
+		windows95 {
+			name	= Windows 95
+			ident	= (Win95)|(Windows 95)
+		}
+		windows98 {
+			name	= Windows 98
+			ident	= (Win98)|(Windows 98)
+		}
+		windowsnt {
+			name	= Windows NT
+			ident	= (WinNT)|(Windows NT)
+		}
+		windows2000 {
+			name	= Windows 2000
+			ident	= (WinNT 5.0)|(Windows NT 5.0)
+		}
+		windowsxp {
+			name	= Windows XP
+			ident	= (WinNT 5.1)|(Windows NT 5.1)
+		}
+		windowsvista {
+			name	= Windows Vista
+			ident	= (WinNT 6.0)|(Windows NT 6.0)
+		}
+		windows7 {
+			name	= Windows 7
+			ident	= (WinNT 7.0)|(Windows NT 7.0)
+		}
+		linux {
+			name	= Linux
+			ident	= Linux
+		}
+		ubuntu {
+			name	= Ubuntu
+			ident	= Ubuntu
+		}
+		ubuntu610 {
+			name	= Ubuntu 6.10 (Edgy Eft)
+			ident	= Ubuntu/6\.10
+		}
+		ubuntu704 {
+			name	= Ubuntu 7.04 (Feisty Fawn)
+			ident	= Ubuntu/7\.04
+		}
+		ubuntu710 {
+			name	= Ubuntu 7.10 (Gutsy Gibbon)
+			ident	= Ubuntu/7\.10
+		}
+		ubuntu804 {
+			name	= Ubuntu 8.04 (Hardy Heron)
+			ident	= Ubuntu/8\.04
+		}
+		ubuntu810 {
+			name	= Ubuntu 8.10 (Intrepid Ibex)
+			ident	= Ubuntu/8\.10
+		}
+		ubuntu904 {
+			name	= Ubuntu 9.04 (Jaunty Jackalope)
+			ident	= Ubuntu/9\.04
+		}
+		ubuntu910 {
+			name	= Ubuntu 9.10 (Karmic Koala)
+			ident	= Ubuntu/9\.10
+		}
+		ubuntu1004 {
+			name	= Ubuntu 10.04
+			ident	= Ubuntu/10\.04
+		}
+		ubuntu1010 {
+			name	= Ubuntu 10.10
+			ident	= Ubuntu/10\.10
+		}
+		macos {
+			name	= Mac OS
+			ident	= (Macintosh)|(Mac_PowerPC)|(Mac)
+		}
+		sunos {
+			name	= Sun OS
+			ident	= Sun
+		}
+	}
+}

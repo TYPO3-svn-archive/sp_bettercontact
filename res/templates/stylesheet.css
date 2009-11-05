@@ -1,0 +1,84 @@
+div.tx-spbettercontact-pi1 {
+	padding: 0px 24px 24px;
+}
+
+div.tx-spbettercontact-pi1 input,
+div.tx-spbettercontact-pi1 textarea {
+	background-color: #FDFDFD;
+	border: 1px solid #A1A1A1;
+	padding: 2px 3px;
+	width: 300px;
+}
+
+div.tx-spbettercontact-pi1 input:focus,
+div.tx-spbettercontact-pi1 textarea:focus {
+	border: 1px solid #0385FF;
+}
+
+div.tx-spbettercontact-pi1 textarea {
+	height: 100px;
+}
+
+div.tx-spbettercontact-pi1 p.tx_spbettercontact_button input {
+	background-color: #FDFDFD;
+	border: 1px solid #A1A1A1;
+	cursor: pointer;
+	width: 150px;
+	height: 23px;
+	text-align: center;
+	padding-top: 0px;
+}
+
+div.tx-spbettercontact-pi1 p.tx_spbettercontact_button input:focus {
+	outline: none;
+}
+
+div.tx-spbettercontact-pi1 input.error,
+div.tx-spbettercontact-pi1 textarea.error {
+	border: 1px solid #FF0000;
+}
+
+div.tx-spbettercontact-pi1 br {
+	clear: left;
+}
+
+.tx_spbettercontact_form {
+
+}
+
+.tx_spbettercontact_info {
+	font-weight: bold;
+}
+
+.tx_spbettercontact_info_positive {
+	color: #01b101;
+}
+
+.tx_spbettercontact_info_negative {
+	color: #FF8F33;
+}
+
+.tx_spbettercontact_message {
+
+}
+
+.tx_spbettercontact_messages ul li {
+	list-style-type: square;
+}
+
+label.tx_spbettercontact_label {
+	width: 100px;
+	float: left;
+	padding-top: 4px;
+}
+
+p.tx_spbettercontact_button {
+	display: block;
+	width: 410px;
+	text-align: right;
+}
+
+.tx_spbettercontact_hidden {
+	visibility: hidden;
+	display: none;
+}
