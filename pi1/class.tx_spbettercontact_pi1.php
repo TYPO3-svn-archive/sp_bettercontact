@@ -42,6 +42,7 @@
 		public $aLL             = array();
 		public $aConfig         = array();
 		public $aFields         = array();
+		public $aUserMarkers    = array();
 		public $oTemplate       = NULL;
 		public $oSession        = NULL;
 		public $oCheck          = NULL;
@@ -73,6 +74,9 @@
 			if ($sMessage = $this->sCheckConfiguration()) {
 				return $this->pi_wrapInBaseClass($sMessage);
 			}
+
+			// Get user defined markers
+			$this->aUserMarkers = $this->aGetUserMarkers();
 
 			// Get required things...
 			$this->aLL              = $this->aGetLL();
@@ -185,6 +189,45 @@
 			$this->aConfig['formTemplate']      = 'EXT:' . $this->extKey . '/res/templates/form.html';
 			$this->aConfig['emailTemplate']     = 'EXT:' . $this->extKey . '/res/templates/email.html';
 			$this->aConfig['stylesheetFile']    = 'EXT:' . $this->extKey . '/res/templates/stylesheet.css';
+		}
+
+
+		/**
+		 * Get TypoScript value from String / cObject
+		 *
+		 * @return  String with value
+		 */
+		protected function sGetTSValue($paConfig, $psKey) {
+			if (!is_array($paConfig) || !count($paConfig) || !strlen($psKey) || substr($psKey, -1) == '.') {
+				return '';
+			}
+
+			if (isset($paConfig[$psKey . '.'])) {
+				return $this->cObj->cObjGetSingle($paConfig[$psKey], $paConfig[$psKey . '.']);
+			}
+
+			return $paConfig[$psKey];
+		}
+
+
+		/**
+		 * Get user defined markers
+		 *
+		 * @return  Array with user markers
+		 */
+		protected function aGetUserMarkers () {
+			$aMarkers = array();
+
+			// User defined markers
+			if (isset($this->aConfig['markers.']) && is_array($this->aConfig['markers.'])) {
+				foreach ($this->aConfig['markers.'] as $sKey => $mValue) {
+					if (substr($sKey, -1) != '.') {
+						$aMarkers['###' . strtoupper($sKey) . '###'] = $this->sGetTSValue($this->aConfig['markers.'], $sKey);
+					}
+				}
+			}
+
+			return $aMarkers;
 		}
 
 
@@ -324,15 +367,9 @@
 			$aFields = array();
 
 			foreach ($this->aConfig['fields.'] as $sKey => $aUserField) {
-				// Get default value if any
-				$sDefault = $aUserField['default'];
-				if (isset($aUserField['default.']) && is_array($aUserField['default.'])) {
-					$sDefault = $this->cObj->cObjGetSingle($aUserField['default'], $aUserField['default.']);
-				}
-
 				// Get configuration
 				$sName      = strtolower(trim($sKey, ' .{}()'));
-				$sValue     = isset($_POST[$sName]) ? $this->piVars[$sName] : $sDefault;
+				$sValue     = isset($_POST[$sName]) ? $this->piVars[$sName] : $this->sGetTSValue($aUserField, 'default');
 				$sUpperName = strtoupper($sName);
 				$sMultiName = $sUpperName . '_' . md5($sValue);
 

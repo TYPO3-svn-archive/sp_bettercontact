@@ -31,15 +31,16 @@
 	 * @subpackage  tx_spbettercontact
 	 */
 	class tx_spbettercontact_pi1_template {
-		public $oCObj       = NULL;
-		public $aLL         = array();
-		public $aConfig     = array();
-		public $aFields     = array();
-		public $aPiVars     = array();
-		public $sFormChar   = 'iso-8859-1';
-		public $sExtKey     = '';
-		public $sPrefix     = '';
-		public $iPluginId   = 0;
+		public $oCObj         = NULL;
+		public $aLL           = array();
+		public $aConfig       = array();
+		public $aFields       = array();
+		public $aPiVars       = array();
+		public $aUserMarkers  = array();
+		public $sFormChar     = 'iso-8859-1';
+		public $sExtKey       = '';
+		public $sPrefix       = '';
+		public $iPluginId     = 0;
 
 
 		/**
@@ -57,6 +58,7 @@
 			$this->sPrefix      = $poParent->prefixId;
 			$this->iPluginId    = $poParent->iPluginId;
 			$this->sFormChar    = $poParent->sFormCharset;
+			$this->aUserMarkers = $poParent->aUserMarkers;
 
 			// Set default markers
 			$this->vAddDefaultMarkers();
@@ -114,19 +116,9 @@
 			}
 
 			// User defined markers
-			if (is_array($this->aConfig['markers.'])) {
-				$sName = '';
-				$sType = '';
-
-				foreach ($this->aConfig['markers.'] as $sKey => $mValue) {
-					if (substr($sKey, -1) !== '.' && is_string($mValue)) {
-						$sName = $sKey;
-						$sType = $mValue;
-					} else if ($sName !== '' && $sType !== '') {
-						$this->aMarkers['###' . strtoupper($sName) . '###'] = $this->oCObj->cObjGetSingle($sType, $mValue);
-						$sName = '';
-						$sType = '';
-					}
+			if (isset($this->aUserMarkers) && is_array($this->aUserMarkers)) {
+				foreach ($this->aUserMarkers as $sKey => $sValue) {
+					$this->aMarkers[$sKey] = $sValue;
 				}
 			}
 

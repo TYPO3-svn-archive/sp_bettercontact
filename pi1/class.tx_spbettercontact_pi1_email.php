@@ -43,6 +43,7 @@
 		public $aMarkers        = array();
 		public $aTemplates      = array();
 		public $aAddresses      = array();
+		public $aUserMarkers    = array();
 		public $bHasError       = FALSE;
 		public $bMBActive       = FALSE;
 		public $bUnequalChar    = FALSE;
@@ -61,6 +62,7 @@
 			$this->aFields      = $poParent->aFields;
 			$this->aLL          = $poParent->aLL;
 			$this->aPiVars      = $poParent->piVars;
+			$this->aUserMarkers = $poParent->aUserMarkers;
 
 			// If mbstring module is not activated in php.ini reduce functionallity
 			if (extension_loaded('mbstring') && function_exists('mb_convert_encoding')) {
@@ -92,35 +94,78 @@
 
 
 		/**
+		 * Get TypoScript value from String / cObject
+		 *
+		 * @return  String with value
+		 */
+		protected function sGetTSValue($paConfig, $psKey) {
+			if (!is_array($paConfig) || !count($paConfig) || !strlen($psKey) || substr($psKey, -1) == '.') {
+				return '';
+			}
+
+			if (isset($paConfig[$psKey . '.'])) {
+				return $this->oCObj->cObjGetSingle($paConfig[$psKey], $paConfig[$psKey . '.']);
+			}
+
+			return $paConfig[$psKey];
+		}
+
+
+		/**
+		 * Check string for multiple email addresses and return only the first
+		 *
+		 * @return  String with first email address
+		 */
+		protected function sGetSingleAddress($psAddress) {
+			if (!strlen($psAddress)) {
+				return 'webmaster@' . $_SERVER['SERVER_ADDR'];
+			}
+
+			$aSigns = array(',', '&', ' ', chr(9));
+			foreach ($aSigns as $sSign) {
+				if (str_replace($sSign, '', $psAddress) !== $psAddress) {
+					$aAddresses = explode($sSign, $psAddress);
+					return $aAddresses[0];
+				}
+			}
+
+			return $psAddress;
+		}
+
+
+		/**
 		 * Get email addresses
 		 *
 		 * @return  Array of email addesses
 		 */
 		protected function aGetMailAddresses () {
 			$aMailAddresses = array(
-				'recipients'    => $this->aConfig['emailRecipients']    ? $this->aConfig['emailRecipients'] : 'webmaster@' . $_SERVER['SERVER_ADDR'],
-				'sender'        => $this->aConfig['emailSender']        ? $this->aConfig['emailSender']     : 'webmaster@' . $_SERVER['SERVER_ADDR'],
-				'admin'         => $this->aConfig['emailAdmin']         ? $this->aConfig['emailAdmin']      : 'webmaster@' . $_SERVER['SERVER_ADDR'],
-				'return'        => $this->aConfig['emailReturnPath']    ? $this->aConfig['emailReturnPath'] : 'webmaster@' . $_SERVER['SERVER_ADDR'],
-				'user'          => $this->aPiVars['email']              ? $this->aPiVars['email']           : 'webmaster@' . $_SERVER['SERVER_ADDR'],
+				'recipients' => '',
+				'sender'     => '',
+				'admin'      => '',
+				'return'     => '',
+				'user'       => '',
 			);
 
-			// Check for multiple addresses in user email
-			$aSigns = array(',', '&', ' ', chr(9));
-			foreach ($aSigns as $sSign) {
-				if (str_replace($sSign, '', $aMailAddresses['user']) !== $aMailAddresses['user']) {
-					$aUsers = explode($sSign, $aMailAddresses['user']);
-					$aMailAddresses['user'] = $aUsers[0];
-					break;
-				}
-			}
+			// Get E-Mail addresses
+			foreach ($aMailAddresses as $sKey => $sValue) {
+				$sIdent   = ($sKey == 'return') ? 'ReturnPath' : ucfirst($sKey);
+				$sReplace = ($sKey == 'sender') ? '/[^a-z0-9_\-,\.@<> ]/i' : '/[^a-z0-9_\-,\.@]/i';
 
-			// Cleanup
-			$aMailAddresses['recipients']   = preg_replace('/[^a-z0-9_\-,\.@]/i', '', $aMailAddresses['recipients']);
-			$aMailAddresses['sender']       = preg_replace('/[^a-z0-9_\-,\.@<> ]/i', '', $aMailAddresses['sender']);
-			$aMailAddresses['admin']        = preg_replace('/[^a-z0-9_\-,\.@]/i', '', $aMailAddresses['admin']);
-			$aMailAddresses['return']       = preg_replace('/[^a-z0-9_\-,\.@]/i', '', trim($aMailAddresses['return'], '-fF '));
-			$aMailAddresses['user']         = preg_replace('/[^a-z0-9_\-,\.@]/i', '', $aMailAddresses['user']);
+				if ($sKey != 'user') {
+					$aMailAddresses[$sKey] = $this->sGetTSValue($this->aConfig, 'email' . $sIdent);
+				} else {
+					$aMailAddresses[$sKey] = $this->sGetSingleAddress($this->aPiVars['email']);
+				}
+
+				// Set to default if empty
+				if ($sKey != 'return' && !strlen($aMailAddresses[$sKey])) {
+					$aMailAddresses[$sKey] = 'webmaster@' . $_SERVER['SERVER_ADDR'];
+				}
+
+				// Cleanup
+				$aMailAddresses[$sKey] = preg_replace($sReplace, '', $aMailAddresses[$sKey]);
+			}
 
 			return $aMailAddresses;
 		}
@@ -160,18 +205,10 @@
 				$aMarkers[$aField['checkedName']]   = (isset($this->aPiVars[$sName]) || intval($sValue) == 1) ? $this->aLL['checked'] : $this->aLL['unchecked'];
 			}
 
-
-			// Get user defined markers
-			if (is_array($this->aConfig['markers.'])) {
-				foreach ($this->aConfig['markers.'] as $sKey => $mValue) {
-					if (substr($sKey, -1) !== '.' && is_string($mValue)) {
-						$sName = $sKey;
-						$sType = $mValue;
-					} else if ($sName !== '' && $sType !== '') {
-						$aMarkers['###' . strtoupper($sName) . '###'] = $this->oCObj->cObjGetSingle($sType, $mValue, $sKey);
-						$sName = '';
-						$sType = '';
-					}
+			// User defined markers
+			if (isset($this->aUserMarkers) && is_array($this->aUserMarkers)) {
+				foreach ($this->aUserMarkers as $sKey => $sValue) {
+					$aMarkers[$sKey] = $sValue;
 				}
 			}
 
@@ -329,7 +366,7 @@
 		 * @param   string  $psReturnPath: Return-Path email address
 		 */
 		protected function vMail ($psRecipients, $psSender, $psReplyTo, $psSubject, $psMessage, $psReturnPath='') {
-			if (empty($psRecipients) || empty($psSender) || empty($psReplyTo) || empty($psSubject) || empty($psMessage)) {
+			if (!strlen($psRecipients) || !strlen($psSender) || !strlen($psReplyTo) || !strlen($psSubject) || !strlen($psMessage)) {
 				$this->bHasError = TRUE;
 				return;
 			}
@@ -340,7 +377,7 @@
 			$sReplyTo       = trim(t3lib_div::encodeHeader($psReplyTo, 'quoted-printable', $this->sEmailChar));
 			$sRecipients    = trim(t3lib_div::encodeHeader($psRecipients, 'quoted-printable', $this->sEmailChar));
 			$sSubject       = trim(t3lib_div::encodeHeader($psSubject, 'quoted-printable', $this->sEmailChar));
-			$sReturnPath    = trim(t3lib_div::encodeHeader($psReturnPath, 'quoted-printable', $this->sEmailChar));
+			$sReturnPath    = strlen($psReturnPath) ? trim(t3lib_div::encodeHeader($psReturnPath, 'quoted-printable', $this->sEmailChar)) : '';
 			$sMessage       = trim(t3lib_div::quoted_printable($psMessage));
 
 			// Get headers
