@@ -63,9 +63,10 @@
 
 	// Add plugin to right position in list
 	$aCTypes    = $TCA['tt_content']['columns']['CType']['config']['items'];
+	$iT3Version = t3lib_div::int_from_ver(TYPO3_version);
 	$aNewItems  = array();
 	foreach ($aCTypes as $aValue) {
-		if (substr($aValue[0], -7) == 'special' || $aValue[1] == 'splash') {
+		if (substr($aValue[0], -7) == 'special' || ($iT3Version < 4003000 && $aValue[1] == 'splash')) {
 			$aNewItems[] = $aPlugin;
 		}
 		$aNewItems[] = $aValue;

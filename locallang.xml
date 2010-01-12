@@ -12,7 +12,7 @@
 			<label index="tt_content.type_label">Contact</label>
 			<label index="tt_content.flexform_pi1.wizard">Open wizard</label>
 			<label index="tt_content.flexform_pi1.sDEF">General</label>
-			<label index="tt_content.flexform_pi1.redirectPage">Redirect to this page if email was sent:</label>
+			<label index="tt_content.flexform_pi1.redirectPage">Redirect to this page if email was sent (PID or URL):</label>
 			<label index="tt_content.flexform_pi1.redirectToAnchor">Jump directly to the contact form (anchor):</label>
 			<label index="tt_content.flexform_pi1.highlightFields">Highlight malicious fields:</label>
 			<label index="tt_content.flexform_pi1.useDefaultTemplates">Use default templates:</label>
@@ -76,7 +76,7 @@
 			<label index="tt_content.type_label">Kontakt</label>
 			<label index="tt_content.flexform_pi1.wizard">Assistenten öffnen</label>
 			<label index="tt_content.flexform_pi1.sDEF">Allgemein</label>
-			<label index="tt_content.flexform_pi1.redirectPage">Diese Seite anzeigen wenn E-Mail versandt wurde:</label>
+			<label index="tt_content.flexform_pi1.redirectPage">Diese Seite anzeigen wenn E-Mail versandt wurde (PID oder URL):</label>
 			<label index="tt_content.flexform_pi1.redirectToAnchor">Direkt auf das Kontaktformular springen (Anker):</label>
 			<label index="tt_content.flexform_pi1.highlightFields">Fehlerhafte Felder hervorheben:</label>
 			<label index="tt_content.flexform_pi1.useDefaultTemplates">Standard-Templates verwenden:</label>
