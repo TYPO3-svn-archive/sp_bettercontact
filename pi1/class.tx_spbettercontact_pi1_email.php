@@ -233,7 +233,7 @@
 
 			if (strlen($sAgent) && is_array($this->aConfig[$psType . 's.'])) {
 				foreach($this->aConfig[$psType . 's.'] as $sKey => $aConfig) {
-					if (eregi($aConfig['ident'], $sAgent)) {
+					if (preg_match('/' . addcslashes($aConfig['ident'], '/') . '/i', $sAgent)) {
 						$sName = $aConfig['name'];
 					}
 				}
