@@ -3,7 +3,7 @@
 ########################################################################
 # Extension Manager/Repository config file for ext: "sp_bettercontact"
 #
-# Auto generated 03-12-2009 09:55
+# Auto generated 12-01-2010 19:52
 #
 # Manual updates:
 # Only the data in the array - anything else is removed by next write.
@@ -15,7 +15,7 @@ $EM_CONF[$_EXTKEY] = array(
 	'description' => 'Secure Contact form with solid Spam protection. Input can be checked for length, allowed and disallowed signs and with Regular Expressions. Attackers can be locked if they try to send a lot of mails back-to-back. Admin can get detailed Spam notifications. Captcha support included.',
 	'category' => 'plugin',
 	'shy' => 0,
-	'version' => '2.3.0',
+	'version' => '2.3.1',
 	'dependencies' => '',
 	'conflicts' => '',
 	'priority' => '',
@@ -42,9 +42,7 @@ $EM_CONF[$_EXTKEY] = array(
 		'suggests' => array(
 		),
 	),
-	'_md5_values_when_last_written' => 'a:27:{s:9:"ChangeLog";s:4:"348e";s:12:"ext_icon.gif";s:4:"e37d";s:17:"ext_localconf.php";s:4:"83c8";s:14:"ext_tables.php";s:4:"4a2a";s:14:"ext_tables.sql";s:4:"936f";s:24:"ext_typoscript_setup.txt";s:4:"884c";s:13:"locallang.xml";s:4:"7e5d";s:14:"doc/manual.sxw";s:4:"8740";s:24:"res/templates/email.html";s:4:"536b";s:23:"res/templates/form.html";s:4:"4d0b";s:28:"res/templates/stylesheet.css";s:4:"ec39";s:37:"res/examples/additional_locallang.xml";s:4:"805e";s:45:"res/examples/checkbox_radiobutton_select.html";s:4:"57df";s:29:"res/examples/more_fields.html";s:4:"db1d";s:45:"res/examples/show_messages_as_list_above.html";s:4:"7775";s:25:"res/fallback/flexform.xml";s:4:"b85d";s:19:"res/images/list.gif";s:4:"46c2";s:20:"res/images/popup.gif";s:4:"1ec5";s:21:"res/images/wizard.gif";s:4:"7c0b";s:36:"pi1/class.tx_spbettercontact_pi1.php";s:4:"5445";s:42:"pi1/class.tx_spbettercontact_pi1_check.php";s:4:"30df";s:42:"pi1/class.tx_spbettercontact_pi1_email.php";s:4:"d67b";s:45:"pi1/class.tx_spbettercontact_pi1_flexform.php";s:4:"74a5";s:44:"pi1/class.tx_spbettercontact_pi1_session.php";s:4:"c379";s:45:"pi1/class.tx_spbettercontact_pi1_template.php";s:4:"608f";s:44:"pi1/class.tx_spbettercontact_pi1_wizicon.php";s:4:"ffeb";s:17:"pi1/locallang.xml";s:4:"9f0d";}',
-	'suggests' => array(
-	),
+	'_md5_values_when_last_written' => 'a:27:{s:9:"ChangeLog";s:4:"348e";s:12:"ext_icon.gif";s:4:"e37d";s:17:"ext_localconf.php";s:4:"83c8";s:14:"ext_tables.php";s:4:"4a2a";s:14:"ext_tables.sql";s:4:"936f";s:24:"ext_typoscript_setup.txt";s:4:"884c";s:13:"locallang.xml";s:4:"7e5d";s:36:"pi1/class.tx_spbettercontact_pi1.php";s:4:"5445";s:42:"pi1/class.tx_spbettercontact_pi1_check.php";s:4:"30df";s:42:"pi1/class.tx_spbettercontact_pi1_email.php";s:4:"d67b";s:45:"pi1/class.tx_spbettercontact_pi1_flexform.php";s:4:"74a5";s:44:"pi1/class.tx_spbettercontact_pi1_session.php";s:4:"c379";s:45:"pi1/class.tx_spbettercontact_pi1_template.php";s:4:"608f";s:44:"pi1/class.tx_spbettercontact_pi1_wizicon.php";s:4:"ffeb";s:17:"pi1/locallang.xml";s:4:"9f0d";s:14:"doc/manual.sxw";s:4:"8740";s:37:"res/examples/additional_locallang.xml";s:4:"805e";s:45:"res/examples/checkbox_radiobutton_select.html";s:4:"57df";s:29:"res/examples/more_fields.html";s:4:"db1d";s:45:"res/examples/show_messages_as_list_above.html";s:4:"7775";s:25:"res/fallback/flexform.xml";s:4:"b85d";s:19:"res/images/list.gif";s:4:"46c2";s:20:"res/images/popup.gif";s:4:"1ec5";s:21:"res/images/wizard.gif";s:4:"7c0b";s:24:"res/templates/email.html";s:4:"536b";s:23:"res/templates/form.html";s:4:"4d0b";s:28:"res/templates/stylesheet.css";s:4:"ec39";}',
 );
 
 ?>
