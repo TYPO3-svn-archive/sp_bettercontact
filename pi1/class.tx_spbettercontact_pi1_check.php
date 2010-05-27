@@ -80,7 +80,7 @@
 		 * @return TRUE if the form was filled by a spam-bot
 		 */
 		public function bIsSpam () {
-			$bRefererCheck = isset($this->aConfig['useRefererCheck']) ? $this->aConfig['useRefererCheck'] : TRUE;
+			$bRefererCheck = (!empty($this->aConfig['useRefererCheck'])) ? $this->aConfig['useRefererCheck'] : FALSE;
 
 			// Check referer (TRUE = form was not sent from this server)
 			if ($bRefererCheck) {

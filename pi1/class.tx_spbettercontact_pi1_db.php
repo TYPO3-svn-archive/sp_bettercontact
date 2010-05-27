@@ -83,6 +83,7 @@
 				return $GLOBALS['TYPO3_DB']->sql_insert_id();
 			}
 
+			$this->bHasError = TRUE;
 			return 0;
 		}
 
@@ -97,7 +98,6 @@
 			 || empty($this->aConfig['database.']['fieldconf.'])
 			 || !is_array($this->aConfig['database.']['fieldconf.'])
 			) {
-				$this->bHasError = TRUE;
 				return 0;
 			}
 

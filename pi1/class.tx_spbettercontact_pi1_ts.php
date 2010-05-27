@@ -137,6 +137,9 @@
 
 			require_once(PATH_t3lib . 'class.t3lib_tsparser.php');
 
+			// Remove uncommented include lines
+			$psValue = preg_replace('|#(.*)<INCLUDE_TYPOSCRIPT:(.*)>|', '', $psValue);
+
 			// Get all include lines
 			preg_match_all('|<INCLUDE_TYPOSCRIPT:(.*)>|', $psValue, $aIncludes);
 			$aIncludes = (!empty($aIncludes)) ? reset($aIncludes) : array();
