@@ -11,10 +11,10 @@
 				</TCEforms>
 				<type>array</type>
 				<el>
-					<redirectPage>
+					<successRedirectPage>
 						<TCEforms>
 							<exclude>1</exclude>
-							<label>LLL:EXT:sp_bettercontact/locallang.php:tt_content.flexform_pi1.formularRedirectTo</label>
+							<label>LLL:EXT:sp_bettercontact/locallang.php:tt_content.flexform_pi1.successRedirectPage</label>
 							<config>
 								<type>input</type>
 								<size>40</size>
@@ -36,25 +36,87 @@
 								</wizards>
 							</config>
 						</TCEforms>
-					</redirectPage>
-					<redirectToAnchor>
+					</successRedirectPage>
+					<spamRedirectPage>
 						<TCEforms>
-							<label>LLL:EXT:sp_bettercontact/locallang.php:tt_content.flexform_pi1.redirectToAnchor</label>
+							<exclude>1</exclude>
+							<label>LLL:EXT:sp_bettercontact/locallang.php:tt_content.flexform_pi1.spamRedirectPage</label>
+							<config>
+								<type>input</type>
+								<size>40</size>
+								<eval>trim</eval>
+								<default></default>
+								<wizards type="array">
+									<_PADDING>2</_PADDING>
+									<link type="array">
+										<type>popup</type>
+										<title>Link</title>
+										<icon>link_popup.gif</icon>
+										<script>browse_links.php?mode=wizard&amp;act=page</script>
+										<params type="array">
+											<blindLinkOptions>mail,spec,file,folder</blindLinkOptions>
+											<allowedExtensions></allowedExtensions>
+										</params>
+										<JSopenParams>height=300,width=500,status=0,menubar=0,scrollbars=1</JSopenParams>
+									</link>
+								</wizards>
+							</config>
+						</TCEforms>
+					</spamRedirectPage>
+					<errorRedirectPage>
+						<TCEforms>
+							<exclude>1</exclude>
+							<label>LLL:EXT:sp_bettercontact/locallang.php:tt_content.flexform_pi1.errorRedirectPage</label>
+							<config>
+								<type>input</type>
+								<size>40</size>
+								<eval>trim</eval>
+								<default></default>
+								<wizards type="array">
+									<_PADDING>2</_PADDING>
+									<link type="array">
+										<type>popup</type>
+										<title>Link</title>
+										<icon>link_popup.gif</icon>
+										<script>browse_links.php?mode=wizard&amp;act=page</script>
+										<params type="array">
+											<blindLinkOptions>mail,spec,file,folder</blindLinkOptions>
+											<allowedExtensions></allowedExtensions>
+										</params>
+										<JSopenParams>height=300,width=500,status=0,menubar=0,scrollbars=1</JSopenParams>
+									</link>
+								</wizards>
+							</config>
+						</TCEforms>
+					</errorRedirectPage>
+					<enableLog>
+						<TCEforms>
+							<label>LLL:EXT:sp_bettercontact/locallang.php:tt_content.flexform_pi1.enableLog</label>
 							<config>
 								<type>check</type>
 								<default>1</default>
 							</config>
 						</TCEforms>
-					</redirectToAnchor>
-					<highlightFields>
+					</enableLog>
+					<enableIPLog>
 						<TCEforms>
-							<label>LLL:EXT:sp_bettercontact/locallang.php:tt_content.flexform_pi1.highlightFields</label>
+							<label>LLL:EXT:sp_bettercontact/locallang.php:tt_content.flexform_pi1.enableIPLog</label>
 							<config>
 								<type>check</type>
 								<default>0</default>
 							</config>
 						</TCEforms>
-					</highlightFields>
+					</enableIPLog>
+				</el>
+			</ROOT>
+		</sDEF>
+		<sTEMPLATE>
+			<ROOT>
+				<TCEforms>
+					<sheetTitle>LLL:EXT:sp_bettercontact/locallang.php:tt_content.flexform_pi1.sTEMPLATE</sheetTitle>
+				</TCEforms>
+				<type>array</type>
+				<el>
 					<useDefaultTemplates>
 						<TCEforms>
 							<label>LLL:EXT:sp_bettercontact/locallang.php:tt_content.flexform_pi1.useDefaultTemplates</label>
@@ -168,9 +230,39 @@
 							</config>
 						</TCEforms>
 					</locallangFile>
+					<fieldPrefix>
+						<TCEforms>
+							<exclude>1</exclude>
+							<label>LLL:EXT:sp_bettercontact/locallang.php:tt_content.flexform_pi1.fieldPrefix</label>
+							<config>
+								<type>input</type>
+								<eval>trim,nospace,alphanum_x</eval>
+								<default></default>
+								<size>20</size>
+							</config>
+						</TCEforms>
+					</fieldPrefix>
+					<redirectToAnchor>
+						<TCEforms>
+							<label>LLL:EXT:sp_bettercontact/locallang.php:tt_content.flexform_pi1.redirectToAnchor</label>
+							<config>
+								<type>check</type>
+								<default>1</default>
+							</config>
+						</TCEforms>
+					</redirectToAnchor>
+					<highlightFields>
+						<TCEforms>
+							<label>LLL:EXT:sp_bettercontact/locallang.php:tt_content.flexform_pi1.highlightFields</label>
+							<config>
+								<type>check</type>
+								<default>0</default>
+							</config>
+						</TCEforms>
+					</highlightFields>
 				</el>
 			</ROOT>
-		</sDEF>
+		</sTEMPLATE>
 		<sEMAIL>
 			<ROOT>
 				<TCEforms>
@@ -385,6 +477,10 @@
 										<numIndex index="0">LLL:EXT:sp_bettercontact/locallang.php:tt_content.flexform_pi1.captchaSupport.3</numIndex>
 										<numIndex index="1">captcha</numIndex>
 									</numIndex>
+									<numIndex index="4" type="array">
+										<numIndex index="0">LLL:EXT:sp_bettercontact/locallang.php:tt_content.flexform_pi1.captchaSupport.4</numIndex>
+										<numIndex index="1">mathguard</numIndex>
+									</numIndex>
 								</items>
 								<minitems>0</minitems>
 								<maxitems>1</maxitems>
@@ -463,7 +559,7 @@
 							<label>LLL:EXT:sp_bettercontact/locallang.php:tt_content.flexform_pi1.useRefererCheck</label>
 							<config>
 								<type>check</type>
-								<default>1</default>
+								<default>0</default>
 							</config>
 						</TCEforms>
 					</useRefererCheck>
@@ -494,5 +590,66 @@
 				</el>
 			</ROOT>
 		</sSPAM>
+		<sDB>
+			<ROOT>
+				<TCEforms>
+					<sheetTitle>LLL:EXT:sp_bettercontact/locallang.php:tt_content.flexform_pi1.sDB</sheetTitle>
+				</TCEforms>
+				<type>array</type>
+				<el>
+					<database.table>
+						<TCEforms>
+							<label>LLL:EXT:sp_bettercontact/locallang.php:tt_content.flexform_pi1.database.table</label>
+							<config>
+								<type>input</type>
+								<eval>trim</eval>
+								<default></default>
+								<size>40</size>
+							</config>
+						</TCEforms>
+					</database.table>
+					<database.useDefaultValues>
+						<TCEforms>
+							<label>LLL:EXT:sp_bettercontact/locallang.php:tt_content.flexform_pi1.database.useDefaultValues</label>
+							<config>
+								<type>check</type>
+								<default>0</default>
+							</config>
+						</TCEforms>
+					</database.useDefaultValues>
+					<database.fieldconf>
+						<TCEforms>
+							<label>LLL:EXT:sp_bettercontact/locallang.php:tt_content.flexform_pi1.database.fieldconf</label>
+							<config>
+								<type>text</type>
+								<wrap>off</wrap>
+								<default><![CDATA[### Demo configuration (see manual for details) ###
+
+# Add current page id as pid of the new dataset
+# pid = TEXT
+# pid.data = TSFE : id
+
+# Add creation date automatically
+# crdate = TEXT
+# crdate.data = date : U
+
+# Set default values for some fields
+# hidden  = 0
+# deleted = 0
+
+# Save submitted name in field "name"
+# name = TEXT
+# name.data = GPvar : tx_spbettercontact_pi1-9|name
+
+# Include external TypoScript configuration
+# <INCLUDE_TYPOSCRIPT: source="FILE:fileadmin/my_setup.txt">]]></default>
+								<cols>40</cols>
+								<rows>10</rows>
+							</config>
+						</TCEforms>
+					</database.fieldconf>
+				</el>
+			</ROOT>
+		</sDB>
 	</sheets>
 </T3DataStructure>

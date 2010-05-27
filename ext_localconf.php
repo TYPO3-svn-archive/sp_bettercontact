@@ -1,8 +1,8 @@
 <?php
-		/***************************************************************
+	/***************************************************************
 	*  Copyright notice
 	*
-	*  (c) 2009 Kai Vogel <kai.vogel ( at ) speedprogs.de>
+	*  (c) 2010 Kai Vogel <kai.vogel ( at ) speedprogs.de>
 	*  All rights reserved
 	*
 	*  This script is part of the TYPO3 project. The TYPO3 project is
@@ -21,12 +21,17 @@
 	*
 	*  This copyright notice MUST APPEAR in all copies of the script!
 	***************************************************************/
+
+
 	if (!defined ('TYPO3_MODE')) {
 		die ('Access denied.');
 	}
 
 	// Add Plugin to TS ( 0 = Not cached )
 	t3lib_extMgm::addPItoST43('sp_bettercontact', 'pi1/class.tx_spbettercontact_pi1.php', '_pi1', 'CType', 0);
+
+	## Add module TSConfig
+	t3lib_extMgm::addPageTSConfig('<INCLUDE_TYPOSCRIPT: source="FILE:EXT:sp_bettercontact/ext_ts_config.txt">');
 
 	// Add new wizard item in Version 4.3
 	if (t3lib_div::int_from_ver(TYPO3_version) >= 4003000) {

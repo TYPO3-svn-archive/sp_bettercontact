@@ -8,18 +8,26 @@
 		<languageKey index="default" type="array">
 			<label index="pi1_title">Contact form</label>
 			<label index="pi1_plus_wiz_description"> Adds a Contact form to this page.</label>
+			<label index="moduleFunction.tx_spbettercontact_modfunc1">Better Contact Log</label>
+			<label index="tabs.form">Form</label>
 			<label index="tt_content.list_type_pi1">Contact form</label>
-			<label index="tt_content.type_label">Contact</label>
+			<label index="tt_content.type_label">Contact form</label>
 			<label index="tt_content.flexform_pi1.wizard">Open wizard</label>
 			<label index="tt_content.flexform_pi1.sDEF">General</label>
-			<label index="tt_content.flexform_pi1.redirectPage">Redirect to this page if email was sent (PID or URL):</label>
-			<label index="tt_content.flexform_pi1.redirectToAnchor">Jump directly to the contact form (anchor):</label>
-			<label index="tt_content.flexform_pi1.highlightFields">Highlight malicious fields:</label>
+			<label index="tt_content.flexform_pi1.successRedirectPage">Show this page if email was sent (PID or URL):</label>
+			<label index="tt_content.flexform_pi1.spamRedirectPage">Show this page if a bot tries to send spam (PID or URL):</label>
+			<label index="tt_content.flexform_pi1.errorRedirectPage">Show this page if an error occurs (PID or URL):</label>
+			<label index="tt_content.flexform_pi1.enableLog">Enable Log:</label>
+			<label index="tt_content.flexform_pi1.enableIPLog">Log IP address:</label>
+			<label index="tt_content.flexform_pi1.sTEMPLATE">Template</label>
 			<label index="tt_content.flexform_pi1.useDefaultTemplates">Use default templates:</label>
 			<label index="tt_content.flexform_pi1.formTemplate">Form template file:</label>
 			<label index="tt_content.flexform_pi1.emailTemplate">Email template file:</label>
 			<label index="tt_content.flexform_pi1.stylesheetFile">Style sheet file:</label>
 			<label index="tt_content.flexform_pi1.locallangFile">Additional language file:</label>
+			<label index="tt_content.flexform_pi1.fieldPrefix">Field name prefix:</label>
+			<label index="tt_content.flexform_pi1.redirectToAnchor">Jump directly to the contact form (anchor):</label>
+			<label index="tt_content.flexform_pi1.highlightFields">Highlight malicious fields:</label>
 			<label index="tt_content.flexform_pi1.sEMAIL">Emails</label>
 			<label index="tt_content.flexform_pi1.emailRecipients">Send notification email to (separate multiple recipients with ","):</label>
 			<label index="tt_content.flexform_pi1.emailSender">Sender email address (e.g. Contact form &lt;contact@your-domain.com&gt;):</label>
@@ -59,6 +67,7 @@
 			<label index="tt_content.flexform_pi1.captchaSupport.1">freeCap CAPTCHA</label>
 			<label index="tt_content.flexform_pi1.captchaSupport.2">reCAPTCHA</label>
 			<label index="tt_content.flexform_pi1.captchaSupport.3">Captcha Library</label>
+			<label index="tt_content.flexform_pi1.captchaSupport.4">MathGuard</label>
 			<label index="tt_content.flexform_pi1.adminMails">Notify administrator about:</label>
 			<label index="tt_content.flexform_pi1.adminMails.0">Defined by TypoScript</label>
 			<label index="tt_content.flexform_pi1.adminMails.1">Nothing</label>
@@ -68,22 +77,34 @@
 			<label index="tt_content.flexform_pi1.useRefererCheck">Check referer (HTTP_REFERER):</label>
 			<label index="tt_content.flexform_pi1.messageCount">Max count of allowed mailings:</label>
 			<label index="tt_content.flexform_pi1.waitingTime">Waiting time if max count was reached (in minutes):</label>
+			<label index="tt_content.flexform_pi1.sDB">DB</label>
+			<label index="tt_content.flexform_pi1.database.table">Save user input into this table (see manual for external table):</label>
+			<label index="tt_content.flexform_pi1.database.useDefaultValues">Fill default fields automatically (pid,tstamp,crdate,cruser_id):</label>
+			<label index="tt_content.flexform_pi1.database.fieldconf">TypoScript field configuration:</label>
 		</languageKey>
 		<languageKey index="de" type="array">
 			<label index="pi1_title">Kontaktformular</label>
 			<label index="pi1_plus_wiz_description">Fügt der aktuellen Seite ein Kontaktformular hinzu.</label>
+			<label index="moduleFunction.tx_spbettercontact_modfunc1">Better Contact Log</label>
+			<label index="tabs.form">Formular</label>
 			<label index="tt_content.list_type_pi1">Kontaktformular</label>
-			<label index="tt_content.type_label">Kontakt</label>
+			<label index="tt_content.type_label">Kontaktformular</label>
 			<label index="tt_content.flexform_pi1.wizard">Assistenten öffnen</label>
 			<label index="tt_content.flexform_pi1.sDEF">Allgemein</label>
-			<label index="tt_content.flexform_pi1.redirectPage">Diese Seite anzeigen wenn E-Mail versandt wurde (PID oder URL):</label>
-			<label index="tt_content.flexform_pi1.redirectToAnchor">Direkt auf das Kontaktformular springen (Anker):</label>
-			<label index="tt_content.flexform_pi1.highlightFields">Fehlerhafte Felder hervorheben:</label>
+			<label index="tt_content.flexform_pi1.successRedirectPage">Diese Seite anzeigen wenn E-Mail versandt wurde (PID oder URL):</label>
+			<label index="tt_content.flexform_pi1.spamRedirectPage">Diese Seite anzeigen wenn ein Bot versucht Spam zu senden (PID oder URL):</label>
+			<label index="tt_content.flexform_pi1.errorRedirectPage">Diese Seite anzeigen wenn ein Fehler auftritt (PID or URL):</label>
+			<label index="tt_content.flexform_pi1.enableLog">Log aktivieren:</label>
+			<label index="tt_content.flexform_pi1.enableIPLog">IP-Adresse erfassen:</label>
+			<label index="tt_content.flexform_pi1.sTEMPLATE">Template</label>
 			<label index="tt_content.flexform_pi1.useDefaultTemplates">Standard-Templates verwenden:</label>
 			<label index="tt_content.flexform_pi1.formTemplate">Formular Template-Datei:</label>
 			<label index="tt_content.flexform_pi1.emailTemplate">E-Mail Template-Datei:</label>
 			<label index="tt_content.flexform_pi1.stylesheetFile">Stylesheet-Datei:</label>
 			<label index="tt_content.flexform_pi1.locallangFile">Zusätzliche Sprachdatei:</label>
+			<label index="tt_content.flexform_pi1.fieldPrefix">Prefix für Feldnamen:</label>
+			<label index="tt_content.flexform_pi1.redirectToAnchor">Direkt auf das Kontaktformular springen (Anker):</label>
+			<label index="tt_content.flexform_pi1.highlightFields">Fehlerhafte Felder hervorheben:</label>
 			<label index="tt_content.flexform_pi1.sEMAIL">E-Mails</label>
 			<label index="tt_content.flexform_pi1.emailRecipients">Sende Benachrichtigung an (mehrere Empfänger durch "," trennen):</label>
 			<label index="tt_content.flexform_pi1.emailSender">Absender E-Mail (z.B. Kontaktformular &lt;contact@your-domain.com&gt;):</label>
@@ -123,6 +144,7 @@
 			<label index="tt_content.flexform_pi1.captchaSupport.1">freeCap CAPTCHA</label>
 			<label index="tt_content.flexform_pi1.captchaSupport.2">reCAPTCHA</label>
 			<label index="tt_content.flexform_pi1.captchaSupport.3">Captcha Library</label>
+			<label index="tt_content.flexform_pi1.captchaSupport.4">MathGuard</label>
 			<label index="tt_content.flexform_pi1.adminMails">Administrator benachrichtigen über:</label>
 			<label index="tt_content.flexform_pi1.adminMails.0">Definiert durch TypoScript</label>
 			<label index="tt_content.flexform_pi1.adminMails.1">Nichts</label>
@@ -132,6 +154,10 @@
 			<label index="tt_content.flexform_pi1.useRefererCheck">Herkunft prüfen (HTTP_REFERER):</label>
 			<label index="tt_content.flexform_pi1.messageCount">Maximale Anzahl erlaubter Sendungen:</label>
 			<label index="tt_content.flexform_pi1.waitingTime">Wartezeit wenn maximale Anzahl erreicht wurde (in Minuten):</label>
+			<label index="tt_content.flexform_pi1.sDB">DB</label>
+			<label index="tt_content.flexform_pi1.database.table">Eingaben in in diese Tabelle speichern (siehe Manual für externe Tabelle):</label>
+			<label index="tt_content.flexform_pi1.database.useDefaultValues">Standard-Felder automatisch befüllen (pid,tstamp,crdate,cruser_id):</label>
+			<label index="tt_content.flexform_pi1.database.fieldconf">TypoScript Feld-Konfiguration:</label>
 		</languageKey>
 	</data>
 </T3locallang>

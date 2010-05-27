@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<T3locallang>
+	<meta type="array">
+		<type>module</type>
+		<description>Language labels for module 'sp_bettercontact'</description>
+	</meta>
+	<data type="array">
+		<languageKey index="default" type="array">
+			<label index="headline">Better Contact Log</label>
+			<label index="menu_mode">Show:</label>
+			<label index="menu_period">Period:</label>
+			<label index="menu_download">Download:</label>
+			<label index="mode_all">All pages</label>
+			<label index="mode_this">This page</label>
+			<label index="period_all">All</label>
+			<label index="period_year">Last 365 days</label>
+			<label index="period_month">Last 30 days</label>
+			<label index="period_week">Last 7 days</label>
+			<label index="period_day">Last 24 hours</label>
+			<label index="download_csv">Download table as CSV</label>
+
+
+			<label index="table_header_datetime">Date / Time</label>
+			<label index="table_header_ip">IP-Address</label>
+			<label index="table_header_agent">User-Agent</label>
+			<label index="table_header_fields">User-Input</label>
+
+			<label index="csv_header_uid">UID</label>
+			<label index="csv_header_pid">PID</label>
+			<label index="csv_header_datetime">Date / Time</label>
+			<label index="csv_header_ip">IP-Address</label>
+			<label index="csv_header_agent">User-Agent</label>
+			<label index="csv_header_hash">Hash</label>
+			<label index="csv_header_fields">User-Input</label>
+
+			<label index="msg_no_rows">No log entries found!</label>
+		</languageKey>
+		<languageKey index="de" type="array">
+			<label index="headline">Better Contact Log</label>
+			<label index="menu_mode">Anzeige:</label>
+			<label index="menu_period">Zeitraum:</label>
+			<label index="menu_download">Download:</label>
+			<label index="mode_all">Alle Seiten</label>
+			<label index="mode_this">Diese Seite</label>
+			<label index="period_all">Alle</label>
+			<label index="period_year">Die letzten 356 Tage</label>
+			<label index="period_month">Die letzten 30 Tage</label>
+			<label index="period_week">Die letzten 7 Tage</label>
+			<label index="period_day">Die letzten 24 Stunden</label>
+			<label index="download_csv">Tabelle als CSV-Datei herunterladen</label>
+
+			<label index="table_header_datetime">Datum / Zeit</label>
+			<label index="table_header_ip">IP-Adresse</label>
+			<label index="table_header_agent">User-Agent</label>
+			<label index="table_header_fields">Benutzereingaben</label>
+
+			<label index="csv_header_uid">UID</label>
+			<label index="csv_header_pid">PID</label>
+			<label index="csv_header_datetime">Datum / Zeit</label>
+			<label index="csv_header_ip">IP-Adresse</label>
+			<label index="csv_header_agent">User-Agent</label>
+			<label index="csv_header_hash">Hash</label>
+			<label index="csv_header_fields">Benutzereingaben</label>
+
+			<label index="msg_no_rows">Keine Log-Einträge gefunden!</label>
+		</languageKey>
+	</data>
+</T3locallang>

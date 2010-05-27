@@ -2,7 +2,7 @@
 	/***************************************************************
 	*  Copyright notice
 	*
-	*  (c) 2009 Kai Vogel <kai.vogel ( at ) speedprogs.de>
+	*  (c) 2010 Kai Vogel <kai.vogel ( at ) speedprogs.de>
 	*  All rights reserved
 	*
 	*  This script is part of the TYPO3 project. The TYPO3 project is
@@ -26,38 +26,61 @@
 	/**
 	 * Check class for the 'sp_bettercontact' extension.
 	 *
-	 * @author      Kai Vogel <kai.vogel ( at ) speedprogs.de>
-	 * @package     TYPO3
-	 * @subpackage  tx_spbettercontact
+	 * @author     Kai Vogel <kai.vogel ( at ) speedprogs.de>
+	 * @package    TYPO3
+	 * @subpackage tx_spbettercontact
 	 */
 	class tx_spbettercontact_pi1_check {
-		public $aConfig     = array();
-		public $aLL         = array();
-		public $aPiVars     = array();
-		public $aFields     = array();
-		public $aMarkers    = array();
+		protected $aConfig  = array();
+		protected $aLL      = array();
+		protected $aGP      = array();
+		protected $aFields  = array();
+		protected $aMarkers = array();
+		protected $oCS      = NULL;
 
 
 		/**
 		 * Set configuration for check object
 		 *
-		 * @param   object  $poParent: Instance of the parent object
+		 * @param object $poParent Instance of the parent object
 		 */
 		public function __construct ($poParent) {
-			$this->aConfig  = $poParent->aConfig;
-			$this->aFields  = $poParent->aFields;
-			$this->aLL      = $poParent->aLL;
-			$this->aPiVars  = $poParent->piVars;
+			$this->aConfig = $poParent->aConfig;
+			$this->aFields = $poParent->aFields;
+			$this->aLL     = $poParent->aLL;
+			$this->aGP     = $poParent->aGP;
+			$this->oCS     = $poParent->oCS;
+
+			// Get backend charset
+			$this->sBECharset = $this->sGetBECharset();
+		}
+
+
+		/**
+		 * Get backend charset
+		 *
+		 * @return Charset of the ts configuration
+		 */
+		protected function sGetBECharset () {
+			$sCharset = 'iso-8859-1';
+
+			if (!empty($GLOBALS['TYPO3_CONF_VARS']['BE']['forceCharset'])) {
+				$sCharset = $GLOBALS['TYPO3_CONF_VARS']['BE']['forceCharset'];
+			} else if (isset($GLOBALS['LANG'])) {
+				$sCharset = $GLOBALS['LANG']->charSet;
+			}
+
+			return strtolower($sCharset);
 		}
 
 
 		/**
 		 * Check for spam
 		 *
-		 * @return  TRUE if the form was filled by a spam-bot
+		 * @return TRUE if the form was filled by a spam-bot
 		 */
 		public function bIsSpam () {
-			$bRefererCheck = isset($this->aConfig['useRefererCheck']) ? (bool) $this->aConfig['useRefererCheck'] : TRUE;
+			$bRefererCheck = isset($this->aConfig['useRefererCheck']) ? $this->aConfig['useRefererCheck'] : TRUE;
 
 			// Check referer (TRUE = form was not sent from this server)
 			if ($bRefererCheck) {
@@ -70,7 +93,7 @@
 			// Check hidden fields
 			if (is_array($this->aFields)) {
 				foreach ($this->aFields as $sKey => $aField) {
-					if (strlen($_POST[$sKey]) || strlen($_GET[$sKey])) {
+					if (!empty($_POST[$sKey]) || !empty($_GET[$sKey])) {
 						return TRUE;
 					}
 				}
@@ -83,15 +106,16 @@
 		/**
 		 * Execute checks and set errors
 		 *
-		 * @return  FALSE if the form has errors
+		 * @return FALSE if the form has errors
 		 */
 		public function bCheckFields () {
 			// Return if no data was sent
-			if (!is_array($this->aPiVars) || !count($this->aPiVars) || !is_array($this->aFields)) {
+			if (empty($this->aGP) || empty($this->aFields) || !is_array($this->aGP)|| !is_array($this->aFields)) {
 				return TRUE;
 			}
 
 			$bResult = TRUE;
+
 			foreach ($this->aFields as $sKey => $aField) {
 
 				// Bypass captcha input, it has its own check routine
@@ -150,7 +174,6 @@
 					if (!preg_match($aField['regex'], $aField['value'])) {
 						$this->aMarkers[$aField['messageName']] = $this->sGetMessage($sKey, 'regex', 'regex');
 						$bResult = FALSE;
-						continue;
 					}
 				}
 			}
@@ -162,21 +185,32 @@
 		/**
 		 * Get formated error message
 		 *
+		 * @param  string $psName       Name of the field
+		 * @param  string $psIdentifier Key to identify a message label
+		 * @param  string $psType       Type of the message
 		 * @return String with final error message
 		 */
-		protected function sGetMessage($psName, $psIdentifier, $psType) {
+		protected function sGetMessage ($psName, $psIdentifier, $psType) {
 			if (!strlen($psIdentifier) || !strlen($psName)) {
 				return '';
 			}
 
 			// Get configuration
-			$psName         = trim($psName);
-			$psIdentifier   = trim($psIdentifier);
-			$psType         = trim($psType);
+			$psName       = trim($psName);
+			$psIdentifier = trim($psIdentifier);
+			$psType       = trim($psType);
 
-			// Check for defined signes and replace formated
-			if ($sReplace = htmlspecialchars(utf8_decode($this->aFields[$psName][$psType]))) {
-			  return sprintf($this->aLL['msg_' . $psName . '_' . $psIdentifier], $sReplace);
+			// Get replacement
+			$sReplace = $this->aFields[$psName][$psType];
+
+			// Convert to utf-8 for internal use
+			if ($this->sBECharset != 'utf-8') {
+				$sReplace = $this->oCS->utf8_decode($sReplace, $this->sBECharset);
+			}
+
+			// Check for defined signes and replace them
+			if (strlen($sReplace)) {
+			  return sprintf($this->aLL['msg_' . $psName . '_' . $psIdentifier], htmlspecialchars($sReplace));
 			}
 
 			return $this->aLL['msg_' . $psName . '_' . $psIdentifier];
@@ -189,9 +223,13 @@
 		 * @return FALSE if the captcha test failes
 		 */
 		protected function bCheckCaptcha () {
-			$sExtKey    = strtolower(trim($this->aConfig['captchaSupport']));
-			$sInput     = $this->aPiVars['captcha'];
-			$bResult    = TRUE;
+			if (empty($this->aConfig['captchaSupport'])) {
+				return TRUE;
+			}
+
+			$sExtKey = strtolower(trim($this->aConfig['captchaSupport']));
+			$sInput  = (!empty($this->aGP['captcha'])) ? $this->aGP['captcha'] : '';
+			$bResult = TRUE;
 
 			if (!strlen($sExtKey) || !t3lib_extMgm::isLoaded($sExtKey)) {
 				return TRUE;
@@ -201,48 +239,42 @@
 			switch ($sExtKey) {
 				case 'sr_freecap' :
 					if (!strlen($sInput)) {
-						$bResult    = FALSE;
-					} else {
-						require_once(t3lib_extMgm::extPath($sExtKey) . 'pi2/class.tx_srfreecap_pi2.php');
-						$oCaptcha   = t3lib_div::makeInstance('tx_srfreecap_pi2');
-						$bResult    = $oCaptcha->checkWord($sInput);
+						return FALSE;
 					}
+					require_once(t3lib_extMgm::extPath($sExtKey) . 'pi2/class.tx_srfreecap_pi2.php');
+					$oCaptcha = t3lib_div::makeInstance('tx_srfreecap_pi2');
+					return $oCaptcha->checkWord($sInput);
 					break;
 				case 'jm_recaptcha' :
-					if (!strlen(t3lib_div::_GP('recaptcha_response_field'))) {
-						$bResult    = FALSE;
-					} else {
-						require_once(t3lib_extMgm::extPath($sExtKey) . 'class.tx_jmrecaptcha.php');
-						$oCaptcha   = t3lib_div::makeInstance('tx_jmrecaptcha');
-						$aResponse  = $oCaptcha->validateReCaptcha();
-						if (is_array($aResponse) && count($aResponse)) {
-							$bResult = $aResponse['verified'] ? (bool) $aResponse['verified'] : FALSE;
-						}
-					}
+					require_once(t3lib_extMgm::extPath($sExtKey) . 'class.tx_jmrecaptcha.php');
+					$oCaptcha  = t3lib_div::makeInstance('tx_jmrecaptcha');
+					$aResponse = $oCaptcha->validateReCaptcha();
+					return (isset($aResponse['verified']) && (bool) $aResponse['verified']);
 					break;
 				case 'captcha' :
-					if (!strlen($sInput)) {
-						$bResult    = FALSE;
-					} else {
-						session_start();
-						$sCaptcha   = $_SESSION['tx_captcha_string'];
-						$bResult    = ($sInput === $sCaptcha);
-					}
+					session_start();
+					$sCaptcha = $_SESSION['tx_captcha_string'];
+					return ($sInput === $sCaptcha);
+					break;
+				case 'mathguard' :
+					require_once(t3lib_extMgm::extPath($sExtKey) . 'class.tx_mathguard.php');
+					$oCaptcha = t3lib_div::makeInstance('tx_mathguard');
+					return $oCaptcha->validateCaptcha();
 					break;
 				default:
 					return FALSE;
 			}
 
-			return $bResult;
+			return FALSE;
 		}
 
 
 		/**
 		 * Get an array of all fields with malicious content
 		 *
-		 * @return  Array of bad fields
+		 * @return Array of bad fields
 		 */
-		public function aGetBadFields () {
+		public function aGetMaliciousFields () {
 			$aResult    = array();
 			$sShow      = strtolower($this->aConfig['showMaliciousInput']);
 
@@ -264,22 +296,22 @@
 		/**
 		 * Get an array of error messages from check
 		 *
-		 * @return  Array of all messages
+		 * @return Array of all messages
 		 */
 		public function aGetMessages () {
-			if (!is_array($this->aPiVars)) {
+			if (empty($this->aGP) || !is_array($this->aGP)) {
 				return array();
 			}
 
-			$aMessages = array();
-			$sErrorClass = strlen($this->aConfig['errorClass']) ? $this->aConfig['errorClass'] : 'error';
+			$aMessages   = array();
+			$sErrorClass = (!empty($this->aConfig['classError'])) ? $this->aConfig['classError'] : 'error';
 
-			// Get field order from piVars
-			$aFields = $this->aPiVars;
+			// Get field order from GPVars
+			$aFields = $this->aGP;
 			unset($aFields['submit']);
 
 			foreach($aFields as $sKey => $aField) {
-				if (!isset($this->aFields[$sKey]) || !strlen($this->aFields[$sKey]['messageName'])) {
+				if (!empty($this->aFields[$sKey]['messageName'])) {
 					continue;
 				}
 

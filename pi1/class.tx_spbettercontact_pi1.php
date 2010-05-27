@@ -2,7 +2,7 @@
 	/***************************************************************
 	*  Copyright notice
 	*
-	*  (c) 2009 Kai Vogel <kai.vogel ( at ) speedprogs.de>
+	*  (c) 2010 Kai Vogel <kai.vogel ( at ) speedprogs.de>
 	*  All rights reserved
 	*
 	*  This script is part of the TYPO3 project. The TYPO3 project is
@@ -29,41 +29,42 @@
 	/**
 	 * Plugin 'Better Contact Form' for the 'sp_bettercontact' extension.
 	 *
-	 * @author      Kai Vogel <kai.vogel ( at ) speedprogs.de>
-	 * @package     TYPO3
-	 * @subpackage  tx_spbettercontact
+	 * @author     Kai Vogel <kai.vogel ( at ) speedprogs.de>
+	 * @package    TYPO3
+	 * @subpackage tx_spbettercontact
 	 */
 	class tx_spbettercontact_pi1 extends tslib_pibase {
-		public $prefixId        = 'tx_spbettercontact_pi1';
-		public $scriptRelPath   = 'pi1/class.tx_spbettercontact_pi1.php';
-		public $extKey          = 'sp_bettercontact';
-		public $sEmailCharset   = 'iso-8859-1';
-		public $sFormCharset    = 'iso-8859-1';
-		public $aLL             = array();
-		public $aConfig         = array();
-		public $aFields         = array();
-		public $aUserMarkers    = array();
-		public $oTemplate       = NULL;
-		public $oSession        = NULL;
-		public $oCheck          = NULL;
-		public $oEmail          = NULL;
-		public $cObj            = NULL;
+		public $prefixId      = 'tx_spbettercontact_pi1';
+		public $scriptRelPath = 'pi1/class.tx_spbettercontact_pi1.php';
+		public $extKey        = 'sp_bettercontact';
+		public $sEmailCharset = 'iso-8859-1';
+		public $sFormCharset  = 'iso-8859-1';
+		public $sFieldPrefix  = '';
+		public $aLL           = array();
+		public $aConfig       = array();
+		public $aFields       = array();
+		public $aUserMarkers  = array();
+		public $oTemplate     = NULL;
+		public $oSession      = NULL;
+		public $oCheck        = NULL;
+		public $oEmail        = NULL;
+		public $cObj          = NULL;
+		public $oCS           = NULL;
 
 
 		/**
 		 * The main method of the PlugIn
 		 *
-		 * @param   string      $content: The PlugIn content
-		 * @param   array       $conf: The PlugIn configuration
-		 * @return  The content that is displayed on the website
+		 * @param  string $content The PlugIn content
+		 * @param  array  $conf    The PlugIn configuration
+		 * @return The content that is displayed on the website
 		 */
-		public function main ($psContent, $paConf) {
+		public function main ($psContent, array $paConf) {
 			$this->pi_USER_INT_obj = 1;
-			$this->aConfig = $paConf;
-			$this->pi_setPiVarDefaults();
 
-			// Override typoscript config with flexform values
-			$this->vFlexOverride();
+			// Get merged config from TS and Flexform
+			$oTS = $this->oMakeInstance('ts');
+			$this->aConfig = $oTS->aGetConfig($paConf);
 
 			// Set default templates if set
 			if ($this->aConfig['useDefaultTemplates']) {
@@ -75,27 +76,18 @@
 				return $this->pi_wrapInBaseClass($sMessage);
 			}
 
-			// Get user defined markers
-			$this->aUserMarkers = $this->aGetUserMarkers();
-
-			// Get required things...
-			$this->aLL              = $this->aGetLL();
-			$this->aFields          = $this->aGetFields();
-			$this->sEmailCharset    = $this->sGetCharset('email');
-			$this->sFormCharset     = $this->sGetCharset('form');
-			$this->oTemplate        = $this->oMakeInstance('template');
-			$this->oSession         = $this->oMakeInstance('session');
-			$this->oCheck           = $this->oMakeInstance('check');
-			$this->oEmail           = $this->oMakeInstance('email');
+			// Init required attributes and objects
+			$this->vInit();
 
 			// Stop here if form was not submitted (ignore $_GET)
-			if (!is_array($_POST) || !count($_POST)) {
+			if (empty($_POST) || !isset($this->aGP['submit'])) {
 				return $this->sGetContent();
 			}
 
-			//  Check if a bot tries to send spam
+			// Check if a bot tries to send spam
 			if ($this->oCheck->bIsSpam()) {
 				$this->vSendWarning('bot');
+				$this->vCheckRedirect('spam');
 				return $this->pi_wrapInBaseClass($this->aLL['msg_not_allowed']);
 			}
 
@@ -105,7 +97,7 @@
 					$this->vSendWarning('user');
 				}
 				$this->oTemplate->vAddMarkers($this->oCheck->aGetMessages());
-				$this->oTemplate->vClearMalicious($this->oCheck->aGetBadFields());
+				$this->oTemplate->vClearMalicious($this->oCheck->aGetMaliciousFields());
 				return $this->sGetContent();
 			}
 
@@ -115,69 +107,27 @@
 				return $this->sGetContent();
 			}
 
+			// Add new entry in log table and save values into specified table
+			$this->oSession->vAddValue('lastLogRowID', $this->oDB->iLog());
+			$this->oSession->vAddValue('lastRowID', $this->oDB->iSave());
+			if ($this->oDB->bHasError()) {
+				return $this->pi_wrapInBaseClass($this->aLL['msg_db_failed']);
+			}
+
 			// Send emails
 			$this->oEmail->vSendMails();
 			$this->oTemplate->vAddMarkers($this->oEmail->aGetMessages());
-			if ($this->oEmail->bHasError) {
+			if ($this->oEmail->bHasError()) {
+				$this->vCheckRedirect('error');
 				return $this->sGetContent();
 			}
 
 			// Save timestamp into session for multiple mails check
 			$this->oSession->vSave();
 
-			// Redirect if set
-			if (strlen($this->aConfig['redirectPage'])) {
-				Header('Location: ' . $this->sGetRedirectURL());
-				exit();
-			}
-
-			// Return whole content
+			// Redirect if configured or return content
+			$this->vCheckRedirect('success');
 			return $this->sGetContent();
-		}
-
-
-		/**
-		 * Override TypoScipt settings with Flexform values
-		 *
-		 */
-		protected function vFlexOverride () {
-			$this->pi_initPIflexForm('pi_flexform_CType');
-
-			if (!is_array($this->cObj->data['pi_flexform_CType'])) {
-				return;
-			}
-
-			// Override TS
-			foreach ($this->cObj->data['pi_flexform_CType']['data'] as $aData) {
-				if (is_array($aData)) {
-					foreach ($aData['lDEF'] as $sKey => $aValue) {
-						if (strlen($aValue['vDEF'])) {
-							$this->aConfig[$sKey] = $aValue['vDEF'];
-						}
-					}
-				}
-			}
-		}
-
-
-		/**
-		 * Get the charset for the form and emails
-		 *
-		 * @param   string      $psType: Type of media which needs the charset
-		 * @return  The character encoding
-		 */
-		protected function sGetCharset ($psType='form') {
-			$sType = strtolower(trim($psType)) . 'Charset';
-
-			$sCharset   = $GLOBALS['LANG']->charSet         ? $GLOBALS['LANG']->charSet         : 'iso-8859-1';
-			$sCharset   = $GLOBALS['TSFE']->renderCharset   ? $GLOBALS['TSFE']->renderCharset   : $sCharset;
-			$sCharset   = $GLOBALS['TSFE']->metaCharset     ? $GLOBALS['TSFE']->metaCharset     : $sCharset;
-
-			if (strlen($this->aConfig[$sType])) {
-				$sCharset = $this->aConfig[$sType];
-			}
-
-			return strtolower($sCharset);
 		}
 
 
@@ -186,162 +136,52 @@
 		 *
 		 */
 		protected function vSetDefaultTemplates () {
-			$this->aConfig['formTemplate']      = 'EXT:' . $this->extKey . '/res/templates/form.html';
-			$this->aConfig['emailTemplate']     = 'EXT:' . $this->extKey . '/res/templates/email.html';
-			$this->aConfig['stylesheetFile']    = 'EXT:' . $this->extKey . '/res/templates/stylesheet.css';
-		}
-
-
-		/**
-		 * Get TypoScript value from String / cObject
-		 *
-		 * @return  String with value
-		 */
-		protected function sGetTSValue($paConfig, $psKey) {
-			if (!is_array($paConfig) || !count($paConfig) || !strlen($psKey) || substr($psKey, -1) == '.') {
-				return '';
-			}
-
-			if (isset($paConfig[$psKey . '.'])) {
-				return $this->cObj->cObjGetSingle($paConfig[$psKey], $paConfig[$psKey . '.']);
-			}
-
-			return $paConfig[$psKey];
-		}
-
-
-		/**
-		 * Get user defined markers
-		 *
-		 * @return  Array with user markers
-		 */
-		protected function aGetUserMarkers () {
-			$aMarkers = array();
-
-			// User defined markers
-			if (isset($this->aConfig['markers.']) && is_array($this->aConfig['markers.'])) {
-				foreach ($this->aConfig['markers.'] as $sKey => $mValue) {
-					if (substr($sKey, -1) != '.') {
-						$aMarkers['###' . strtoupper($sKey) . '###'] = $this->sGetTSValue($this->aConfig['markers.'], $sKey);
-					}
-				}
-			}
-
-			return $aMarkers;
-		}
-
-
-		/**
-		 * Get user language array
-		 *
-		 * @return  Array of user localized labels
-		 */
-		protected function aGetUserLabels ($psLang='default') {
-			$sFile      = t3lib_div::getFileAbsFileName($this->aConfig['locallangFile']);
-			$aOwnLabels = array();
-
-			if (strlen($sFile)) {
-				$aXML = t3lib_div::xml2array(t3lib_div::getUrl($sFile));
-
-				if (!is_array($aXML['data'][$psLang])) {
-					$psLang = 'default';
-				}
-
-				$aOwnLabels = $aXML['data'][$psLang];
-			}
-
-			// Convert to utf-8
-			if ($this->sGetCharset('default') != 'utf-8' && is_array($aOwnLabels)) {
-				foreach ($aOwnLabels as $sKey => $sValue) {
-					$aOwnLabels[$sKey] = utf8_decode($sValue);
-				}
-			}
-
-			return $aOwnLabels;
-		}
-
-
-		/**
-		 * Get whole language array
-		 *
-		 * @return  Array of all localized labels
-		 */
-		protected function aGetLL() {
-			$this->pi_loadLL();
-
-			$sLangKey       = (strtolower($this->LLkey) == 'en') ? 'default' : $this->LLkey;
-			$aLocalLang     = $this->LOCAL_LANG[$sLangKey];
-			$aOtherLabels   = array(
-				$this->aConfig['_LOCAL_LANG.'][$sLangKey  . '.'],
-				$this->aGetUserLabels($sLangKey),
-			);
-
-			if (!is_array($this->LOCAL_LANG[$sLangKey]) || !count($this->LOCAL_LANG[$sLangKey])) {
-				$aLocalLang = $this->LOCAL_LANG['default'];
-			}
-
-			// Add and override labels
-			if (is_array($aOtherLabels)) {
-				foreach ($aOtherLabels as $aLabels) {
-					if (is_array($aLabels) && count($aLabels)) {
-						foreach ($aLabels as $sKey => $sLabel) {
-							$aLocalLang[$sKey] = $sLabel;
-						}
-					}
-				}
-			}
-
-			return $aLocalLang;
+			$this->aConfig['formTemplate']   = 'EXT:' . $this->extKey . '/res/templates/frontend/form.html';
+			$this->aConfig['emailTemplate']  = 'EXT:' . $this->extKey . '/res/templates/frontend/email.html';
+			$this->aConfig['stylesheetFile'] = 'EXT:' . $this->extKey . '/res/templates/frontend/stylesheet.css';
 		}
 
 
 		/**
 		 * Check configuration
 		 *
-		 * @return  TRUE if configuration is ok
+		 * @return TRUE if configuration is ok
 		 */
 		protected function sCheckConfiguration () {
 			$aMessages = array();
 
 			// Check email field
-			if (!isset($this->aConfig['fields.'])
-			 || !is_array($this->aConfig['fields.'])
-			 || !isset($this->aConfig['fields.']['email.'])
-			 || !is_array($this->aConfig['fields.']['email.'])) {
+			if (empty($this->aConfig['fields.']['email.']) || !is_array($this->aConfig['fields.']['email.'])) {
 				$aMessages[] = 'Please configure the required email field in your TypoScript!';
 			}
 
 			// Check captcha
-			if (strlen($this->aConfig['captchaSupport'])
-			 && (!isset($this->aConfig['fields.']['captcha.'])
-			 || !is_array($this->aConfig['fields.']['captcha.']))) {
+			if (!empty($this->aConfig['captchaSupport']) && empty($this->aConfig['fields.']['captcha.'])) {
 				$aMessages[] = 'Please configure the required captcha field in your TypoScript!';
 			}
 
 			// Check form template
-			if (!strlen($this->aConfig['formTemplate'])) {
+			if (empty($this->aConfig['formTemplate'])) {
 				$aMessages[] = 'Please define a template for the form!';
 			}
 
 			// Check email template
-			if (!strlen($this->aConfig['emailTemplate'])) {
+			if (empty($this->aConfig['emailTemplate'])) {
 				$aMessages[] = 'Please define a template for the email!';
 			}
 
 			// Check recipients email address
-			if (($this->aConfig['sendTo'] == 'recipients' || $this->aConfig['sendTo'] == 'both')
-			 && !strlen($this->aConfig['emailRecipients'])) {
+			if (($this->aConfig['sendTo'] == 'recipients' || $this->aConfig['sendTo'] == 'both') && empty($this->aConfig['emailRecipients'])) {
 				$aMessages[] = 'Please define an email address for the recipients!';
 			}
 
 			// Check sender email address ("none" will be available if db support was implemented)
-			if ($this->aConfig['sendTo'] != 'none' && !strlen($this->aConfig['emailSender'])) {
+			if ($this->aConfig['sendTo'] != 'none' && empty($this->aConfig['emailSender'])) {
 				$aMessages[] = 'Please define an email address for the sender!';
 			}
 
 			// Check admin email address
-			if (strlen($this->aConfig['adminMails']) && $this->aConfig['adminMails'] != 'none'
-			 && !strlen($this->aConfig['emailAdmin'])) {
+			if ($this->aConfig['adminMails'] != 'none' && empty($this->aConfig['emailAdmin'])) {
 				$aMessages[] = 'Please define an email address for the admin!';
 			}
 
@@ -355,42 +195,185 @@
 
 
 		/**
+		 * Init required attributes and objects
+		 *
+		 */
+		protected function vInit () {
+			$this->sFieldPrefix  = $this->sGetPrefix();
+			$this->oCS           = $this->oGetCSObject();
+			$this->aGP           = $this->aGetGP();
+			$this->aLL           = $this->aGetLL();
+			$this->aUserMarkers  = $this->aGetUserMarkers();
+			$this->aFields       = $this->aGetFields();
+			$this->sEmailCharset = $this->sGetCharset('email');
+			$this->sFormCharset  = $this->sGetCharset('form');
+			$this->oTemplate     = $this->oMakeInstance('template');
+			$this->oSession      = $this->oMakeInstance('session');
+			$this->oCheck        = $this->oMakeInstance('check');
+			$this->oEmail        = $this->oMakeInstance('email');
+			$this->oDB           = $this->oMakeInstance('db');
+		}
+
+
+		/**
+		 * Get fieldname prefix
+		 *
+		 * @return The prefix
+		 */
+		protected function sGetPrefix () {
+			if (!empty($this->aConfig['fieldPrefix'])) {
+				return $this->aConfig['fieldPrefix'];
+			}
+
+			return $this->prefixId . '-' . (int) $this->cObj->data['uid'];
+		}
+
+
+		/**
+		 * Get charset convert object
+		 *
+		 * @return Instance of the csConvObj
+		 */
+		protected function oGetCSObject () {
+			if (isset($GLOBALS['LANG']))    {
+				return $GLOBALS['LANG']->csConvObj;
+			} else if (isset($GLOBALS['TSFE']))  {
+				return $GLOBALS['TSFE']->csConvObj;
+			}
+
+			return t3lib_div::makeInstance('t3lib_cs');
+		}
+
+
+		/**
+		 * Get merged $_GET and $_POST
+		 *
+		 * @return Array with GPVars
+		 */
+		protected function aGetGP () {
+			$aGP = t3lib_div::array_merge_recursive_overrule($_GET, $_POST);
+
+			// Merge prefixed values to first level
+			if (strlen($this->sFieldPrefix) && isset($aGP[$this->sFieldPrefix])) {
+				$aGP = array_merge($aGP, $aGP[$this->sFieldPrefix]);
+				unset($aGP[$this->sFieldPrefix]);
+			}
+
+			t3lib_div::stripSlashesOnArray($aGP);
+			
+			// Add default piVars if configured
+			if (!empty($this->aConfig['_DEFAULT_PI_VARS.']) && is_array($this->aConfig['_DEFAULT_PI_VARS.'])) {
+				$aGP = t3lib_div::array_merge_recursive_overrule($this->aConfig['_DEFAULT_PI_VARS.'], $aGP);
+			}
+
+			return $aGP;
+		}
+
+
+		/**
+		 * Get whole language array
+		 *
+		 * @return Array of all localized labels
+		 */
+		protected function aGetLL () {
+			$sLangKey   = (strtolower($this->LLkey) == 'en') ? 'default' : $this->LLkey;
+			$aLanguages = ($sLangKey != 'default') ? array('default', $sLangKey) : array('default');
+			$aLocalLang = array();
+
+			// Get all locallang sources
+			$aSources = array(
+				'ext'  => 'EXT:' . $this->extKey . '/res/templates/frontend/locallang.xml',
+				'ts'   => (!empty($this->aConfig['_LOCAL_LANG.']))  ? $this->aConfig['_LOCAL_LANG.']  : FALSE,
+				'user' => (!empty($this->aConfig['locallangFile'])) ? $this->aConfig['locallangFile'] : FALSE,
+			);
+
+			foreach ($aSources as $mSource) {
+				if (empty($mSource)) {
+					continue;
+				}
+
+				// Read language file
+				if (is_string($mSource)) {
+					$sFile   = t3lib_div::getFileAbsFileName($mSource);
+					$mSource = t3lib_div::readLLXMLfile($sFile, $sLangKey, $this->oCS->renderCharset);
+				}
+
+				if (!is_array($mSource)) {
+					continue;
+				}
+
+				// Remove dots from TS keys if any
+				$mSource = t3lib_div::removeDotsFromTS($mSource);
+
+				// Combine labels
+				foreach ($aLanguages as $sLang) {
+					if (!empty($mSource[$sLang]) && is_array($mSource[$sLang])) {
+						$aLocalLang = $mSource[$sLang] + $aLocalLang;
+					}
+				}
+			}
+
+			return $aLocalLang;
+		}
+
+
+		/**
+		 * Get user defined markers
+		 *
+		 * @return Array with user markers
+		 */
+		protected function aGetUserMarkers () {
+			$aMarkers = array();
+
+			// User defined markers
+			if (!empty($this->aConfig['markers.']) && is_array($this->aConfig['markers.'])) {
+				foreach ($this->aConfig['markers.'] as $sKey => $sValue) {
+					$aMarkers['###' . strtoupper($sKey) . '###'] = $sValue;
+				}
+			}
+
+			return $aMarkers;
+		}
+
+
+		/**
 		 * Get an array of all fields
 		 *
-		 * @return  Array of all formular fields
+		 * @return Array of all formular fields
 		 */
 		protected function aGetFields () {
-			if (!is_array($this->aConfig['fields.']) || !count($this->aConfig['fields.'])) {
+			if (empty($this->aConfig['fields.']) || !is_array($this->aConfig['fields.'])) {
 				return array();
 			}
 
 			$aFields = array();
 
-			foreach ($this->aConfig['fields.'] as $sKey => $aUserField) {
+			foreach ($this->aConfig['fields.'] as $sKey => $aField) {
 				// Get configuration
 				$sName      = strtolower(trim($sKey, ' .{}()'));
-				$sValue     = isset($_POST[$sName]) ? $this->piVars[$sName] : $this->sGetTSValue($aUserField, 'default');
+				$sValue     = isset($_POST[$sName]) ? $this->aGP[$sName] : $aField['default'];
 				$sUpperName = strtoupper($sName);
 				$sMultiName = $sUpperName . '_' . md5($sValue);
 
 				// Build the field
 				$aFields[$sName] = array (
-					'markerName'    => '###'          . $sUpperName . '###',
-					'messageName'   => '###MSG_'      . $sUpperName . '###',
-					'errClassName'  => '###ERR_'      . $sUpperName . '###',
-					'valueName'     => '###VALUE_'    . $sUpperName . '###',
-					'labelName'     => '###LABEL_'    . $sUpperName . '###',
-					'checkedName'   => '###CHECKED_'  . $sUpperName . '###',
-					'multiChkName'  => '###CHECKED_'  . $sMultiName . '###',
-					'multiSelName'  => '###SELECTED_' . $sMultiName . '###',
-					'regex'         => $aUserField['regex']         ? $aUserField['regex']      : '',
-					'disallowed'    => $aUserField['disallowed']    ? $aUserField['disallowed'] : '',
-					'allowed'       => $aUserField['allowed']       ? $aUserField['allowed']    : '',
-					'required'      => $aUserField['required']      ? $aUserField['required']   : 0,
-					'minLength'     => $aUserField['minLength']     ? $aUserField['minLength']  : 0,
-					'maxLength'     => $aUserField['maxLength']     ? $aUserField['maxLength']  : 0,
-					'label'         => $this->aLL[$sName]           ? $this->aLL[$sName]        : ucfirst($sName) . ':',
-					'value'         => $sValue,
+					'markerName'   => '###'          . $sUpperName . '###',
+					'messageName'  => '###MSG_'      . $sUpperName . '###',
+					'errClassName' => '###ERR_'      . $sUpperName . '###',
+					'valueName'    => '###VALUE_'    . $sUpperName . '###',
+					'labelName'    => '###LABEL_'    . $sUpperName . '###',
+					'checkedName'  => '###CHECKED_'  . $sUpperName . '###',
+					'requiredName' => '###REQUIRED_' . $sUpperName . '###',
+					'multiChkName' => '###CHECKED_'  . $sMultiName . '###',
+					'multiSelName' => '###SELECTED_' . $sMultiName . '###',
+					'regex'        => $aField['regex']      ? $aField['regex']      : '',
+					'disallowed'   => $aField['disallowed'] ? $aField['disallowed'] : '',
+					'allowed'      => $aField['allowed']    ? $aField['allowed']    : '',
+					'required'     => $aField['required']   ? $aField['required']   : 0,
+					'minLength'    => $aField['minLength']  ? $aField['minLength']  : 0,
+					'maxLength'    => $aField['maxLength']  ? $aField['maxLength']  : 0,
+					'label'        => $this->aLL[$sName]    ? $this->aLL[$sName]    : ucfirst($sName),
+					'value'        => $sValue,
 				);
 			}
 
@@ -399,9 +382,33 @@
 
 
 		/**
+		 * Get the charset for the form and emails
+		 *
+		 * @param  string $psType Type of media which needs the charset
+		 * @return The character encoding
+		 */
+		protected function sGetCharset ($psType = 'form') {
+			$sType    = strtolower(trim($psType)) . 'Charset';
+			$sCharset = 'iso-8859-1';
+
+			if (isset($GLOBALS['LANG'])) {
+				$sCharset = $GLOBALS['LANG']->charSet;
+			} else if (isset($GLOBALS['TSFE'])) {
+				$sCharset = (strlen($GLOBALS['TSFE']->renderCharset)) ? $GLOBALS['TSFE']->renderCharset : $GLOBALS['TSFE']->defaultCharSet;
+			}
+
+			if (!empty($this->aConfig[$sType])) {
+				$sCharset = $this->aConfig[$sType];
+			}
+
+			return strtolower($sCharset);
+		}
+
+
+		/**
 		 * Make an instance of any class
 		 *
-		 * @return  Instance of the new object
+		 * @return Instance of the new object
 		 */
 		protected function oMakeInstance ($psClassPostfix) {
 			if (!strlen($psClassPostfix)) {
@@ -414,10 +421,12 @@
 			if (@file_exists($sFileName)) {
 				include_once($sFileName);
 
-				$sClass  = t3lib_div::makeInstanceClassName($sClassName);
-				$oResult = new $sClass($this);
+				if (t3lib_div::int_from_ver(TYPO3_version) >= 4003000) {
+					return t3lib_div::makeInstance($sClassName, $this);
+				}
 
-				return $oResult;
+				$sClass = t3lib_div::makeInstanceClassName($sClassName);
+				return new $sClass($this);
 			}
 
 			return NULL;
@@ -427,15 +436,23 @@
 		/**
 		 * Check if form is empty
 		 *
-		 * @return  TRUE if the form is empty
+		 * @param  array $paValues Values to check
+		 * @return TRUE if the form is empty
 		 */
-		protected function bIsFormEmpty () {
-			if (!is_array($this->piVars)) {
-				return FALSE;
-			}
+		protected function bIsFormEmpty (array $paValues = array()) {
+			$aValues = (count($paValues)) ? $paValues : $this->aGP;
 
-			foreach ($this->piVars as $sKey => $sValue) {
-				if (strlen($sValue)) {
+			foreach ($paValues as $sKey => $mValue) {
+				// Check first if its an array
+				if (is_array($mValue)) {
+					if (!$this->bIsFormEmpty($mValue)) {
+						return FALSE;
+					}
+					continue;
+				}
+
+				// Now check if field is empty
+				if (!empty($mValue)) {
 					return FALSE;
 				}
 			}
@@ -449,7 +466,7 @@
 		 *
 		 */
 		protected function vSendWarning ($psType) {
-			if ($this->aConfig['adminMails'] !== strtolower($psType) && $this->aConfig['adminMails'] !== 'both') {
+			if ($this->aConfig['adminMails'] != strtolower($psType) && $this->aConfig['adminMails'] != 'both') {
 				return;
 			}
 
@@ -458,30 +475,28 @@
 
 
 		/**
-		 * Get redirect url
+		 * Redirect if page is configured
 		 *
-		 * @return  URL of the page which should be shown after successfully sent mail
 		 */
-		protected function sGetRedirectURL () {
-			$sPage = $this->aConfig['redirectPage'];
-
-			if (!strlen($sPage)) {
-				$sPage = $GLOBALS['TSFE']->id;
+		protected function vCheckRedirect ($psType = 'success') {
+			if ($psType != 'success' && $psType != 'spam' && $psType != 'error') {
+				return;
 			}
 
-			return $this->cObj->typoLink('', array(
-					'parameter' => $sPage,
-					'returnLast' => 'url',
-				)
-			);
+			if (!empty($this->aConfig[$psType . 'RedirectPage'])) {
+				$sURL = $this->aConfig[$psType . 'RedirectPage'];
+				$sURL = $this->pi_linkTP_keepPIvars_url(array(), 0, 0, $sURL);
 
+				Header('Location: ' . t3lib_div::locationHeaderUrl($sURL));
+				exit();
+			}
 		}
 
 
 		/**
 		 * Get content
 		 *
-		 * @return  Whole content
+		 * @return Whole content
 		 */
 		protected function sGetContent () {
 			$sContent = $this->oTemplate->sGetContent();

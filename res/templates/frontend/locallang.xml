@@ -58,6 +58,7 @@
 			<label index="msg_email_failed">Message could not be sent. Please try again.</label>
 			<label index="msg_check_passed"></label>
 			<label index="msg_check_failed">A problem has occurred, your input contains errors.</label>
+			<label index="msg_db_failed">A problem has occurred. Please check your database configuration.</label>
 			<label index="msg_not_allowed">This process is not allowed!</label>
 			<label index="msg_already_sent">You have already sent %d messages. Please wait %d minute(s).</label>
 			<label index="msg_captcha">Please enter the sequence of characters shown in the captcha image.</label>
@@ -72,6 +73,8 @@
 			<label index="submit">Submit</label>
 			<label index="checked">yes</label>
 			<label index="unchecked">no</label>
+			<label index="required">*</label>
+			<label index="required_info">All with a symbol (*) are required fields.</label>
 		</languageKey>
 		<languageKey index="de" type="array">
 			<label index="msg_name_empty">Bitte geben Sie Ihren Namen ein.</label>
@@ -126,6 +129,7 @@
 			<label index="msg_email_failed">Ihre Nachricht konnte nicht versandt werden. Bitte versuchen Sie es erneut.</label>
 			<label index="msg_check_passed"></label>
 			<label index="msg_check_failed">Bei den Formulareingaben ist ein Problem aufgetreten.</label>
+			<label index="msg_db_failed">Es ist ein Problem aufgetreten. Bitte prüfen Sie Ihre Datenbank-Konfiguration.</label>
 			<label index="msg_not_allowed">Dieser Prozess ist nicht erlaubt!</label>
 			<label index="msg_already_sent">Sie haben bereits %d Nachrichten versandt. Bitte warten Sie %d Minute(n).</label>
 			<label index="msg_captcha">Bitte übertragen Sie die Zeichen des Captcha-Bildes in das Textfeld.</label>
@@ -140,6 +144,8 @@
 			<label index="submit">Absenden</label>
 			<label index="checked">ja</label>
 			<label index="unchecked">nein</label>
+			<label index="required">*</label>
+			<label index="required_info">Alle mit einem (*) versehenen Felder sind Pflichtangaben.</label>
 		</languageKey>
 	</data>
 </T3locallang>

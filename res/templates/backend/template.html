@@ -1,0 +1,91 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+	<title>main backend template</title>
+</head>
+<body>
+<h1>Following markers could be set:</h1>
+
+<h2>General:</h2>
+###URL_SELF###                  <br />
+###CSV_IMAGE_SRC###             <br />
+###INFO###                      <br />
+                                <br />
+
+<h2>Func menues:</h2>
+###MENU_MODE###                 <br />
+###MENU_PERIOD###               <br />
+                                <br />
+
+<h2>Show the value of input fields:</h2>
+###VALUE_<FIELDNAME>###         <br />
+                                <br />
+
+<h2>Show whole prepered content:</h2>
+###INPUT_HTML###                <br />
+###INPUT_PLAIN###               <br />
+                                <br />
+
+<h2>Show your own markers (define via TypoScript - see manual):</h2>
+###<NAME_OF_MY_MARKER>###       <br />
+                                <br />
+
+<h2>Show your own locallang labels (see manual):</h2>
+###LLL:<label_name_in_xml>###   <br />
+                                <br />
+
+<h2>Show user information:</h2>
+###USER:<DB_FIELDNAME>###       <br />
+                                <br />
+                                <br />
+
+
+
+<!-- ###TEMPLATE### begin -->
+<style type="text/css">
+tr.highlight:hover {
+  background-color: #FFFFFF;
+  cursor: default;
+}
+span.label {
+  display: inline-block;
+  width: 90px;
+  padding-right: 6px;
+  font-weight: bold;
+}
+</style>
+<h2>###LLL:headline###</h2>
+<br />
+<p>###LLL:menu_mode### ###MENU_MODE###&nbsp;&nbsp;###LLL:menu_period### ###MENU_PERIOD###&nbsp;&nbsp;###LLL:menu_download### <a href="###URL_SELF###&csv=1" target="_self" title="###LLL:download_csv###"><img ###CSV_IMAGE_SRC### /></a></p>
+<br />
+<table>
+	<tr class="bgColor5 tableheader">
+		<td align="center">###LLL:table_header_datetime###</td>
+		<td align="center">###LLL:table_header_ip###</td>
+		<td align="center">###LLL:table_header_agent###</td>
+		<td align="center">###LLL:table_header_fields###</td>
+	</tr>
+	###LOG_TABLE_ROWS###
+</table>
+<br />
+<p>###INFO###</p>
+<!-- ###TEMPLATE### end -->
+
+
+
+
+
+<!-- ###SUB_TEMPLATE_LOG_TABLE_ROWS### begin -->
+<tr class="bgColor-20 highlight">
+	<td valign="top">###CRDATE###</td>
+	<td valign="top" align="right">###IP###</td>
+	<td valign="top">###AGENT###</td>
+	<td valign="top">###INPUT_HTML###</td>
+</tr>
+<!-- ###SUB_TEMPLATE_LOG_TABLE_ROWS### end -->
+
+
+
+</body>
+</html>

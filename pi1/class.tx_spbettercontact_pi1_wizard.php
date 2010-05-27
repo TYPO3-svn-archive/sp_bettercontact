@@ -2,7 +2,7 @@
 	/***************************************************************
 	*  Copyright notice
 	*
-	*  (c) 2009 Kai Vogel <kai.vogel ( at ) speedprogs.de>
+	*  (c) 2010 Kai Vogel <kai.vogel ( at ) speedprogs.de>
 	*  All rights reserved
 	*
 	*  This script is part of the TYPO3 project. The TYPO3 project is
@@ -30,24 +30,24 @@
 	/**
 	 * Class that adds the wizard icon in version 4.3
 	 *
-	 * @author      Kai Vogel <kai.vogel ( at ) speedprogs.de>
-	 * @package     TYPO3
-	 * @subpackage  tx_spbettercontact
+	 * @author     Kai Vogel <kai.vogel ( at ) speedprogs.de>
+	 * @package    TYPO3
+	 * @subpackage tx_spbettercontact
 	 */
 	class tx_spbettercontact_pi1_wizard implements cms_newContentElementWizardsHook {
 
 		/**
 		 * Processing the wizard items array
 		 *
-		 * @param   array   $aWizardItems: The wizard items
-		 * @param   array   $oParent: New Content element wizard object
-		 * @return  Modified array with wizard items
+		 * @param  array $aWizardItems The wizard items
+		 * @param  array $oParent New Content element wizard object
+		 * @return Modified array with wizard items
 		 */
-		public function manipulateWizardItems(&$aWizardItems, &$oParent) {
-			$oWizard = t3lib_div::makeInstance('tx_spbettercontact_pi1_wizicon');
+		public function manipulateWizardItems (array &$aWizardItems, &$oParent) {
+			$oWizard      = t3lib_div::makeInstance('tx_spbettercontact_pi1_wizicon');
 			$aWizardItems = $oWizard->proc($aWizardItems);
 
-			if (is_array($aWizardItems) && isset($aWizardItems['forms_contact'])) {
+			if (isset($aWizardItems['forms_contact'])) {
 				$aWizardItems['forms_contact']['params'] = '&defVals[tt_content][CType]=sp_bettercontact_pi1';
 			}
 

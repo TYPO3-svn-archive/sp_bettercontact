@@ -2,7 +2,7 @@
 	/***************************************************************
 	*  Copyright notice
 	*
-	*  (c) 2009 Kai Vogel <kai.vogel ( at ) speedprogs.de>
+	*  (c) 2010 Kai Vogel <kai.vogel ( at ) speedprogs.de>
 	*  All rights reserved
 	*
 	*  This script is part of the TYPO3 project. The TYPO3 project is
@@ -26,42 +26,46 @@
 	/**
 	 * Template class for the 'sp_bettercontact' extension.
 	 *
-	 * @author      Kai Vogel <kai.vogel ( at ) speedprogs.de>
-	 * @package     TYPO3
-	 * @subpackage  tx_spbettercontact
+	 * @author     Kai Vogel <kai.vogel ( at ) speedprogs.de>
+	 * @package    TYPO3
+	 * @subpackage tx_spbettercontact
 	 */
 	class tx_spbettercontact_pi1_template {
-		public $oCObj         = NULL;
-		public $aLL           = array();
-		public $aConfig       = array();
-		public $aFields       = array();
-		public $aPiVars       = array();
-		public $aUserMarkers  = array();
-		public $sFormChar     = 'iso-8859-1';
-		public $sExtKey       = '';
-		public $sPrefix       = '';
-		public $iPluginId     = 0;
+		protected $oCObj        = NULL;
+		protected $aLL          = array();
+		protected $aConfig      = array();
+		protected $aFields      = array();
+		protected $aGP          = array();
+		protected $aMarkers     = array();
+		protected $sExtKey      = 'sp_bettercontact';
+		protected $sFormChar    = 'iso-8859-1';
+		protected $sFieldPrefix = '';
+		protected $iPluginId    = 0;
 
 
 		/**
 		 * Set configuration for template object
 		 *
-		 * @param   object   $poParent: Instance of the parent object
+		 * @param object $poParent Instance of the parent object
 		 */
 		public function __construct ($poParent) {
 			$this->oCObj        = $poParent->cObj;
 			$this->aLL          = $poParent->aLL;
 			$this->aConfig      = $poParent->aConfig;
 			$this->aFields      = $poParent->aFields;
-			$this->aPiVars      = $poParent->piVars;
+			$this->aGP          = $poParent->aGP;
 			$this->sExtKey      = $poParent->extKey;
-			$this->sPrefix      = $poParent->prefixId;
 			$this->iPluginId    = $poParent->iPluginId;
 			$this->sFormChar    = $poParent->sFormCharset;
-			$this->aUserMarkers = $poParent->aUserMarkers;
+			$this->sFieldPrefix = $poParent->sFieldPrefix;
 
 			// Set default markers
-			$this->vAddDefaultMarkers();
+			$this->aMarkers = $this->aGetDefaultMarkers();
+
+			// User defined markers
+			if (isset($poParent->aUserMarkers) && is_array($poParent->aUserMarkers)) {
+				$this->vAddMarkers($poParent->aUserMarkers);
+			}
 
 			// Add captcha fields
 			$this->vAddCaptcha();
@@ -74,60 +78,114 @@
 		/**
 		 * Predefine default markers
 		 *
+		 * @return Array with markers
 		 */
-		protected function vAddDefaultMarkers () {
-			$aLinkParams = array(
-				'parameter'  => $GLOBALS['TSFE']->id,
-				'returnLast' => 'url',
-			);
-
-			if ($this->aConfig['redirectToAnchor']) {
-				$aLinkParams['section'] = 'p' . $this->oCObj->data['uid'];
-			}
+		protected function aGetDefaultMarkers () {
+			$aMarkers = array();
 
 			// Default markers
-			$this->aMarkers['###URL_SELF###']       = $this->oCObj->typoLink('', $aLinkParams);
-			$this->aMarkers['###SUBMIT###']         = $this->sExtKey . '[submit]';
-			$this->aMarkers['###SUBMIT_VALUE###']   = $this->aLL['submit'];
-			$this->aMarkers['###CHARSET###']        = $this->sFormChar;
-			$this->aMarkers['###MESSAGES###']       = '';
-			$this->aMarkers['###HIDDEN###']         = '';
-			$this->aMarkers['###INFO###']           = '';
-			$this->aMarkers['###ANCHOR###']         = ($this->aConfig['redirectToAnchor']) ? '<a id="p' . $this->oCObj->data['uid'] . '" name="p' . $this->oCObj->data['uid'] . '"></a>' : '';
+			$aMarkers['###URL_SELF###']     = $this->sGetSelfLink();
+			$aMarkers['###FORM_NAME###']    = $this->sFieldPrefix . '[form]';
+			$aMarkers['###FORM_ID###']      = $this->sFieldPrefix;
+			$aMarkers['###SUBMIT###']       = $this->sFieldPrefix . '[submit]';
+			$aMarkers['###SUBMIT_VALUE###'] = $this->aLL['submit'];
+			$aMarkers['###CHARSET###']      = $this->sFormChar;
+			$aMarkers['###HIDDEN###']       = PHP_EOL;
+			$aMarkers['###MESSAGES###']     = '';
+			$aMarkers['###INFO###']         = '';
+			$aMarkers['###ANCHOR###']       = '';
+
+			// Anchor
+			if (!empty($this->aConfig['redirectToAnchor'])) {
+				$aMarkers['###ANCHOR###'] = '<a id="p' . $this->oCObj->data['uid'] . '" name="p' . $this->oCObj->data['uid'] . '"></a>';
+			}
 
 			// Fields
 			if (is_array($this->aFields)) {
 				foreach ($this->aFields as $sKey => $aField) {
 					$sName = strtolower(trim($sKey, ' .{}()='));
-					$this->aMarkers['###HIDDEN###']            .= '<input type="text" name="' . $sKey.'" value="" />' . PHP_EOL;
-					$this->aMarkers[$aField['valueName']]       = $aField['value'];
-					$this->aMarkers[$aField['labelName']]       = $aField['label'];
-					$this->aMarkers[$aField['messageName']]     = '';
-					$this->aMarkers[$aField['errClassName']]    = '';
-					$this->aMarkers[$aField['checkedName']]     = '';
-					$this->aMarkers[$aField['multiChkName']]    = '';
-					$this->aMarkers[$aField['multiSelName']]    = '';
-					if (isset($this->aPiVars[$sName]) || (bool) $aField['value']) {
-						$this->aMarkers[$aField['checkedName']]     = 'checked="checked"';
-						$this->aMarkers[$aField['multiChkName']]    = 'checked="checked"';
-						$this->aMarkers[$aField['multiSelName']]    = 'selected="selected"';
+					$aMarkers['###HIDDEN###']         .= '<input type="text" name="' . $sKey.'" value="" />' . PHP_EOL;
+					$aMarkers[$aField['valueName']]    = $aField['value'];
+					$aMarkers[$aField['labelName']]    = $aField['label'];
+					$aMarkers[$aField['messageName']]  = '';
+					$aMarkers[$aField['errClassName']] = (!empty($this->aConfig['classNoError'])) ? $this->aConfig['classNoError'] : '';
+					$aMarkers[$aField['checkedName']]  = '';
+					$aMarkers[$aField['multiChkName']] = '';
+					$aMarkers[$aField['multiSelName']] = '';
+					$aMarkers[$aField['requiredName']] = (!empty($aField['required'])) ? $this->aLL['required'] : '';
+
+					if (isset($this->aGP[$sName]) || (bool) $aField['value']) {
+						$aMarkers[$aField['checkedName']]  = 'checked="checked"';
+						$aMarkers[$aField['multiChkName']] = 'checked="checked"';
+						$aMarkers[$aField['multiSelName']] = 'selected="selected"';
 					}
 				}
 			}
 
-			// User defined markers
-			if (isset($this->aUserMarkers) && is_array($this->aUserMarkers)) {
-				foreach ($this->aUserMarkers as $sKey => $sValue) {
-					$this->aMarkers[$sKey] = $sValue;
+			// Page info
+			if (!empty($GLOBALS['TSFE']->page) && is_array($GLOBALS['TSFE']->page)) {
+				foreach ($GLOBALS['TSFE']->page as $sKey => $sValue) {
+					$aMarkers['###PAGE:' . $sKey . '###'] = $sValue;
+				}
+			}
+
+			// Plugin info
+			if (!empty($this->oCObj->data) && is_array($this->oCObj->data)) {
+				foreach ($this->oCObj->data as $sKey => $sValue) {
+					$aMarkers['###PLUGIN:' . $sKey . '###'] = $sValue;
+				}
+			}
+
+			// FE-User info
+			if (!empty($GLOBALS['TSFE']->fe_user->user) && is_array($GLOBALS['TSFE']->fe_user->user)) {
+				$aUserData = $GLOBALS['TSFE']->fe_user->user;
+				foreach ($aUserData as $sKey => $sValue) {
+					$aMarkers['###USER:' . $sKey . '###'] = $sValue;
 				}
 			}
 
 			// Locallang labels
 			if (is_array($this->aLL)) {
 				foreach ($this->aLL as $sKey => $sValue) {
-					$this->aMarkers['###LLL:' . $sKey . '###'] = $sValue;
+					$aMarkers['###LLL:' . $sKey . '###'] = $sValue;
 				}
 			}
+
+			return $aMarkers;
+		}
+
+
+		/**
+		 * Get URL to current page
+		 *
+		 * @return URL to current page
+		 */
+		protected function sGetSelfLink () {
+			// Default link config
+			$aLinkParams = array(
+				'parameter'       => $GLOBALS['TSFE']->id,
+				'returnLast'      => 'url',
+				'addQueryString'  => 1,
+				'addQueryString.' => array(
+					'method' => 'GET',
+				),
+			);
+
+			// Add anchor
+			if ($this->aConfig['redirectToAnchor']) {
+				$aLinkParams['section'] = 'p' . $this->oCObj->data['uid'];
+			}
+
+			return $this->oCObj->typoLink('', $aLinkParams);
+		}
+
+
+		/**
+		 * Merge given markers with global marker array
+		 *
+		 */
+		public function vAddMarkers (array $paMarkers) {
+			$this->aMarkers = $paMarkers + $this->aMarkers;
 		}
 
 
@@ -136,8 +194,8 @@
 		 *
 		 */
 		protected function vAddCaptcha () {
-			$sExtKey    = strtolower(trim($this->aConfig['captchaSupport']));
-			$aField     = $this->aFields['captcha'];
+			$sExtKey = strtolower(trim($this->aConfig['captchaSupport']));
+			$aField  = $this->aFields['captcha'];
 
 			// Add captcha
 			if (strlen($sExtKey) && t3lib_extMgm::isLoaded(strtolower(trim($sExtKey)))) {
@@ -146,9 +204,9 @@
 				switch ($sExtKey) {
 					case 'sr_freecap' :
 						require_once(t3lib_extMgm::extPath($sExtKey) . 'pi2/class.tx_srfreecap_pi2.php');
-						$oCaptcha   = t3lib_div::makeInstance('tx_srfreecap_pi2');
-						$aMarkers   = $oCaptcha->makeCaptcha();
-						$this->vAddMarkers($aMarkers);
+						$oCaptcha       = t3lib_div::makeInstance('tx_srfreecap_pi2');
+						$aMarkers       = $oCaptcha->makeCaptcha();
+						$this->aMarkers = $aMarkers + $this->aMarkers;
 						$this->aMarkers['###CAPTCHA_DATA###'] = implode(PHP_EOL, array(
 							'<div class="tx_srfreecap_pi2">',
 								'<div class="tx_srfreecap_pi2_image">',
@@ -179,6 +237,11 @@
 							'</div>',
 						));
 					break;
+					case 'mathguard' :
+						require_once(t3lib_extMgm::extPath($sExtKey) . 'class.tx_mathguard.php');
+						$oCaptcha = t3lib_div::makeInstance('tx_mathguard');
+						$this->aMarkers['###CAPTCHA_DATA###'] = $oCaptcha->getCaptcha();
+					break;
 					default:
 						return;
 					break;
@@ -193,6 +256,7 @@
 		 */
 		protected function vSetStylesheet () {
 			$sFile = $this->aConfig['stylesheetFile'];
+			$sTag  = '<link rel="stylesheet" href="%s" type="text/css" />';
 
 			// Check for extension relative path
 			if (substr($sFile, 0, 4) == 'EXT:') {
@@ -205,25 +269,7 @@
 			}
 
 			if (strlen($sFile)) {
-				$GLOBALS['TSFE']->additionalHeaderData[$this->sExtKey] = '<link rel="stylesheet" href="' . $sFile . '" type="text/css" />';
-			}
-		}
-
-
-		/**
-		 * Merge markers given with class marker array
-		 *
-		 */
-		public function vAddMarkers ($paMarkers) {
-			if (!is_array($paMarkers)) {
-				return;
-			}
-
-			// Combine arrays
-			if (count($this->aMarkers)) {
-				$this->aMarkers = array_merge($this->aMarkers, $paMarkers);
-			} else {
-				$this->aMarkers = $paMarkers;
+				$GLOBALS['TSFE']->additionalHeaderData[md5($sFile)] = sprintf($sTag, urlencode($sFile));
 			}
 		}
 
@@ -232,12 +278,7 @@
 		 * Remove malicious input from markers
 		 *
 		 */
-		public function vClearMalicious ($paFields) {
-			if (!is_array($paFields)) {
-				return;
-			}
-
-			// Remove field values
+		public function vClearMalicious (array $paFields) {
 			foreach ($paFields as $aField) {
 				$this->aMarkers[$aField['valueName']] = '';
 			}
@@ -247,39 +288,38 @@
 		/**
 		 * Get content from template and markers
 		 *
-		 * @return	Whole content
+		 * @return Whole content
 		 */
 		public function sGetContent () {
-			if (!strlen($this->aConfig['formTemplate'])) {
+			if (empty($this->aConfig['formTemplate'])) {
 				return;
 			}
 
 			// Add field names
 			if (is_array($this->aFields)) {
 				foreach ($this->aFields as $sKey => $aField) {
-					$this->aMarkers[$aField['markerName']] = $this->sPrefix . '[' . $sKey . ']';
+					$this->aMarkers[$aField['markerName']] = $this->sFieldPrefix . '[' . $sKey . ']';
 					$aMultiNames['[' . $aField['labelName'] . ']'] = md5($this->aMarkers[$aField['labelName']]);
 				}
 			}
 
 			// Get templates and markers
-			$sRessource     = $this->oCObj->fileResource($this->aConfig['formTemplate']);
-			$sTemplate      = $this->oCObj->getSubpart($sRessource, '###TEMPLATE###');
-			$aSpecial       = $this->aGetSpecialMarkers($sTemplate);
+			$sRessource = $this->oCObj->fileResource($this->aConfig['formTemplate']);
+			$aSpecial   = $this->aGetSpecialMarkers($sTemplate);
+			$sTemplate  = $this->oCObj->getSubpart($sRessource, '###TEMPLATE###');
+			$sTemplate  = trim($sTemplate, "\n");
+			$sTemplate  = $this->oCObj->substituteMarkerArray($sTemplate, $aSpecial);
 
 			// Add captcha if configured
 			if (strlen($this->aConfig['captchaSupport']) && strlen($this->aMarkers['###CAPTCHA_DATA###'])) {
-				$sCaptchaExt    = strtoupper($this->aConfig['captchaSupport']);
-				$sCaptchaTmpl   = $this->oCObj->getSubpart($sRessource, '###SUB_TEMPLATE_' . $sCaptchaExt . '###');
+				$sCaptchaExt  = strtoupper($this->aConfig['captchaSupport']);
+				$sCaptchaTmpl = $this->oCObj->getSubpart($sRessource, '###SUB_TEMPLATE_' . $sCaptchaExt . '###');
+				$sCaptchaTmpl = trim($sCaptchaTmpl, "\n");
 				$this->aMarkers['###CAPTCHA_FIELD###'] = $this->oCObj->substituteMarkerArray($sCaptchaTmpl, $this->aMarkers);
 			}
 
-			// Build output
-			$sTemplate      = $this->oCObj->substituteMarkerArray($sTemplate, $aSpecial);
-			$sContent       = $this->oCObj->substituteMarkerArray($sTemplate, $this->aMarkers);
-			$sContent       = preg_replace('|###.*?###|i', '', $sContent);
-
-			return $sContent;
+			// Output
+			return $this->oCObj->substituteMarkerArray($sTemplate, $this->aMarkers, '', FALSE, TRUE);
 		}
 
 
@@ -294,8 +334,8 @@
 				return array();
 			}
 
-			$aResults   = array();
-			$aMarkers   = array();
+			$aResults = array();
+			$aMarkers = array();
 
 			preg_match_all('|_\[.*?\]#|i', $psTemplate, $aResults);
 
