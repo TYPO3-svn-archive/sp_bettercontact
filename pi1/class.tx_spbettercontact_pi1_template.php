@@ -176,7 +176,9 @@
 				$aLinkParams['section'] = 'p' . $this->oCObj->data['uid'];
 			}
 
-			return $this->oCObj->typoLink('', $aLinkParams);
+			// Get URL
+			$sURL = $this->oCObj->typoLink('', $aLinkParams);
+			return t3lib_div::locationHeaderUrl($sURL);
 		}
 
 

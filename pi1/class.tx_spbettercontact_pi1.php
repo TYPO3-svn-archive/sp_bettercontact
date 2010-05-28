@@ -260,7 +260,7 @@
 			}
 
 			t3lib_div::stripSlashesOnArray($aGP);
-			
+
 			// Add default piVars if configured
 			if (!empty($this->aConfig['_DEFAULT_PI_VARS.']) && is_array($this->aConfig['_DEFAULT_PI_VARS.'])) {
 				$aGP = t3lib_div::array_merge_recursive_overrule($this->aConfig['_DEFAULT_PI_VARS.'], $aGP);
@@ -479,17 +479,15 @@
 		 *
 		 */
 		protected function vCheckRedirect ($psType = 'success') {
-			if ($psType != 'success' && $psType != 'spam' && $psType != 'error') {
+			if (empty($this->aConfig[$psType . 'RedirectPage'])) {
 				return;
 			}
 
-			if (!empty($this->aConfig[$psType . 'RedirectPage'])) {
-				$sURL = $this->aConfig[$psType . 'RedirectPage'];
-				$sURL = $this->pi_linkTP_keepPIvars_url(array(), 0, 0, $sURL);
+			$sURL = $this->aConfig[$psType . 'RedirectPage'];
+			$sURL = $this->pi_linkTP_keepPIvars_url(array(), 0, 0, $sURL);
 
-				Header('Location: ' . t3lib_div::locationHeaderUrl($sURL));
-				exit();
-			}
+			Header('Location: ' . t3lib_div::locationHeaderUrl($sURL));
+			exit();
 		}
 
 

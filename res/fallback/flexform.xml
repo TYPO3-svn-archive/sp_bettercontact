@@ -443,6 +443,33 @@
 							</config>
 						</TCEforms>
 					</emailCharset>
+					<emailType>
+						<TCEforms>
+							<exclude>1</exclude>
+							<label>LLL:EXT:sp_bettercontact/locallang.php:tt_content.flexform_pi1.emailType</label>
+							<config>
+								<type>select</type>
+								<default></default>
+								<items type="array">
+									<numIndex index="0" type="array">
+										<numIndex index="0">LLL:EXT:sp_bettercontact/locallang.php:tt_content.flexform_pi1.emailType.0</numIndex>
+										<numIndex index="1"></numIndex>
+									</numIndex>
+									<numIndex index="1" type="array">
+										<numIndex index="0">LLL:EXT:sp_bettercontact/locallang.php:tt_content.flexform_pi1.emailType.1</numIndex>
+										<numIndex index="1">plain</numIndex>
+									</numIndex>
+									<numIndex index="2" type="array">
+										<numIndex index="0">LLL:EXT:sp_bettercontact/locallang.php:tt_content.flexform_pi1.emailType.2</numIndex>
+										<numIndex index="1">both</numIndex>
+									</numIndex>
+								</items>
+								<minitems>0</minitems>
+								<maxitems>1</maxitems>
+								<size>1</size>
+							</config>
+						</TCEforms>
+					</emailType>
 				</el>
 			</ROOT>
 		</sEMAIL>

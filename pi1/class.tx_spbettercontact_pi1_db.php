@@ -59,14 +59,12 @@
 				return 0;
 			}
 
-			$iTime = time();
-
 			// Add default fields
 			$aFields = array(
-				'pid'       => $GLOBALS['TSFE']->id,
-				'tstamp'    => $iTime,
-				'crdate'    => $iTime,
-				'cruser_id' => (!empty($GLOBALS['TSFE']->fe_user->user['uid'])) ? $GLOBALS['TSFE']->fe_user->user['uid'] : 0,
+				'pid'       => (int) $GLOBALS['TSFE']->id,
+				'tstamp'    => (int) $GLOBALS['SIM_EXEC_TIME'],
+				'crdate'    => (int) $GLOBALS['SIM_EXEC_TIME'],
+				'cruser_id' => (!empty($GLOBALS['TSFE']->fe_user->user['uid'])) ? (int) $GLOBALS['TSFE']->fe_user->user['uid'] : 0,
 				'deleted'   => 0,
 				'ip'        => (!empty($this->aConfig['enableIPLog'])) ? t3lib_div::getIndpEnv('REMOTE_ADDR') : '',
 				'agent'     => t3lib_div::getIndpEnv('HTTP_USER_AGENT'),
@@ -132,7 +130,7 @@
 
 			// Insert
 			if ($GLOBALS['TYPO3_DB']->exec_INSERTquery($aDBConf['table'], $aFields)) {
-				return $GLOBALS['TYPO3_DB']->sql_insert_id();
+				return (int) $GLOBALS['TYPO3_DB']->sql_insert_id();
 			}
 
 			$this->bHasError = TRUE;
@@ -219,7 +217,6 @@
 
 			$aColumns   = $GLOBALS['TCA'][$psTable]['columns'];
 			$aCTRL      = $GLOBALS['TCA'][$psTable]['ctrl'];
-			$iTime      = time();
 			$aNewFields = array();
 
 			// PID
@@ -229,12 +226,12 @@
 
 			// TSTAMP
 			if (isset($aColumns['tstamp']) || isset($aCTRL['tstamp'])) {
-				$aNewFields['tstamp'] = $iTime;
+				$aNewFields['tstamp'] = (int) $GLOBALS['SIM_EXEC_TIME'];
 			}
 
 			// CRDATE
 			if (isset($aColumns['crdate']) || isset($aCTRL['crdate'])) {
-				$aNewFields['crdate'] = $iTime;
+				$aNewFields['crdate'] = (int) $GLOBALS['SIM_EXEC_TIME'];
 			}
 
 			// CRUSER_ID

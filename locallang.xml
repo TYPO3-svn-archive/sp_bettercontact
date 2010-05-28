@@ -56,6 +56,10 @@
 			<label index="tt_content.flexform_pi1.emailCharset.10">BIG5-HKSCS</label>
 			<label index="tt_content.flexform_pi1.emailCharset.11">Shift_JIS</label>
 			<label index="tt_content.flexform_pi1.emailCharset.12">EUC-JP</label>
+			<label index="tt_content.flexform_pi1.emailType">Send emails in this format:</label>
+			<label index="tt_content.flexform_pi1.emailType.0">Defined by TypoScript</label>
+			<label index="tt_content.flexform_pi1.emailType.1">Plain only</label>
+			<label index="tt_content.flexform_pi1.emailType.2">HTML with plain alternative</label>
 			<label index="tt_content.flexform_pi1.sSPAM">Spam</label>
 			<label index="tt_content.flexform_pi1.showMaliciousInput">Show input in case of error:</label>
 			<label index="tt_content.flexform_pi1.showMaliciousInput.0">Defined by TypoScript</label>
@@ -133,6 +137,10 @@
 			<label index="tt_content.flexform_pi1.emailCharset.10">BIG5-HKSCS</label>
 			<label index="tt_content.flexform_pi1.emailCharset.11">Shift_JIS</label>
 			<label index="tt_content.flexform_pi1.emailCharset.12">EUC-JP</label>
+			<label index="tt_content.flexform_pi1.emailType">E-Mails in diesem Format senden:</label>
+			<label index="tt_content.flexform_pi1.emailType.0">Definiert durch TypoScript</label>
+			<label index="tt_content.flexform_pi1.emailType.1">Nur Text</label>
+			<label index="tt_content.flexform_pi1.emailType.2">HTML mit Nur-Text Alternative</label>
 			<label index="tt_content.flexform_pi1.sSPAM">Spam</label>
 			<label index="tt_content.flexform_pi1.showMaliciousInput">Eingaben im Fehlerfall anzeigen:</label>
 			<label index="tt_content.flexform_pi1.showMaliciousInput.0">Definiert durch TypoScript</label>

@@ -301,22 +301,28 @@
 
 			// Get configuration
 			$sRessource = $this->oCObj->fileResource($this->aConfig['emailTemplate']);
-			$aTemplates = array(
-				'message_sender_plain',
-				'message_sender_html',
-				'message_admin_plain',
-				'message_admin_html',
-				'message_spam_plain',
-				'message_spam_html',
+
+			// Add default subparts
+			$aSubparts = array(
 				'subject_sender',
 				'subject_admin',
 				'subject_spam',
+				'message_sender_plain',
+				'message_admin_plain',
+				'message_spam_plain',
 			);
 
+			// Add HTML subparts
+			if (!empty($this->aConfig['emailType']) && $this->aConfig['emailType'] == 'both') {
+				$aSubparts[] = 'message_sender_html';
+				$aSubparts[] = 'message_admin_html';
+				$aSubparts[] = 'message_spam_html';
+			}
+
 			// Replace all markers and remove unused
-			foreach ($aTemplates as $sValue) {
+			foreach ($aSubparts as $sValue) {
 				$this->aTemplates[$sValue] = $this->oCObj->getSubpart($sRessource, '###MAIL_' . strtoupper($sValue) . '###');
-				$this->aTemplates[$sValue] = trim($this->aTemplates[$sValue], "\n");
+				$this->aTemplates[$sValue] = trim($this->aTemplates[$sValue], "\n"); // Remove newline behind and before subpart markers
 				$this->aTemplates[$sValue] = str_replace(array_keys($this->aMarkers), array_values($this->aMarkers), $this->aTemplates[$sValue]);
 				$this->aTemplates[$sValue] = preg_replace('|###.*?###|i', '', $this->aTemplates[$sValue]);
 			}
@@ -425,7 +431,7 @@
 				$this->aAddresses['sender'],
 				$this->aTemplates['subject_spam'],
 				$this->aTemplates['message_spam_plain'],
-				$this->aTemplates['message_spam_html'],
+				(!empty($this->aTemplates['message_spam_html']))  ? $this->aTemplates['message_spam_html']  : '',
 				$this->aAddresses['return']
 			);
 		}
@@ -448,7 +454,7 @@
 					$this->aAddresses[$sReplyTo],
 					$this->aTemplates['subject_admin'],
 					$this->aTemplates['message_admin_plain'],
-					$this->aTemplates['message_admin_html'],
+					(!empty($this->aTemplates['message_admin_html']))  ? $this->aTemplates['message_admin_html']  : '',
 					$this->aAddresses['return']
 				);
 			}
@@ -461,7 +467,7 @@
 					$this->aAddresses['sender'],
 					$this->aTemplates['subject_sender'],
 					$this->aTemplates['message_sender_plain'],
-					$this->aTemplates['message_sender_html'],
+					(!empty($this->aTemplates['message_sender_html']))  ? $this->aTemplates['message_sender_html']  : '',
 					$this->aAddresses['return']
 				);
 			}

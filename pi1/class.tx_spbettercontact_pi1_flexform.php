@@ -83,6 +83,7 @@
 			$this->vAddDropDown($aTabs['sEMAIL'], 'sendTo', array('','recipients','user','both'));
 			$this->vAddDropDown($aTabs['sEMAIL'], 'replyTo', array('','sender','user'));
 			$this->vAddDropDown ($aTabs['sEMAIL'], 'emailCharset', array('','iso-8859-1','iso-8859-15','utf-8','cp866','cp1251','cp1252','koi8-r','big5','gb2312','big5-hkscs','shift_jis','euc-jp'));
+			$this->vAddDropDown ($aTabs['sEMAIL'], 'emailType', array('','plain','both'));
 
 			// Add elements to tab "spam"
 			$this->vAddDropDown($aTabs['sSPAM'], 'captchaSupport', array('','sr_freecap','jm_recaptcha','captcha','mathguard'));
