@@ -66,10 +66,8 @@
 			$oTS = $this->oMakeInstance('ts');
 			$this->aConfig = $oTS->aGetConfig($paConf);
 
-			// Set default templates if set
-			if ($this->aConfig['useDefaultTemplates']) {
-				$this->vSetDefaultTemplates();
-			}
+			// Set default templates if not configured
+			$this->vSetDefaultTemplates();
 
 			// Check configuration
 			if ($sMessage = $this->sCheckConfiguration()) {
@@ -132,13 +130,31 @@
 
 
 		/**
-		 * Set default templates
+		 * Set default templates if they are not configured
 		 *
 		 */
 		protected function vSetDefaultTemplates () {
-			$this->aConfig['formTemplate']   = 'EXT:' . $this->extKey . '/res/templates/frontend/form.html';
-			$this->aConfig['emailTemplate']  = 'EXT:' . $this->extKey . '/res/templates/frontend/email.html';
-			$this->aConfig['stylesheetFile'] = 'EXT:' . $this->extKey . '/res/templates/frontend/stylesheet.css';
+			if (!empty($this->aConfig['notUseAutoTemplates'])) {
+				return;
+			}
+
+			// Get filenames
+			$aFiles = array(
+				'formTemplate'   => 'EXT:' . $this->extKey . '/res/templates/frontend/form.html',
+				'emailTemplate'  => 'EXT:' . $this->extKey . '/res/templates/frontend/email.html',
+			);
+
+			// Add stylesheet only if formTemplate is empty (will only be used if also not configured)
+			if (empty($this->aConfig['formTemplate'])) {
+				$aFiles['stylesheetFile'] = 'EXT:' . $this->extKey . '/res/templates/frontend/stylesheet.css';
+			}
+
+			// Add only these files which are not configured
+			foreach ($aFiles as $sKey => $sFileName) {
+				if (empty($this->aConfig[$sKey])) {
+					$this->aConfig[$sKey] = $sFileName;
+				}
+			}
 		}
 
 

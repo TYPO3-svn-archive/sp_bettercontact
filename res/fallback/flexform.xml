@@ -117,15 +117,6 @@
 				</TCEforms>
 				<type>array</type>
 				<el>
-					<useDefaultTemplates>
-						<TCEforms>
-							<label>LLL:EXT:sp_bettercontact/locallang.php:tt_content.flexform_pi1.useDefaultTemplates</label>
-							<config>
-								<type>check</type>
-								<default>1</default>
-							</config>
-						</TCEforms>
-					</useDefaultTemplates>
 					<formTemplate>
 						<TCEforms>
 							<exclude>1</exclude>
@@ -230,6 +221,15 @@
 							</config>
 						</TCEforms>
 					</locallangFile>
+					<notUseAutoTemplates>
+						<TCEforms>
+							<label>LLL:EXT:sp_bettercontact/locallang.php:tt_content.flexform_pi1.notUseAutoTemplates</label>
+							<config>
+								<type>check</type>
+								<default>0</default>
+							</config>
+						</TCEforms>
+					</notUseAutoTemplates>
 					<fieldPrefix>
 						<TCEforms>
 							<exclude>1</exclude>
@@ -443,25 +443,25 @@
 							</config>
 						</TCEforms>
 					</emailCharset>
-					<emailType>
+					<emailFormat>
 						<TCEforms>
 							<exclude>1</exclude>
-							<label>LLL:EXT:sp_bettercontact/locallang.php:tt_content.flexform_pi1.emailType</label>
+							<label>LLL:EXT:sp_bettercontact/locallang.php:tt_content.flexform_pi1.emailFormat</label>
 							<config>
 								<type>select</type>
 								<default></default>
 								<items type="array">
 									<numIndex index="0" type="array">
-										<numIndex index="0">LLL:EXT:sp_bettercontact/locallang.php:tt_content.flexform_pi1.emailType.0</numIndex>
+										<numIndex index="0">LLL:EXT:sp_bettercontact/locallang.php:tt_content.flexform_pi1.emailFormat.0</numIndex>
 										<numIndex index="1"></numIndex>
 									</numIndex>
 									<numIndex index="1" type="array">
-										<numIndex index="0">LLL:EXT:sp_bettercontact/locallang.php:tt_content.flexform_pi1.emailType.1</numIndex>
+										<numIndex index="0">LLL:EXT:sp_bettercontact/locallang.php:tt_content.flexform_pi1.emailFormat.1</numIndex>
 										<numIndex index="1">plain</numIndex>
 									</numIndex>
 									<numIndex index="2" type="array">
-										<numIndex index="0">LLL:EXT:sp_bettercontact/locallang.php:tt_content.flexform_pi1.emailType.2</numIndex>
-										<numIndex index="1">both</numIndex>
+										<numIndex index="0">LLL:EXT:sp_bettercontact/locallang.php:tt_content.flexform_pi1.emailFormat.2</numIndex>
+										<numIndex index="1">html</numIndex>
 									</numIndex>
 								</items>
 								<minitems>0</minitems>
@@ -469,7 +469,7 @@
 								<size>1</size>
 							</config>
 						</TCEforms>
-					</emailType>
+					</emailFormat>
 				</el>
 			</ROOT>
 		</sEMAIL>

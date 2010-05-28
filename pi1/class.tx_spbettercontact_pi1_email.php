@@ -48,6 +48,7 @@
 		protected $bHasError    = FALSE;
 		protected $sEmailChar   = 'iso-8859-1';
 		protected $sFormChar    = 'iso-8859-1';
+		protected $sEmailFormat = 'plain';
 
 
 		/**
@@ -65,6 +66,11 @@
 			$this->aUserMarkers = $poParent->aUserMarkers;
 			$this->sEmailChar   = $poParent->sEmailCharset;
 			$this->sFormChar    = $poParent->sFormCharset;
+
+			// Set email type
+			if (!empty($this->aConfig['emailFormat']) && $this->aConfig['emailFormat'] == 'html') {
+				$this->sEmailFormat = 'html';
+			}
 
 			// Set email addresses
 			$this->aAddresses = $this->aGetMailAddresses();
@@ -295,32 +301,32 @@
 		 *
 		 */
 		protected function vSetTemplates () {
-			if (!strlen($this->aConfig['emailTemplate'])) {
+			if (empty($this->aConfig['emailTemplate'])) {
 				return;
 			}
 
 			// Get configuration
 			$sRessource = $this->oCObj->fileResource($this->aConfig['emailTemplate']);
-
-			// Add default subparts
-			$aSubparts = array(
+			$aSubparts  = array(
 				'subject_sender',
 				'subject_admin',
 				'subject_spam',
 				'message_sender_plain',
 				'message_admin_plain',
 				'message_spam_plain',
+				'message_sender_html',
+				'message_admin_html',
+				'message_spam_html',
 			);
 
-			// Add HTML subparts
-			if (!empty($this->aConfig['emailType']) && $this->aConfig['emailType'] == 'both') {
-				$aSubparts[] = 'message_sender_html';
-				$aSubparts[] = 'message_admin_html';
-				$aSubparts[] = 'message_spam_html';
-			}
-
-			// Replace all markers and remove unused
 			foreach ($aSubparts as $sValue) {
+				// Leave HTML subparts blank if not used
+				if ($this->sEmailFormat != 'html' && substr($sValue, -4) == 'html') {
+					$this->aTemplates[$sValue] = '';
+					continue;
+				}
+
+				// Replace all markers and remove unused
 				$this->aTemplates[$sValue] = $this->oCObj->getSubpart($sRessource, '###MAIL_' . strtoupper($sValue) . '###');
 				$this->aTemplates[$sValue] = trim($this->aTemplates[$sValue], "\n"); // Remove newline behind and before subpart markers
 				$this->aTemplates[$sValue] = str_replace(array_keys($this->aMarkers), array_values($this->aMarkers), $this->aTemplates[$sValue]);
@@ -368,7 +374,7 @@
 			$oMail->addPlain($psMessagePlain);
 
 			// Set HTML content
-			if (strlen($psMessageHTML)) {
+			if ($this->sEmailFormat == 'html' && strlen($psMessageHTML)) {
 				$oMail->setHTML($oMail->encodeMsg($psMessageHTML));
 			}
 
@@ -431,7 +437,7 @@
 				$this->aAddresses['sender'],
 				$this->aTemplates['subject_spam'],
 				$this->aTemplates['message_spam_plain'],
-				(!empty($this->aTemplates['message_spam_html'])) ? $this->aTemplates['message_spam_html'] : '',
+				$this->aTemplates['message_spam_html'],
 				$this->aAddresses['return']
 			);
 		}
@@ -454,7 +460,7 @@
 					$this->aAddresses[$sReplyTo],
 					$this->aTemplates['subject_admin'],
 					$this->aTemplates['message_admin_plain'],
-					(!empty($this->aTemplates['message_admin_html'])) ? $this->aTemplates['message_admin_html'] : '',
+					$this->aTemplates['message_admin_html'],
 					$this->aAddresses['return']
 				);
 			}
@@ -467,7 +473,7 @@
 					$this->aAddresses['sender'],
 					$this->aTemplates['subject_sender'],
 					$this->aTemplates['message_sender_plain'],
-					(!empty($this->aTemplates['message_sender_html'])) ? $this->aTemplates['message_sender_html'] : '',
+					$this->aTemplates['message_sender_html'],
 					$this->aAddresses['return']
 				);
 			}

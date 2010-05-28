@@ -64,12 +64,12 @@
 			$this->vAddCheckBox($aTabs['sDEF'], 'enableIPLog', FALSE);
 
 			// Add elements to tab "template"
-			$this->vAddCheckBox($aTabs['sTEMPLATE'], 'useDefaultTemplates', TRUE);
 			$this->vAddInput($aTabs['sTEMPLATE'], 'formTemplate', 40, '', TRUE, 'file', 'html,tmpl');
 			$this->vAddInput($aTabs['sTEMPLATE'], 'emailTemplate', 40, '', TRUE, 'file', 'html,tmpl');
 			$this->vAddInput($aTabs['sTEMPLATE'], 'stylesheetFile', 40, '', TRUE, 'file', 'css');
 			$this->vAddInput($aTabs['sTEMPLATE'], 'locallangFile', 40, '', TRUE, 'file', 'xml');
 			$this->vAddInput($aTabs['sTEMPLATE'], 'fieldPrefix', 20, '', FALSE, 'page', '', 'trim,nospace,alphanum_x');
+			$this->vAddCheckBox($aTabs['sTEMPLATE'], 'notUseAutoTemplates', FALSE);
 			$this->vAddCheckBox($aTabs['sTEMPLATE'], 'redirectToAnchor', TRUE);
 			$this->vAddCheckBox($aTabs['sTEMPLATE'], 'highlightFields', FALSE);
 
@@ -83,7 +83,7 @@
 			$this->vAddDropDown($aTabs['sEMAIL'], 'sendTo', array('','recipients','user','both'));
 			$this->vAddDropDown($aTabs['sEMAIL'], 'replyTo', array('','sender','user'));
 			$this->vAddDropDown ($aTabs['sEMAIL'], 'emailCharset', array('','iso-8859-1','iso-8859-15','utf-8','cp866','cp1251','cp1252','koi8-r','big5','gb2312','big5-hkscs','shift_jis','euc-jp'));
-			$this->vAddDropDown ($aTabs['sEMAIL'], 'emailType', array('','plain','both'));
+			$this->vAddDropDown ($aTabs['sEMAIL'], 'emailFormat', array('','plain','html'));
 
 			// Add elements to tab "spam"
 			$this->vAddDropDown($aTabs['sSPAM'], 'captchaSupport', array('','sr_freecap','jm_recaptcha','captcha','mathguard'));
