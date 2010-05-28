@@ -431,7 +431,7 @@
 				$this->aAddresses['sender'],
 				$this->aTemplates['subject_spam'],
 				$this->aTemplates['message_spam_plain'],
-				(!empty($this->aTemplates['message_spam_html']))  ? $this->aTemplates['message_spam_html']  : '',
+				(!empty($this->aTemplates['message_spam_html'])) ? $this->aTemplates['message_spam_html'] : '',
 				$this->aAddresses['return']
 			);
 		}
@@ -454,7 +454,7 @@
 					$this->aAddresses[$sReplyTo],
 					$this->aTemplates['subject_admin'],
 					$this->aTemplates['message_admin_plain'],
-					(!empty($this->aTemplates['message_admin_html']))  ? $this->aTemplates['message_admin_html']  : '',
+					(!empty($this->aTemplates['message_admin_html'])) ? $this->aTemplates['message_admin_html'] : '',
 					$this->aAddresses['return']
 				);
 			}
@@ -467,7 +467,7 @@
 					$this->aAddresses['sender'],
 					$this->aTemplates['subject_sender'],
 					$this->aTemplates['message_sender_plain'],
-					(!empty($this->aTemplates['message_sender_html']))  ? $this->aTemplates['message_sender_html']  : '',
+					(!empty($this->aTemplates['message_sender_html'])) ? $this->aTemplates['message_sender_html'] : '',
 					$this->aAddresses['return']
 				);
 			}
