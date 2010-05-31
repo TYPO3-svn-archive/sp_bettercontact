@@ -483,7 +483,7 @@
 		 *
 		 */
 		protected function vSendWarning ($psType) {
-			if ($this->aConfig['adminMails'] != strtolower($psType) && $this->aConfig['adminMails'] != 'both') {
+			if (empty($this->aConfig['adminMails']) || ($this->aConfig['adminMails'] != strtolower($psType) && $this->aConfig['adminMails'] != 'both')) {
 				return;
 			}
 

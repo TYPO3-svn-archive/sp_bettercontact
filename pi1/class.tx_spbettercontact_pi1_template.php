@@ -114,7 +114,7 @@
 					$aMarkers[$aField['multiSelName']] = '';
 					$aMarkers[$aField['requiredName']] = (!empty($aField['required'])) ? $this->aLL['required'] : '';
 
-					if (isset($this->aGP[$sName]) || (bool) $aField['value']) {
+					if (!empty($this->aGP[$sName]) || (bool) $aField['value']) {
 						$aMarkers[$aField['checkedName']]  = 'checked="checked"';
 						$aMarkers[$aField['multiChkName']] = 'checked="checked"';
 						$aMarkers[$aField['multiSelName']] = 'selected="selected"';
