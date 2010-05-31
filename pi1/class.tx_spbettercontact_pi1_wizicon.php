@@ -48,6 +48,7 @@
 			$aLL       = t3lib_div::readLLXMLfile($sLangFile, $GLOBALS['LANG']->lang);
 			$sLastKey  = '';
 			$aNewItems = array();
+			$bHasForms = array_key_exists('forms', $aWizardItems);
 
 			// Get plugin
 			$aPlugin = array(
@@ -59,6 +60,18 @@
 
 			// Add plugin in forms area
 			foreach ($aWizardItems as $sKey => $aValue) {
+				if (!$bHasForms && strpos($sLastKey, 'special') !== FALSE && strpos($sKey, 'special') === FALSE) {
+					$sLangFile = t3lib_extMgm::extPath('cms') . 'layout/locallang_db_new_content_el.xml';
+					$aLLCms    = t3lib_div::readLLXMLfile($sLangFile, $GLOBALS['LANG']->lang);
+
+					$aNewItems['forms'] = array(
+						'header' => $GLOBALS['LANG']->getLLL('forms', $aLLCms),
+					);
+					$aNewItems['forms_contact'] = $aPlugin;
+				} else if (strpos($sLastKey, 'forms') !== FALSE && strpos($sKey, 'forms') === FALSE) {
+					$aNewItems['forms_contact'] = $aPlugin;
+				}
+
 				if (strpos($sLastKey, 'forms') !== FALSE && strpos($sKey, 'forms') === FALSE) {
 					$aNewItems['forms_contact'] = $aPlugin;
 				}
