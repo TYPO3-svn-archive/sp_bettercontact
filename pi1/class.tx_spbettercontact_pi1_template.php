@@ -84,27 +84,27 @@
 			$aMarkers = array();
 
 			// Default markers
-			$aMarkers['###URL_SELF###']     = $this->sGetSelfLink();
-			$aMarkers['###FORM_NAME###']    = $this->sFieldPrefix . '[form]';
-			$aMarkers['###FORM_ID###']      = $this->sFieldPrefix;
-			$aMarkers['###SUBMIT###']       = $this->sFieldPrefix . '[submit]';
-			$aMarkers['###SUBMIT_VALUE###'] = $this->aLL['submit'];
-			$aMarkers['###CHARSET###']      = $this->sFormChar;
-			$aMarkers['###HIDDEN###']       = PHP_EOL;
-			$aMarkers['###MESSAGES###']     = '';
-			$aMarkers['###INFO###']         = '';
-			$aMarkers['###ANCHOR###']       = '';
+			$aMarkers['URL_SELF']     = $this->sGetSelfLink();
+			$aMarkers['FORM_NAME']    = $this->sFieldPrefix . '[form]';
+			$aMarkers['FORM_ID']      = $this->sFieldPrefix;
+			$aMarkers['SUBMIT']       = $this->sFieldPrefix . '[submit]';
+			$aMarkers['SUBMIT_VALUE'] = $this->aLL['submit'];
+			$aMarkers['CHARSET']      = $this->sFormChar;
+			$aMarkers['HIDDEN']       = PHP_EOL;
+			$aMarkers['MESSAGES']     = '';
+			$aMarkers['INFO']         = '';
+			$aMarkers['ANCHOR']       = '';
 
 			// Anchor
 			if (!empty($this->aConfig['redirectToAnchor'])) {
-				$aMarkers['###ANCHOR###'] = '<a id="p' . $this->oCObj->data['uid'] . '" name="p' . $this->oCObj->data['uid'] . '"></a>';
+				$aMarkers['ANCHOR'] = '<a id="p' . $this->oCObj->data['uid'] . '" name="p' . $this->oCObj->data['uid'] . '"></a>';
 			}
 
 			// Fields
 			if (is_array($this->aFields)) {
 				foreach ($this->aFields as $sKey => $aField) {
 					$sName = strtolower(trim($sKey, ' .{}()='));
-					$aMarkers['###HIDDEN###']         .= '<input type="text" name="' . $sKey.'" value="" />' . PHP_EOL;
+					$aMarkers['HIDDEN']               .= '<input type="text" name="' . $sKey.'" value="" />' . PHP_EOL;
 					$aMarkers[$aField['valueName']]    = $aField['value'];
 					$aMarkers[$aField['labelName']]    = $aField['label'];
 					$aMarkers[$aField['messageName']]  = '';
@@ -125,14 +125,14 @@
 			// Page info
 			if (!empty($GLOBALS['TSFE']->page) && is_array($GLOBALS['TSFE']->page)) {
 				foreach ($GLOBALS['TSFE']->page as $sKey => $sValue) {
-					$aMarkers['###PAGE:' . $sKey . '###'] = $sValue;
+					$aMarkers['PAGE:' . $sKey] = $sValue;
 				}
 			}
 
 			// Plugin info
 			if (!empty($this->oCObj->data) && is_array($this->oCObj->data)) {
 				foreach ($this->oCObj->data as $sKey => $sValue) {
-					$aMarkers['###PLUGIN:' . $sKey . '###'] = $sValue;
+					$aMarkers['PLUGIN:' . $sKey] = $sValue;
 				}
 			}
 
@@ -140,14 +140,14 @@
 			if (!empty($GLOBALS['TSFE']->fe_user->user) && is_array($GLOBALS['TSFE']->fe_user->user)) {
 				$aUserData = $GLOBALS['TSFE']->fe_user->user;
 				foreach ($aUserData as $sKey => $sValue) {
-					$aMarkers['###USER:' . $sKey . '###'] = $sValue;
+					$aMarkers['USER:' . $sKey] = $sValue;
 				}
 			}
 
 			// Locallang labels
 			if (is_array($this->aLL)) {
 				foreach ($this->aLL as $sKey => $sValue) {
-					$aMarkers['###LLL:' . $sKey . '###'] = $sValue;
+					$aMarkers['LLL:' . $sKey] = $sValue;
 				}
 			}
 
@@ -209,16 +209,16 @@
 						$oCaptcha       = t3lib_div::makeInstance('tx_srfreecap_pi2');
 						$aMarkers       = $oCaptcha->makeCaptcha();
 						$this->aMarkers = $aMarkers + $this->aMarkers;
-						$this->aMarkers['###CAPTCHA_DATA###'] = implode(PHP_EOL, array(
+						$this->aMarkers['CAPTCHA_DATA'] = implode(PHP_EOL, array(
 							'<div class="tx_srfreecap_pi2">',
 								'<div class="tx_srfreecap_pi2_image">',
-									$aMarkers['###SR_FREECAP_IMAGE###'],
+									$aMarkers['SR_FREECAP_IMAGE'],
 								'</div>',
 								'<div class="tx_srfreecap_pi2_cant_read">',
-									$aMarkers['###SR_FREECAP_CANT_READ###'],
+									$aMarkers['SR_FREECAP_CANT_READ'],
 								'</div>',
 								'<div class="tx_srfreecap_pi2_accessible">',
-									$aMarkers['###SR_FREECAP_ACCESSIBLE###'],
+									$aMarkers['SR_FREECAP_ACCESSIBLE'],
 								'</div>',
 							'</div>',
 						));
@@ -226,12 +226,12 @@
 					case 'jm_recaptcha' :
 						require_once(t3lib_extMgm::extPath($sExtKey) . 'class.tx_jmrecaptcha.php');
 						$oCaptcha = t3lib_div::makeInstance('tx_jmrecaptcha');
-						$this->aMarkers['###CAPTCHA_DATA###'] = $oCaptcha->getReCaptcha();
+						$this->aMarkers['CAPTCHA_DATA'] = $oCaptcha->getReCaptcha();
 					break;
 					case 'captcha' :
 						$sFileName = t3lib_extMgm::siteRelPath('captcha') . 'captcha/captcha.php';
-						$this->aMarkers['###CAPTCHA_FILE###'] = $sFileName;
-						$this->aMarkers['###CAPTCHA_DATA###'] = implode(PHP_EOL, array(
+						$this->aMarkers['CAPTCHA_FILE'] = $sFileName;
+						$this->aMarkers['CAPTCHA_DATA'] = implode(PHP_EOL, array(
 							'<div class="tx_captcha">',
 								'<div class="tx_captcha_image">',
 									'<img src="' . $sFileName . '" alt="captcha image" />',
@@ -242,7 +242,7 @@
 					case 'mathguard' :
 						require_once(t3lib_extMgm::extPath($sExtKey) . 'class.tx_mathguard.php');
 						$oCaptcha = t3lib_div::makeInstance('tx_mathguard');
-						$this->aMarkers['###CAPTCHA_DATA###'] = $oCaptcha->getCaptcha();
+						$this->aMarkers['CAPTCHA_DATA'] = $oCaptcha->getCaptcha();
 					break;
 					default:
 						return;
@@ -307,21 +307,21 @@
 
 			// Get templates and markers
 			$sRessource = $this->oCObj->fileResource($this->aConfig['formTemplate']);
-			$aSpecial   = $this->aGetSpecialMarkers($sTemplate);
 			$sTemplate  = $this->oCObj->getSubpart($sRessource, '###TEMPLATE###');
 			$sTemplate  = trim($sTemplate, "\n");
-			$sTemplate  = $this->oCObj->substituteMarkerArray($sTemplate, $aSpecial);
+			$aSpecial   = $this->aGetSpecialMarkers($sTemplate); // Replace sepcial markers like checked radio buttons
+			$sTemplate  = $this->oCObj->substituteMarkerArray($sTemplate, $aSpecial, '[###|###]');
 
 			// Add captcha if configured
-			if (strlen($this->aConfig['captchaSupport']) && strlen($this->aMarkers['###CAPTCHA_DATA###'])) {
+			if (strlen($this->aConfig['captchaSupport']) && strlen($this->aMarkers['CAPTCHA_DATA'])) {
 				$sCaptchaExt  = strtoupper($this->aConfig['captchaSupport']);
 				$sCaptchaTmpl = $this->oCObj->getSubpart($sRessource, '###SUB_TEMPLATE_' . $sCaptchaExt . '###');
 				$sCaptchaTmpl = trim($sCaptchaTmpl, "\n");
-				$this->aMarkers['###CAPTCHA_FIELD###'] = $this->oCObj->substituteMarkerArray($sCaptchaTmpl, $this->aMarkers);
+				$this->aMarkers['CAPTCHA_FIELD'] = $this->oCObj->substituteMarkerArray($sCaptchaTmpl, $this->aMarkers, '###|###');
 			}
 
 			// Output
-			return $this->oCObj->substituteMarkerArray($sTemplate, $this->aMarkers, '', FALSE, TRUE);
+			return $this->oCObj->substituteMarkerArray($sTemplate, $this->aMarkers, '###|###', FALSE, TRUE);
 		}
 
 
@@ -341,17 +341,15 @@
 
 			preg_match_all('|_\[.*?\]#|i', $psTemplate, $aResults);
 
-			if (isset($aResults[0]) && is_array($aResults[0])) {
-				foreach ($aResults[0] as $sValue) {
-					if (strpos($sValue, '###') !== FALSE) {
-						$sName = substr($sValue, 2, -2);
-						$aMarkers['[' . $sName . ']'] = md5($this->aMarkers[$sName]);
-						continue;
-					} else {
-						$sName = substr($sValue, 1, -1);
-						$aMarkers[$sName] = md5(substr($sValue, 2, -2));
-					}
-				}
+			if (empty($aResults[0]) || !is_array($aResults[0])) {
+				return array();
+			}
+
+			foreach ($aResults[0] as $sValue) {
+				$sName   = substr($sValue, 5, -5);
+				$sMarker = (isset($this->aMarkers[$sName])) ? $this->aMarkers[$sName] : '';
+				$sValue  = (strpos($sValue, '###') !== FALSE) ? $sMarker : $sName;
+				$aMarkers[$sName] = md5($sValue);
 			}
 
 			return $aMarkers;

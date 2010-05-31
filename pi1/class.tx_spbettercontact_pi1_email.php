@@ -179,14 +179,14 @@
 			// Page info
 			if (!empty($GLOBALS['TSFE']->page) && is_array($GLOBALS['TSFE']->page)) {
 				foreach ($GLOBALS['TSFE']->page as $sKey => $sValue) {
-					$aMarkers['###PAGE:' . $sKey . '###'] = $sValue;
+					$aMarkers['PAGE:' . $sKey] = $sValue;
 				}
 			}
 
 			// Plugin info
 			if (!empty($this->oCObj->data) && is_array($this->oCObj->data)) {
 				foreach ($this->oCObj->data as $sKey => $sValue) {
-					$aMarkers['###PLUGIN:' . $sKey . '###'] = $sValue;
+					$aMarkers['PLUGIN:' . $sKey] = $sValue;
 				}
 			}
 
@@ -194,14 +194,14 @@
 			if (!empty($GLOBALS['TSFE']->fe_user->user) && is_array($GLOBALS['TSFE']->fe_user->user)) {
 				$aUserData = $GLOBALS['TSFE']->fe_user->user;
 				foreach ($aUserData as $sKey => $sValue) {
-					$aMarkers['###USER:' . $sKey . '###'] = $sValue;
+					$aMarkers['USER:' . $sKey] = $sValue;
 				}
 			}
 
 			// Locallang labels
 			if (is_array($this->aLL)) {
 				foreach ($this->aLL as $sKey => $sValue) {
-					$aMarkers['###LLL:' . $sKey . '###'] = $sValue;
+					$aMarkers['LLL:' . $sKey] = $sValue;
 				}
 			}
 
@@ -266,29 +266,32 @@
 		 * @return Array with markers
 		 */
 		protected function aGetSpamMarkers () {
-			$aMarkers['###SPAM_IP###']      = $this->sGetCleaned(t3lib_div::getIndpEnv('REMOTE_ADDR'));
-			$aMarkers['###SPAM_REFERER###'] = $this->sGetCleaned(t3lib_div::getIndpEnv('HTTP_REFERER'));
-			$aMarkers['###SPAM_AGENT###']   = $this->sGetCleaned(t3lib_div::getIndpEnv('HTTP_USER_AGENT'));
-			$aMarkers['###SPAM_METHOD###']  = $this->sGetCleaned(strtolower($_SERVER['REQUEST_METHOD']));
-			$aMarkers['###SPAM_BROWSER###'] = $this->sGetSysInfo('browser');
-			$aMarkers['###SPAM_SYSTEM###']  = $this->sGetSysInfo('system');
-			$aMarkers['###SPAM_DATE###']    = gmdate('M d Y', $GLOBALS['SIM_EXEC_TIME']) . ' (GMT)';
-			$aMarkers['###SPAM_TIME###']    = gmdate('H:i:s', $GLOBALS['SIM_EXEC_TIME']) . ' (GMT)';
+			$aMarkers['SPAM_IP']      = $this->sGetCleaned(t3lib_div::getIndpEnv('REMOTE_ADDR'));
+			$aMarkers['SPAM_REFERER'] = $this->sGetCleaned(t3lib_div::getIndpEnv('HTTP_REFERER'));
+			$aMarkers['SPAM_AGENT']   = $this->sGetCleaned(t3lib_div::getIndpEnv('HTTP_USER_AGENT'));
+			$aMarkers['SPAM_METHOD']  = $this->sGetCleaned(strtolower($_SERVER['REQUEST_METHOD']));
+			$aMarkers['SPAM_BROWSER'] = $this->sGetSysInfo('browser');
+			$aMarkers['SPAM_SYSTEM']  = $this->sGetSysInfo('system');
+			$aMarkers['SPAM_DATE']    = gmdate('M d Y', $GLOBALS['SIM_EXEC_TIME']) . ' (GMT)';
+			$aMarkers['SPAM_TIME']    = gmdate('H:i:s', $GLOBALS['SIM_EXEC_TIME']) . ' (GMT)';
 
 			// Use own date and time format
 			foreach (array('Date', 'Time') as $sKey) {
 				if (!empty($this->aConfig['spam' . $sKey . 'Format'])) {
 					$sDateTime = strftime($this->aConfig['email' . $sKey . 'Format'], $GLOBALS['SIM_EXEC_TIME']);
-					$aMarkers['###SPAM_' . strtoupper($sKey) . '###'] = $sDateTime;
+					$aMarkers['SPAM_' . strtoupper($sKey)] = $sDateTime;
 				}
 			}
 
 			// Add field markers
 			if (is_array($this->aFields)) {
 				foreach ($this->aFields as $sKey => $aField) {
-					$sName = strtolower(trim($sKey, ' .{}()='));
-					$aMarkers['###SPAM_VALUE_' . strtoupper($sKey) . '###']   = $this->sGetCleaned($_POST[$sKey]);
-					$aMarkers['###SPAM_CHECKED_' . strtoupper($sKey) . '###'] = isset($_POST[$sKey]) ? $this->aLL['checked'] : $this->aLL['unchecked'];
+					$sName = strtoupper($sKey);
+					$aMarkers['SPAM_CHECKED_' . $sName] = $this->aLL['unchecked'];
+					if (isset($this->aGP[$sKey])) {
+						$aMarkers['SPAM_VALUE_'   . $sName] = $this->sGetCleaned($this->aGP[$sKey]);
+						$aMarkers['SPAM_CHECKED_' . $sName] = $this->aLL['checked'];
+					}
 				}
 			}
 
@@ -329,8 +332,7 @@
 				// Replace all markers and remove unused
 				$this->aTemplates[$sValue] = $this->oCObj->getSubpart($sRessource, '###MAIL_' . strtoupper($sValue) . '###');
 				$this->aTemplates[$sValue] = trim($this->aTemplates[$sValue], "\n"); // Remove newline behind and before subpart markers
-				$this->aTemplates[$sValue] = str_replace(array_keys($this->aMarkers), array_values($this->aMarkers), $this->aTemplates[$sValue]);
-				$this->aTemplates[$sValue] = preg_replace('|###.*?###|i', '', $this->aTemplates[$sValue]);
+				$this->aTemplates[$sValue] = $this->oCObj->substituteMarkerArray($this->aTemplates[$sValue], $this->aMarkers, '###|###', FALSE, TRUE);
 			}
 		}
 
@@ -449,8 +451,9 @@
 		 */
 		public function vSendMails () {
 			// Get configuration
-			$sSendTo  = strtolower($this->aConfig['sendTo']);
-			$sReplyTo = (strtolower($this->aConfig['replyTo']) == 'user') ? 'user' : 'sender';
+			$sSendTo  = (!empty($this->aConfig['sendTo']))  ? strtolower($this->aConfig['sendTo'])  : 'both';
+			$sReplyTo = (!empty($this->aConfig['replyTo'])) ? strtolower($this->aConfig['replyTo']) : 'user';
+			$sReplyTo = (strtolower($sReplyTo) == 'user') ? 'user' : 'sender';
 
 			// Send emails to all recipients
 			if (($sSendTo == 'both' || $sSendTo == 'recipients') && $this->bCheckMailAddresses('recipients', 'sender', $sReplyTo)) {
@@ -491,9 +494,9 @@
 			$aMarkers       = array();
 
 			if ($this->bHasError) {
-				$aMarkers['###INFO###'] = str_replace('|', $this->aLL['msg_email_failed'], $sWrapNegative);
+				$aMarkers['INFO'] = str_replace('|', $this->aLL['msg_email_failed'], $sWrapNegative);
 			} else {
-				$aMarkers['###INFO###'] = str_replace('|', $this->aLL['msg_email_passed'], $sWrapPositive);
+				$aMarkers['INFO'] = str_replace('|', $this->aLL['msg_email_passed'], $sWrapPositive);
 			}
 
 			return $aMarkers;

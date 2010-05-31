@@ -328,16 +328,16 @@
 			}
 
 			if (count($aMessages)) {
-				$this->aMarkers['###MESSAGES###'] = '<ul>' . implode(PHP_EOL, $aMessages) . '</ul>';
+				$this->aMarkers['MESSAGES'] = '<ul>' . implode(PHP_EOL, $aMessages) . '</ul>';
 			}
 
 			// Add info text
 			$sWrapNegative = $this->aConfig['infoWrapNegative'] ? $this->aConfig['infoWrapNegative'] : '|';
 			$sWrapPositive = $this->aConfig['infoWrapPositive'] ? $this->aConfig['infoWrapPositive'] : '|';
 			if (count($this->aMarkers)) {
-				$this->aMarkers['###INFO###'] = str_replace('|', $this->aLL['msg_check_failed'], $sWrapNegative);
+				$this->aMarkers['INFO'] = str_replace('|', $this->aLL['msg_check_failed'], $sWrapNegative);
 			} else {
-				$this->aMarkers['###INFO###'] = str_replace('|', $this->aLL['msg_check_passed'], $sWrapPositive);
+				$this->aMarkers['INFO'] = str_replace('|', $this->aLL['msg_check_passed'], $sWrapPositive);
 			}
 
 			return $this->aMarkers;

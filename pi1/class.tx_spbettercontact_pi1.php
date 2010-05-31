@@ -77,8 +77,8 @@
 			// Init required attributes and objects
 			$this->vInit();
 
-			// Stop here if form was not submitted (ignore $_GET)
-			if (empty($_POST) || !isset($this->aGP['submit'])) {
+			// Stop here if form was not submitted
+			if ((!empty($this->aConfig['postOnly']) && empty($_POST)) || !isset($this->aGP['submit'])) {
 				return $this->sGetContent();
 			}
 
@@ -134,7 +134,7 @@
 		 *
 		 */
 		protected function vSetDefaultTemplates () {
-			if (!empty($this->aConfig['notUseAutoTemplates'])) {
+			if (!empty($this->aConfig['disableAutoTemplates'])) {
 				return;
 			}
 
@@ -344,7 +344,7 @@
 			// User defined markers
 			if (!empty($this->aConfig['markers.']) && is_array($this->aConfig['markers.'])) {
 				foreach ($this->aConfig['markers.'] as $sKey => $sValue) {
-					$aMarkers['###' . strtoupper($sKey) . '###'] = $sValue;
+					$aMarkers[strtoupper($sKey)] = $sValue;
 				}
 			}
 
@@ -367,28 +367,29 @@
 			foreach ($this->aConfig['fields.'] as $sKey => $aField) {
 				// Get configuration
 				$sName      = strtolower(trim($sKey, ' .{}()'));
-				$sValue     = isset($_POST[$sName]) ? $this->aGP[$sName] : $aField['default'];
+				$sDefault   = (isset($aField['default'])) ? $aField['default'] : '';
+				$sValue     = (isset($this->aGP[$sName])) ? $this->aGP[$sName] : $sDefault;
 				$sUpperName = strtoupper($sName);
 				$sMultiName = $sUpperName . '_' . md5($sValue);
 
 				// Build the field
 				$aFields[$sName] = array (
-					'markerName'   => '###'          . $sUpperName . '###',
-					'messageName'  => '###MSG_'      . $sUpperName . '###',
-					'errClassName' => '###ERR_'      . $sUpperName . '###',
-					'valueName'    => '###VALUE_'    . $sUpperName . '###',
-					'labelName'    => '###LABEL_'    . $sUpperName . '###',
-					'checkedName'  => '###CHECKED_'  . $sUpperName . '###',
-					'requiredName' => '###REQUIRED_' . $sUpperName . '###',
-					'multiChkName' => '###CHECKED_'  . $sMultiName . '###',
-					'multiSelName' => '###SELECTED_' . $sMultiName . '###',
-					'regex'        => $aField['regex']      ? $aField['regex']      : '',
-					'disallowed'   => $aField['disallowed'] ? $aField['disallowed'] : '',
-					'allowed'      => $aField['allowed']    ? $aField['allowed']    : '',
-					'required'     => $aField['required']   ? $aField['required']   : 0,
-					'minLength'    => $aField['minLength']  ? $aField['minLength']  : 0,
-					'maxLength'    => $aField['maxLength']  ? $aField['maxLength']  : 0,
-					'label'        => $this->aLL[$sName]    ? $this->aLL[$sName]    : ucfirst($sName),
+					'markerName'   => $sUpperName,
+					'messageName'  => 'MSG_'      . $sUpperName,
+					'errClassName' => 'ERR_'      . $sUpperName,
+					'valueName'    => 'VALUE_'    . $sUpperName,
+					'labelName'    => 'LABEL_'    . $sUpperName,
+					'checkedName'  => 'CHECKED_'  . $sUpperName,
+					'requiredName' => 'REQUIRED_' . $sUpperName,
+					'multiChkName' => 'CHECKED_'  . $sMultiName,
+					'multiSelName' => 'SELECTED_' . $sMultiName,
+					'regex'        => (isset($aField['regex']))      ? $aField['regex']      : '',
+					'disallowed'   => (isset($aField['disallowed'])) ? $aField['disallowed'] : '',
+					'allowed'      => (isset($aField['allowed']))    ? $aField['allowed']    : '',
+					'required'     => (isset($aField['required']))   ? $aField['required']   : 0,
+					'minLength'    => (isset($aField['minLength']))  ? $aField['minLength']  : 0,
+					'maxLength'    => (isset($aField['maxLength']))  ? $aField['maxLength']  : 0,
+					'label'        => (isset($this->aLL[$sName]))    ? $this->aLL[$sName]    : ucfirst($sName),
 					'value'        => $sValue,
 				);
 			}

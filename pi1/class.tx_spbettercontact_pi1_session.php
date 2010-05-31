@@ -106,7 +106,7 @@
 			$sMessage      = sprintf($this->aLL['msg_already_sent'], $iCount, $iTime);
 			$sMessage      = str_replace('|', $sMessage, $sWrapNegative);
 
-			return array('###INFO###' => $sMessage);
+			return array('INFO' => $sMessage);
 		}
 
 

@@ -221,15 +221,15 @@
 							</config>
 						</TCEforms>
 					</locallangFile>
-					<notUseAutoTemplates>
+					<disableAutoTemplates>
 						<TCEforms>
-							<label>LLL:EXT:sp_bettercontact/locallang.php:tt_content.flexform_pi1.notUseAutoTemplates</label>
+							<label>LLL:EXT:sp_bettercontact/locallang.php:tt_content.flexform_pi1.disableAutoTemplates</label>
 							<config>
 								<type>check</type>
 								<default>0</default>
 							</config>
 						</TCEforms>
-					</notUseAutoTemplates>
+					</disableAutoTemplates>
 					<fieldPrefix>
 						<TCEforms>
 							<exclude>1</exclude>

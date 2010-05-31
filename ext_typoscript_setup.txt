@@ -4,42 +4,43 @@
 plugin.tx_spbettercontact_pi1 {
 
 	## Basic configuration (see manual for details)
-	successRedirectPage   =
-	spamRedirectPage      =
-	errorRedirectPage     =
-	formTemplate          =
-	stylesheetFile        =
-	locallangFile         =
-	# formCharset         = ## If not set -> auto detection (default "iso-8859-1")
-	# notUseAutoTemplates = ## If "1" default templates will not be used for missing ones
+	successRedirectPage    =
+	spamRedirectPage       =
+	errorRedirectPage      =
+	formTemplate           =
+	stylesheetFile         =
+	locallangFile          =
+	# formCharset          = ## If not set -> auto detection (default "iso-8859-1")
+	# disableAutoTemplates = ## If "1" default templates will not be used for missing ones
 
-	emailTemplate         =
-	emailRecipients       =
-	emailSender           =
-	emailAdmin            =
-	emailReturnPath       =
-	sendTo                = both
-	replyTo               = user
-	emailCharset          = utf-8
-	emailFormat           = html
+	emailTemplate          =
+	emailRecipients        =
+	emailSender            =
+	emailAdmin             =
+	emailReturnPath        =
+	sendTo                 = both
+	replyTo                = user
+	emailCharset           = utf-8
+	emailFormat            = html
 
-	showMaliciousInput    = clean
-	adminMails            = bot
-	messageCount          = 10
-	waitingTime           = 60
-	# useRefererCheck     = ## Aktivate Referer-Check by setting to "1"
-	# captchaSupport      = ## Supported are: sr_freecap, jm_recaptcha, captcha and mathguard
-	# spamDateFormat      = ## Use a valid "strftime" format to display date in spam notification
-	# spamTimeFormat      = ## Use a valid "strftime" format to display time in spam notification
+	showMaliciousInput     = clean
+	adminMails             = bot
+	messageCount           = 10
+	waitingTime            = 60
+	postOnly               = 1
+	# useRefererCheck      = ## Aktivate Referer-Check by setting to "1"
+	# captchaSupport       = ## Supported are: sr_freecap, jm_recaptcha, captcha and mathguard
+	# spamDateFormat       = ## Use a valid "strftime" format to display date in spam notification
+	# spamTimeFormat       = ## Use a valid "strftime" format to display time in spam notification
 
-	# enableLog           = ## Activate with "1" to log all valid sendings into a db table
-	# enableIPLog         = ## Activate with "1" to log ip addresses also
-	# highlightFields     = ## Activate with "1" to add the "classError" class to malicious fields
-	# classError          = ## Define own class name for malicious fields
-	# classNoError        = ## Define a class for fields without an error
+	# enableLog            = ## Activate with "1" to log all valid sendings into a db table
+	# enableIPLog          = ## Activate with "1" to log ip addresses also
+	# highlightFields      = ## Activate with "1" to add the "classError" class to malicious fields
+	# classError           = ## Define own class name for malicious fields
+	# classNoError         = ## Define a class for fields without an error
 
-	infoWrapPositive      = <span class="tx_spbettercontact_info_positive">|</span>
-	infoWrapNegative      = <span class="tx_spbettercontact_info_negative">|</span>
+	infoWrapPositive       = <span class="tx_spbettercontact_info_positive">|</span>
+	infoWrapNegative       = <span class="tx_spbettercontact_info_negative">|</span>
 
 
 	## Set some basic fields

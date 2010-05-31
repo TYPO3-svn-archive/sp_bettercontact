@@ -69,7 +69,7 @@
 			$this->vAddInput($aTabs['sTEMPLATE'], 'stylesheetFile', 40, '', TRUE, 'file', 'css');
 			$this->vAddInput($aTabs['sTEMPLATE'], 'locallangFile', 40, '', TRUE, 'file', 'xml');
 			$this->vAddInput($aTabs['sTEMPLATE'], 'fieldPrefix', 20, '', FALSE, 'page', '', 'trim,nospace,alphanum_x');
-			$this->vAddCheckBox($aTabs['sTEMPLATE'], 'notUseAutoTemplates', FALSE);
+			$this->vAddCheckBox($aTabs['sTEMPLATE'], 'disableAutoTemplates', FALSE);
 			$this->vAddCheckBox($aTabs['sTEMPLATE'], 'redirectToAnchor', TRUE);
 			$this->vAddCheckBox($aTabs['sTEMPLATE'], 'highlightFields', FALSE);
 
