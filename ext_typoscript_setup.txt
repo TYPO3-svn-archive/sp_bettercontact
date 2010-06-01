@@ -1,18 +1,21 @@
 # ==============================================================================
-# Default configuration for sp_bettercontact
+# Default configuration for extension "sp_bettercontact"
 # ==============================================================================
 plugin.tx_spbettercontact_pi1 {
 
-	## Basic configuration (see manual for details)
+
+	# ====================================================================
+	# Basic configuration (see manual for details)
+	# ====================================================================
 	successRedirectPage    =
 	spamRedirectPage       =
 	errorRedirectPage      =
 	formTemplate           =
 	stylesheetFile         =
 	locallangFile          =
-	# formCharset          = ## If not set -> auto detection (default "iso-8859-1")
-	# disableAutoTemplates = ## If "1" default templates will not be used for missing ones
-	# fieldPrefix          = ## Define your own field name prefix (default "tx_spbettercontact_pi1-<plugin_uid>")
+	# formCharset          = (?) If not set -> auto detection (default "iso-8859-1")
+	# disableAutoTemplates = (?) If "1" default templates will not be used for missing ones
+	# fieldPrefix          = (?) Define your own field name prefix (default "tx_spbettercontact_pi1-<plugin_uid>")
 
 	emailTemplate          =
 	emailRecipients        =
@@ -29,22 +32,25 @@ plugin.tx_spbettercontact_pi1 {
 	messageCount           = 10
 	waitingTime            = 60
 	postOnly               = 1
-	# useRefererCheck      = ## Aktivate Referer-Check by setting to "1"
-	# captchaSupport       = ## Supported are: sr_freecap, jm_recaptcha, captcha and mathguard
-	# spamDateFormat       = ## Use a valid "strftime" format to display date in spam notification
-	# spamTimeFormat       = ## Use a valid "strftime" format to display time in spam notification
+	useRefererCheck        =
+	# captchaSupport       = (?) Supported are: sr_freecap, jm_recaptcha, captcha and mathguard
+	# spamDateFormat       = (?) Use a valid "strftime" format to display date in spam notification
+	# spamTimeFormat       = (?) Use a valid "strftime" format to display time in spam notification
 
-	# enableLog            = ## Activate with "1" to log all valid sendings into a db table
-	# enableIPLog          = ## Activate with "1" to log ip addresses also
-	# highlightFields      = ## Activate with "1" to add the "classError" class to malicious fields
-	# classError           = ## Define own class name for malicious fields
-	# classNoError         = ## Define a class for fields without an error
+	enableLog              =
+	enableIPLog            =
+	# highlightFields      = (?) Activate with "1" to add the "classError" class to malicious fields
+	# classError           = (?) Define own class name for malicious fields
+	# classNoError         = (?) Define a class for fields without an error
 
 	infoWrapPositive       = <span class="tx_spbettercontact_info_positive">|</span>
 	infoWrapNegative       = <span class="tx_spbettercontact_info_negative">|</span>
 
 
-	## Set some basic fields
+
+	# ====================================================================
+	# Basic input fields
+	# ====================================================================
 	fields {
 		name {
 			required    = 1
@@ -96,7 +102,7 @@ plugin.tx_spbettercontact_pi1 {
 			default     =
 		}
 
-		## The email field is required and must be configured
+		## Required email field (!)
 		email {
 			required    = 1
 			minLength   = 5
@@ -117,7 +123,7 @@ plugin.tx_spbettercontact_pi1 {
 			default     =
 		}
 
-		## We need this dummy configuration if captcha is activated
+		## Required dummy configuration if captcha is activated (!)
 		captcha {
 			required    =
 			minLength   =
@@ -130,27 +136,32 @@ plugin.tx_spbettercontact_pi1 {
 	}
 
 
-	## Some demo markers
+
+	# ====================================================================
+	# User defined template markers
+	# ====================================================================
 	markers {
-		# static_marker = TEXT
-		# static_marker.value = I am a static marker
+		# static_marker= I am a static marker
 
 		# dynamic_marker = TEXT
 		# dynamic_marker.field = title
 	}
 
 
-	## Database configuration
+
+	# ====================================================================
+	# Database configuration
+	# ====================================================================
 	database {
-		# driver           = ## Use only for external database (default "mysql")
-		# host             = ## Use only for external database
-		# port             = ## Use only for external database
-		# username         = ## Use only for external database
-		# password         = ## Use only for external database
-		# database         = ## Use only for external database
-		# table            = ## Internal or external table (e.g. tt_news, tt_address, ...)
-		# idField          = ## Field name to identify and update a row (default "uid")
-		# useDefaultValues = ## Automatically fill default fields pid, tstamp, crdate and cruser_id
+		# driver           = (?) Use only for external database (default "mysql")
+		# host             = (?) Use only for external database
+		# port             = (?) Use only for external database
+		# username         = (?) Use only for external database
+		# password         = (?) Use only for external database
+		# database         = (?) Use only for external database
+		# table            = (?) Internal or external table (e.g. tt_news, tt_address, ...)
+		# idField          = (?) Field name to identify and update a row (default "uid")
+		# useDefaultValues = (?) Automatically fill default fields pid, tstamp, crdate and cruser_id
 
 		## Demo field configuration (see manual for details)
 		fieldconf {
@@ -169,24 +180,28 @@ plugin.tx_spbettercontact_pi1 {
 	}
 
 
-	## Overwrite or add locallang labels (better use your own locallang.xml)
+
+	# ====================================================================
+	# Overwrite / add locallang labels (better use your own locallang.xml)
+	# ====================================================================
 	_LOCAL_LANG.default {
 		# msg_email_passed = Message was sent. Thank you.
-		# msg_email_failed = Message could not be sent. Please try again.
-		# msg_check_passed = Check passed. Thank you.
-		# msg_check_failed = A problem has occurred with the entered data.
-		# msg_not_allowed  = This process is not allowed!
-		# msg_already_sent = You have already sent %d messages. Please wait %d minutes.
-		# msg_captcha      = Please enter the sequence of characters shown in the captcha image.
 	}
 
 
-	## Set some default piVars or overwrite existing
+
+	# ====================================================================
+	# Default piVars
+	# ====================================================================
 	_DEFAULT_PI_VARS {
 		# email = user@domain.com
 	}
 
+
+
 }
+
+
 
 ## Include TypoScript configuration for systems
 <INCLUDE_TYPOSCRIPT: source="FILE:EXT:sp_bettercontact/res/setup/systems.txt">

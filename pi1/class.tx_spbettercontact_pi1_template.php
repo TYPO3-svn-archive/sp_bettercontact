@@ -206,19 +206,21 @@
 				switch ($sExtKey) {
 					case 'sr_freecap' :
 						require_once(t3lib_extMgm::extPath($sExtKey) . 'pi2/class.tx_srfreecap_pi2.php');
-						$oCaptcha       = t3lib_div::makeInstance('tx_srfreecap_pi2');
-						$aMarkers       = $oCaptcha->makeCaptcha();
-						$this->aMarkers = $aMarkers + $this->aMarkers;
+						$oCaptcha = t3lib_div::makeInstance('tx_srfreecap_pi2');
+						$aMarkers = $oCaptcha->makeCaptcha();
+						foreach ($aMarkers as $sKey => $sValue) {
+							$this->aMarkers[trim($sKey, '#')] = $sValue;
+						}
 						$this->aMarkers['CAPTCHA_DATA'] = implode(PHP_EOL, array(
 							'<div class="tx_srfreecap_pi2">',
 								'<div class="tx_srfreecap_pi2_image">',
-									$aMarkers['SR_FREECAP_IMAGE'],
+									$this->aMarkers['SR_FREECAP_IMAGE'],
 								'</div>',
 								'<div class="tx_srfreecap_pi2_cant_read">',
-									$aMarkers['SR_FREECAP_CANT_READ'],
+									$this->aMarkers['SR_FREECAP_CANT_READ'],
 								'</div>',
 								'<div class="tx_srfreecap_pi2_accessible">',
-									$aMarkers['SR_FREECAP_ACCESSIBLE'],
+									$this->aMarkers['SR_FREECAP_ACCESSIBLE'],
 								'</div>',
 							'</div>',
 						));
@@ -271,7 +273,8 @@
 			}
 
 			if (strlen($sFile)) {
-				$GLOBALS['TSFE']->additionalHeaderData[md5($sFile)] = sprintf($sTag, urlencode($sFile));
+				$sFile = t3lib_div::locationHeaderUrl($sFile);
+				$GLOBALS['TSFE']->additionalHeaderData[md5($sFile)] = sprintf($sTag, $sFile);
 			}
 		}
 

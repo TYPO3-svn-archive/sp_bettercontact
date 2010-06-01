@@ -2,89 +2,93 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
 	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-	<title>formular template</title>
+	<title>Default form template</title>
 </head>
 <body>
-<h1>Following markers could be set:</h1>
+<h1>Default form template</h1>
+<p>The following markers could be set:</p>
+<div style="font-family: monospace; font-size:11px; background:#E6EFF9; border:1px dashed #000000; margin-bottom: 24px;">
+	<pre>
+    // General markers
+    ###URL_SELF###
+    ###FORM_NAME###
+    ###FORM_ID###
+    ###INFO###
+    ###HIDDEN###
+    ###SUBMIT###
+    ###SUBMIT_VALUE###
+    ###CHARSET###
+    ###ANCHOR###
 
-<h2>General:</h2>
-###URL_SELF###                  <br />
-###FORM_NAME###                 <br />
-###FORM_ID###                   <br />
-###INFO###                      <br />
-###HIDDEN###                    <br />
-###SUBMIT###                    <br />
-###SUBMIT_VALUE###              <br />
-###CHARSET###                   <br />
-###ANCHOR###                    <br />
-                                <br />
 
-<h2>Show all messages of all fields as list:</h2>
-###MESSAGES###                  <br />
-                                <br />
+    // Show all messages of all fields as list
+    ###MESSAGES###
 
-<h2>Show inline messages for each field:</h2>
-###MSG_<FIELDNAME>###           <br />
-                                <br />
 
-<h2>Add error class to each field:</h2>
-###ERR_<FIELDNAME>###           <br />
-                                <br />
+    // Show inline messages for each field
+    ###MSG_<FIELDNAME>###
 
-<h2>Show the value of input fields:</h2>
-###VALUE_<FIELDNAME>###         <br />
-                                <br />
 
-<h2>Set state of a checkbox:</h2>
-###CHECKED_<FIELDNAME>###       <br />
-                                <br />
+    // Add error class to each field
+    ###ERR_<FIELDNAME>###
 
-<h2>Set state of a radio button:</h2>
-###CHECKED_<FIELDNAME>_[###<SAME_AS_VALUE>###]###   <br />
-                                <br />
 
-<h2>Set state of a select option:</h2>
-###SELECTED_<FIELDNAME>_[###<SAME_AS_VALUE>###]###  <br />
-                                <br />
+    // Show the value of input fields
+    ###VALUE_<FIELDNAME>###
 
-<h2>Show labels for the input fields:</h2>
-###LABEL_<FIELDNAME>###         <br />
-                                <br />
 
-<h2>Show required symbol for the input fields:</h2>
-###REQUIRED_<FIELDNAME>###      <br />
-                                <br />
+    // Set state of a checkbox
+    ###CHECKED_<FIELDNAME>###
 
-<h2>Show your own markers (define via TypoScript - see manual):</h2>
-###<NAME_OF_MY_MARKER>###       <br />
-                                <br />
 
-<h2>Show your own locallang labels (see manual):</h2>
-###LLL:<label_name>###          <br />
-                                <br />
+    // Set state of a radio button
+    ###CHECKED_<FIELDNAME>_[###<SAME_AS_VALUE>###]###
 
-<h2>Show page information:</h2>
-###PAGE:<db_fieldname>###       <br />
-                                <br />
 
-<h2>Show plugin information:</h2>
-###PLUGIN:<db_fieldname>###     <br />
-                                <br />
+    // Set state of a select option
+    ###SELECTED_<FIELDNAME>_[###<SAME_AS_VALUE>###]###
 
-<h2>Show user information:</h2>
-###USER:<db_fieldname>###       <br />
-                                <br />
 
-<h2>Show captcha (see manual):</h2>
-###CAPTCHA_DATA###              <br />
-###CAPTCHA_FILE###              <br />
-###SR_FREECAP_NOTICE###         <br />
-###SR_FREECAP_CANT_READ###      <br />
-###SR_FREECAP_IMAGE###          <br />
-###SR_FREECAP_ACCESSIBLE###     <br />
-###CAPTCHA_FIELD###             <br />
-                                <br />
-                                <br />
+    // Show labels for the input fields
+    ###LABEL_<FIELDNAME>###
+
+
+    // Show required symbol for the input fields
+    ###REQUIRED_<FIELDNAME>###
+
+
+    // Show your own markers (define via TypoScript - see manual)
+    ###<NAME_OF_MY_MARKER>###
+
+
+    // Show your own locallang labels (see manual)
+    ###LLL:<label_name>###
+
+
+    // Show page information
+    ###PAGE:<db_fieldname>###
+
+
+    // Show plugin information
+    ###PLUGIN:<db_fieldname>###
+
+
+    // Show user information
+    ###USER:<db_fieldname>###
+
+
+    // Show captcha (see manual)
+    ###CAPTCHA_DATA###
+    ###CAPTCHA_FILE###
+    ###SR_FREECAP_NOTICE###
+    ###SR_FREECAP_CANT_READ###
+    ###SR_FREECAP_IMAGE###
+    ###SR_FREECAP_ACCESSIBLE###
+    ###CAPTCHA_FIELD###
+	</pre>
+</div>
+
+
 
 
 

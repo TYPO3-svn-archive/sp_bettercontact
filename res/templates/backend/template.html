@@ -2,39 +2,43 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
 	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-	<title>main backend template</title>
+	<title>Default backend template</title>
 </head>
 <body>
-<h1>Following markers could be set:</h1>
+<h1>Default backend template</h1>
+<p>The following markers could be set:</p>
+<div style="font-family: monospace; font-size:11px; background:#E6EFF9; border:1px dashed #000000; margin-bottom: 24px;">
+	<pre>
+    // General markers
+    ###URL_SELF###
+    ###CSV_IMAGE_SRC###
+    ###INFO###
 
-<h2>General:</h2>
-###URL_SELF###                  <br />
-###CSV_IMAGE_SRC###             <br />
-###INFO###                      <br />
-                                <br />
 
-<h2>Func menues:</h2>
-###MENU_MODE###                 <br />
-###MENU_PERIOD###               <br />
-                                <br />
+    // Menus
+    ###MENU_MODE###
+    ###MENU_PERIOD###
+    
+    
+    // Show the value of input fields
+    ###VALUE_<FIELDNAME>###
+    
+    
+    // Show whole prepered content
+    ###INPUT_HTML###
+    ###INPUT_PLAIN###
+    
+    
+    // Show your own locallang labels (see manual)
+    ###LLL:<label_name>###
+    
+    
+    // Show backend user information
+    ###USER:<db_fieldname>###
+	</pre>
+</div>
 
-<h2>Show the value of input fields:</h2>
-###VALUE_<FIELDNAME>###         <br />
-                                <br />
 
-<h2>Show whole prepered content:</h2>
-###INPUT_HTML###                <br />
-###INPUT_PLAIN###               <br />
-                                <br />
-
-<h2>Show your own locallang labels (see manual):</h2>
-###LLL:<label_name>###          <br />
-                                <br />
-
-<h2>Show user information:</h2>
-###USER:<db_fieldname>###       <br />
-                                <br />
-                                <br />
 
 
 
