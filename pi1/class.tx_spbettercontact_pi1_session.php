@@ -52,7 +52,7 @@
 			$this->aGP          = $poParent->aGP;
 			$this->aLL          = $poParent->aLL;
 			$this->sExtKey      = $poParent->extKey;
-			$this->sSessionName = $this->sExtKey . '-' . $poParent->cObj->data['uid'];
+			$this->iPluginID    = $poParent->cObj->data['uid'];
 		}
 
 
@@ -62,9 +62,10 @@
 		 * @return TRUE if current fe user has already sent a lot of emails
 		 */
 		public function bHasAlreadySent () {
-			$aSessionContent = $GLOBALS['TSFE']->fe_user->getKey('ses', $this->sSessionName);
+			$aSessionContent = $GLOBALS['TSFE']->fe_user->getKey('ses', $this->sExtKey);
+			$aSessionContent = (isset($aSessionContent[$this->iPluginID])) ? $aSessionContent[$this->iPluginID] : array();
 
-			if (!is_array($aSessionContent)) {
+			if (empty($aSessionContent) || !is_array($aSessionContent)) {
 				return FALSE;
 			}
 
@@ -130,12 +131,18 @@
 		 *
 		 */
 		public function vSave () {
-			$this->iCount++;
+			// Get new session content
 			$this->aSessionContent['tstmp']  = $GLOBALS['SIM_EXEC_TIME'];
-			$this->aSessionContent['cnt']    = $this->iCount;
+			$this->aSessionContent['cnt']    = ++$this->iCount;
 			$this->aSessionContent['gpVars'] = $this->aGP;
 
-			$GLOBALS['TSFE']->fe_user->setKey('ses', $this->sSessionName, $this->aSessionContent);
+			// Add a new entry for each plugin and update "lastEntryID"
+			$aContent = $GLOBALS['TSFE']->fe_user->getKey('ses', $this->sExtKey);
+			$aContent[$this->iPluginID] = $this->aSessionContent;
+			$aContent['lastEntryID']    = $this->iPluginID;
+
+			// Update session content
+			$GLOBALS['TSFE']->fe_user->setKey('ses', $this->sExtKey, $aContent);
 			$GLOBALS['TSFE']->storeSessionData();
 		}
 
