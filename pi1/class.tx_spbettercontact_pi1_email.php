@@ -78,11 +78,6 @@
 			// Set default markers
 			$this->aMarkers = $this->aGetDefaultMarkers();
 
-			// User defined markers
-			if (isset($poParent->aUserMarkers) && is_array($poParent->aUserMarkers)) {
-				$this->aMarkers = $poParent->aUserMarkers + $this->aMarkers;
-			}
-
 			// Add additional remote user information for spam notifications
 			$aSpamMarkers   = $this->aGetSpamMarkers();
 			$this->aMarkers = $aSpamMarkers + $this->aMarkers;
@@ -202,6 +197,13 @@
 			if (is_array($this->aLL)) {
 				foreach ($this->aLL as $sKey => $sValue) {
 					$aMarkers['LLL:' . $sKey] = $sValue;
+				}
+			}
+
+			// User defined markers
+			if (!empty($this->aConfig['markers.']) && is_array($this->aConfig['markers.'])) {
+				foreach ($this->aConfig['markers.'] as $sKey => $sValue) {
+					$aMarkers[strtoupper($sKey)] = $sValue;
 				}
 			}
 

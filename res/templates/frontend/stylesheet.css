@@ -10,11 +10,6 @@ div.tx-spbettercontact-pi1 textarea {
 	width: 300px;
 }
 
-div.tx-spbettercontact-pi1 input:focus,
-div.tx-spbettercontact-pi1 textarea:focus {
-	border: 1px solid #0385FF;
-}
-
 div.tx-spbettercontact-pi1 textarea {
 	height: 100px;
 }
@@ -42,43 +37,51 @@ div.tx-spbettercontact-pi1 br {
 	clear: left;
 }
 
-.tx_spbettercontact_form {
-
-}
-
-.tx_spbettercontact_info {
+div.tx-spbettercontact-pi1 .tx_spbettercontact_info {
 	font-weight: bold;
 }
 
-.tx_spbettercontact_info_positive {
+div.tx-spbettercontact-pi1 .tx_spbettercontact_info_positive {
 	color: #01b101;
 }
 
-.tx_spbettercontact_info_negative {
+div.tx-spbettercontact-pi1 .tx_spbettercontact_info_negative {
 	color: #FF8F33;
 }
 
-.tx_spbettercontact_message {
-
+div.tx-spbettercontact-pi1 .tx_spbettercontact_message {
+	width: 410px;
 }
 
-.tx_spbettercontact_messages ul li {
+div.tx-spbettercontact-pi1 .tx_spbettercontact_messages ul li {
 	list-style-type: square;
 }
 
-label.tx_spbettercontact_label {
+div.tx-spbettercontact-pi1 .tx_spbettercontact_label {
 	width: 100px;
 	float: left;
 	padding-top: 4px;
 }
 
-p.tx_spbettercontact_button {
+div.tx-spbettercontact-pi1 .tx_spbettercontact_button {
 	display: block;
 	width: 410px;
 	text-align: right;
 }
 
-.tx_spbettercontact_hidden {
-	visibility: hidden;
-	display: none;
+div.tx-spbettercontact-pi1 .tx_spbettercontact_hidden {
+	position: absolute;
+	top: -2000px;
+}
+
+div.tx-spbettercontact-pi1 .tx_spbettercontact_captcha {
+	padding-left: 100px;
+	width: 300px;
+	overflow: visible;
+}
+
+div.tx-spbettercontact-pi1 .tx_spbettercontact_captcha img {
+	border: 1px solid #A1A1A1;
+	padding: 0;
+	margin: 0;
 }

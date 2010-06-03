@@ -43,7 +43,6 @@
 		public $aLL           = array();
 		public $aConfig       = array();
 		public $aFields       = array();
-		public $aUserMarkers  = array();
 		public $oTemplate     = NULL;
 		public $oSession      = NULL;
 		public $oCheck        = NULL;
@@ -65,6 +64,9 @@
 			// Get merged config from TS and Flexform
 			$oTS = $this->oMakeInstance('ts');
 			$this->aConfig = $oTS->aGetConfig($paConf);
+
+			// Call preUserFunc to do something before checks and rendering
+			$this->vCheckUserFunc('preUserFunc');
 
 			// Set default templates if not configured
 			$this->vSetDefaultTemplates();
@@ -91,7 +93,7 @@
 
 			// Check form data
 			if (!$this->oCheck->bCheckFields()) {
-				if (!$this->bIsFormEmpty()) {
+				if (!$this->bIsFormEmpty($this->aGP)) {
 					$this->vSendWarning('user');
 				}
 				$this->oTemplate->vAddMarkers($this->oCheck->aGetMessages());
@@ -122,6 +124,9 @@
 
 			// Save timestamp into session for multiple mails check
 			$this->oSession->vSave();
+
+			// Call saveUserFunc to do something before redirect or output
+			$this->vCheckUserFunc('postUserFunc');
 
 			// Redirect if configured or return content
 			$this->vCheckRedirect('success');
@@ -201,6 +206,11 @@
 				$aMessages[] = 'Please define an email address for the admin!';
 			}
 
+			// Check if "sr_freecap" and php option "display_errors" are active
+			/*if (!empty($this->aConfig['captchaSupport']) && $this->aConfig['captchaSupport'] == 'sr_freecap' && ini_get('display_errors')) {
+				$aMessages[] = 'Please disable "display_errors" in your php.ini if you use "sr_freecap" as Captcha extension!';
+			}*/
+
 			// Return a list of error messages
 			if (count($aMessages)) {
 				return '<strong>Configuration of "Better Contact" is incorrect:</strong><br /><ul><li>' . implode('</li><li>', $aMessages) . '</li></ul>';
@@ -219,7 +229,6 @@
 			$this->oCS           = $this->oGetCSObject();
 			$this->aGP           = $this->aGetGP();
 			$this->aLL           = $this->aGetLL();
-			$this->aUserMarkers  = $this->aGetUserMarkers();
 			$this->aFields       = $this->aGetFields();
 			$this->sEmailCharset = $this->sGetCharset('email');
 			$this->sFormCharset  = $this->sGetCharset('form');
@@ -334,25 +343,6 @@
 
 
 		/**
-		 * Get user defined markers
-		 *
-		 * @return Array with user markers
-		 */
-		protected function aGetUserMarkers () {
-			$aMarkers = array();
-
-			// User defined markers
-			if (!empty($this->aConfig['markers.']) && is_array($this->aConfig['markers.'])) {
-				foreach ($this->aConfig['markers.'] as $sKey => $sValue) {
-					$aMarkers[strtoupper($sKey)] = $sValue;
-				}
-			}
-
-			return $aMarkers;
-		}
-
-
-		/**
 		 * Get an array of all fields
 		 *
 		 * @return Array of all formular fields
@@ -456,9 +446,7 @@
 		 * @param  array $paValues Values to check
 		 * @return TRUE if the form is empty
 		 */
-		protected function bIsFormEmpty (array $paValues = array()) {
-			$aValues = (count($paValues)) ? $paValues : $this->aGP;
-
+		protected function bIsFormEmpty (array $paValues) {
 			foreach ($paValues as $sKey => $mValue) {
 				// Check first if its an array
 				if (is_array($mValue)) {
@@ -488,6 +476,22 @@
 			}
 
 			$this->oEmail->vSendSpamWarning();
+		}
+
+
+		/**
+		 * Execute a given userFunc if configured
+		 *
+		 * @param string $psName Name of the userFunc option
+		 */
+		protected function vCheckUserFunc ($psName) {
+			if (!is_string($psName) || !strlen($psName) || empty($this->aConfig[$psName])) {
+				return;
+			}
+
+			$aConfig = (!empty($this->aConfig[$psName . '.'])) ? $this->aConfig[$psName . '.'] : array();
+
+			t3lib_div::callUserFunction($this->aConfig[$psName], $aConfig, $this, '');
 		}
 
 

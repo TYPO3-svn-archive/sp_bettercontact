@@ -71,7 +71,7 @@
 			$this->vAddInput($aTabs['sTEMPLATE'], 'fieldPrefix', 20, '', FALSE, 'page', '', 'trim,nospace,alphanum_x');
 			$this->vAddCheckBox($aTabs['sTEMPLATE'], 'disableAutoTemplates', FALSE);
 			$this->vAddCheckBox($aTabs['sTEMPLATE'], 'redirectToAnchor', TRUE);
-			$this->vAddCheckBox($aTabs['sTEMPLATE'], 'highlightFields', FALSE);
+			$this->vAddCheckBox($aTabs['sTEMPLATE'], 'highlightFields', TRUE);
 
 			// Add elements to tab "email"
 			$this->vAddInput($aTabs['sEMAIL'], 'emailRecipients', 40);

@@ -137,16 +137,28 @@
 
 			require_once(PATH_t3lib . 'class.t3lib_tsparser.php');
 
-			// Remove uncommented include lines
-			$psValue = preg_replace('|#(.*)<INCLUDE_TYPOSCRIPT:(.*)>|', '', $psValue);
+			$aIncludes = array();
+			$aParts    = array($psValue);
 
-			// Get all include lines
-			preg_match_all('|<INCLUDE_TYPOSCRIPT:(.*)>|', $psValue, $aIncludes);
-			$aIncludes = (!empty($aIncludes)) ? reset($aIncludes) : array();
-			$aIncludes = t3lib_TSparser::checkIncludeLines_array($aIncludes);
+			// Check for includes
+			if (strpos($psValue, 'INCLUDE_TYPOSCRIPT') !== FALSE) {
+				// Remove uncommented lines
+				$psValue = preg_replace('|#.*|', '', $psValue);
+				$psValue = preg_replace('|\/\*.*\*\/|s', '', $psValue); // All multiline comments
+				$psValue = trim($psValue);
 
-			// Get all other TypoScript lines around them
-			$aParts = preg_split('|<INCLUDE_TYPOSCRIPT:(.*)>|', $psValue);
+				if (!strlen($psValue)) {
+					return $paBaseArray;
+				}
+
+				// Get all include lines
+				preg_match_all('|<INCLUDE_TYPOSCRIPT:.*>|', $psValue, $aIncludes);
+				$aIncludes = (!empty($aIncludes)) ? reset($aIncludes) : array();
+				$aIncludes = t3lib_TSparser::checkIncludeLines_array($aIncludes);
+
+				// Get all other TypoScript lines around them
+				$aParts = preg_split('|<INCLUDE_TYPOSCRIPT:.*>|', $psValue);
+			}
 
 			// Build new TypoScript configuration
 			$sWrapMulti  = "plugin.tx_spbettercontact_pi1." . $psKeys . " {\n%s\n}\n";
