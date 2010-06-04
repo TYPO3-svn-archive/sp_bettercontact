@@ -43,7 +43,7 @@
 		 * @param  array $oParent New Content element wizard object
 		 * @return Modified array with wizard items
 		 */
-		public function manipulateWizardItems (array &$aWizardItems, &$oParent) {
+		public function manipulateWizardItems (&$aWizardItems, &$oParent) {
 			$oWizard      = t3lib_div::makeInstance('tx_spbettercontact_pi1_wizicon');
 			$aWizardItems = $oWizard->proc($aWizardItems);
 

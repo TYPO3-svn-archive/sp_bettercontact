@@ -66,9 +66,21 @@
 				return array();
 			}
 
+			// Check if DB tab is visible in Flexform
+			$bShowDBTab = FALSE;
+			if (isset($GLOBALS['TYPO3_CONF_VARS']['EXT']['extConf']['sp_bettercontact'])) {
+				$aConfig    = unserialize($GLOBALS['TYPO3_CONF_VARS']['EXT']['extConf']['sp_bettercontact']);
+				$bShowDBTab = !empty($aConfig['enableDBTab']);
+			}
+
 			// Override TS with FlexForm values
-			foreach ($mFlex['data'] as $aData) {
+			foreach ($mFlex['data'] as $sTab => $aData) {
 				if (empty($aData['lDEF']) && !is_array($aData['lDEF'])) {
+					continue;
+				}
+
+				// Exclude DB tab if disabled
+				if (!$bShowDBTab && $sTab == 'sDB') {
 					continue;
 				}
 

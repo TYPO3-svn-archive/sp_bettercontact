@@ -16,6 +16,7 @@ plugin.tx_spbettercontact_pi1 {
 	# formCharset          = (?) If not set -> auto detection (default "iso-8859-1")
 	# disableAutoTemplates = (?) If "1" default templates will not be used for missing ones
 	# fieldPrefix          = (?) Define your own field name prefix (default "tx_spbettercontact_pi1-<plugin_uid>")
+	# clearOnSuccess       = (?) Activate with "1" to clear all input fields if request was successfully sent
 
 	emailTemplate          =
 	emailRecipients        =

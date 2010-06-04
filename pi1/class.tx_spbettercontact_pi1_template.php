@@ -282,10 +282,10 @@
 
 
 		/**
-		 * Remove malicious input from markers
+		 * Clear given input fields in marker array
 		 *
 		 */
-		public function vClearMalicious (array $paFields) {
+		public function vClearFields (array $paFields) {
 			foreach ($paFields as $aField) {
 				$this->aMarkers[$aField['valueName']] = '';
 			}

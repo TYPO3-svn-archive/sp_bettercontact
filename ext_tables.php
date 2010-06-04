@@ -27,14 +27,23 @@
 		die ('Access denied.');
 	}
 
+	// Check if DB tab is visible in Flexform
+	$bShowDBTab = FALSE;
+	if (isset($GLOBALS['TYPO3_CONF_VARS']['EXT']['extConf']['sp_bettercontact'])) {
+		$aConfig    = unserialize($GLOBALS['TYPO3_CONF_VARS']['EXT']['extConf']['sp_bettercontact']);
+		$bShowDBTab = !empty($aConfig['enableDBTab']);
+	}
+
 	// Check for required SimpleXML and get flexform
 	if (class_exists('SimpleXMLElement')) {
 		include_once(t3lib_extMgm::extPath('sp_bettercontact') . 'pi1/class.tx_spbettercontact_pi1_flexform.php');
 		$oFlexForm = t3lib_div::makeInstance('tx_spbettercontact_pi1_flexform');
-		$sFlexData = $oFlexForm->sGetFlexForm();
+		$sFlexData = $oFlexForm->sGetFlexForm($bShowDBTab);
 		unset($oFlexForm);
-	} else {
+	} else if ($bShowDBTab) {
 		$sFlexData = 'FILE:EXT:sp_bettercontact/res/fallback/flexform.xml';
+	} else {
+		$sFlexData = 'FILE:EXT:sp_bettercontact/res/fallback/flexform_no_db.xml';
 	}
 
 	// Get plugin data
@@ -46,12 +55,12 @@
 
 	// Add flexform
 	t3lib_div::loadTCA('tt_content');
-	$TCA['tt_content']['columns']['pi_flexform']['config']['ds'][',sp_bettercontact_pi1'] = $sFlexData;
-	$TCA['tt_content']['columns']['pi_flexform']['config']['ds_pointerField'] = 'list_type,CType';
-	$TCA['tt_content']['types']['sp_bettercontact_pi1']['showitem'] = 'CType;;4;button,hidden,1-1-1, header;;3;;2-2-2, linkToTop;;;;3-3-3, --div--;LLL:EXT:sp_bettercontact/locallang.xml:tabs.form,pi_flexform;;;;1-1-1, --div--;LLL:EXT:cms/locallang_tca.xml:pages.tabs.access,starttime, endtime, cPos';
+	$GLOBALS['TCA']['tt_content']['columns']['pi_flexform']['config']['ds'][',sp_bettercontact_pi1'] = $sFlexData;
+	$GLOBALS['TCA']['tt_content']['columns']['pi_flexform']['config']['ds_pointerField'] = 'list_type,CType';
+	$GLOBALS['TCA']['tt_content']['types']['sp_bettercontact_pi1']['showitem'] = 'CType;;4;button,hidden,1-1-1, header;;3;;2-2-2, linkToTop;;;;3-3-3, --div--;LLL:EXT:sp_bettercontact/locallang.xml:tabs.form,pi_flexform;;;;1-1-1, --div--;LLL:EXT:cms/locallang_tca.xml:pages.tabs.access,starttime, endtime, cPos';
 
 	// Add plugin into correct position in list
-	$aCTypes    = $TCA['tt_content']['columns']['CType']['config']['items'];
+	$aCTypes    = $GLOBALS['TCA']['tt_content']['columns']['CType']['config']['items'];
 	$aNewItems  = array();
 	foreach ($aCTypes as $aValue) {
 		if (strpos($aValue[0], 'special') !== FALSE) {
@@ -59,12 +68,12 @@
 		}
 		$aNewItems[] = $aValue;
 	}
-	$TCA['tt_content']['columns']['CType']['config']['items'] = $aNewItems;
+	$GLOBALS['TCA']['tt_content']['columns']['CType']['config']['items'] = $aNewItems;
 
 
 	if (TYPO3_MODE == 'BE') {
 		// Add wizard icon
-		$TBE_MODULES_EXT['xMOD_db_new_content_el']['addElClasses']['tx_spbettercontact_pi1_wizicon'] = t3lib_extMgm::extPath('sp_bettercontact').'pi1/class.tx_spbettercontact_pi1_wizicon.php';
+		$GLOBALS['TBE_MODULES_EXT']['xMOD_db_new_content_el']['addElClasses']['tx_spbettercontact_pi1_wizicon'] = t3lib_extMgm::extPath('sp_bettercontact').'pi1/class.tx_spbettercontact_pi1_wizicon.php';
 
 		// Add backend module to web->info
 		t3lib_extMgm::insertModuleFunction(

@@ -1,0 +1,2 @@
+# cat=basic/enable; type=boolean; label=Enable DB Tab: Enable additional Tab for database configuration in Plugin Flexform.
+enableDBTab = 0

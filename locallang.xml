@@ -28,6 +28,7 @@
 			<label index="tt_content.flexform_pi1.disableAutoTemplates">Do not use default templates for missing ones:</label>
 			<label index="tt_content.flexform_pi1.redirectToAnchor">Jump directly to the contact form (anchor):</label>
 			<label index="tt_content.flexform_pi1.highlightFields">Highlight malicious fields:</label>
+			<label index="tt_content.flexform_pi1.clearOnSuccess">Empty form if successfully sent:</label>
 			<label index="tt_content.flexform_pi1.sEMAIL">Emails</label>
 			<label index="tt_content.flexform_pi1.emailRecipients">Send notification email to (separate multiple recipients with ","):</label>
 			<label index="tt_content.flexform_pi1.emailSender">Sender email address (e.g. Contact form &lt;contact@your-domain.com&gt;):</label>
@@ -109,6 +110,7 @@
 			<label index="tt_content.flexform_pi1.disableAutoTemplates">Für fehlende Templates nicht die Standardtemplates benutzen:</label>
 			<label index="tt_content.flexform_pi1.redirectToAnchor">Direkt auf das Kontaktformular springen (Anker):</label>
 			<label index="tt_content.flexform_pi1.highlightFields">Fehlerhafte Felder hervorheben:</label>
+			<label index="tt_content.flexform_pi1.clearOnSuccess">Formular leeren wenn erfolgreich versandt:</label>
 			<label index="tt_content.flexform_pi1.sEMAIL">E-Mails</label>
 			<label index="tt_content.flexform_pi1.emailRecipients">Sende Benachrichtigung an (mehrere Empfänger durch "," trennen):</label>
 			<label index="tt_content.flexform_pi1.emailSender">Absender E-Mail (z.B. Kontaktformular &lt;contact@your-domain.com&gt;):</label>

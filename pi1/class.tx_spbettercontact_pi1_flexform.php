@@ -38,9 +38,10 @@
 		/**
 		 * Get flexform belonging to server configuration
 		 *
+		 * @param  boolean $pbShowDBTab Enable additional DB tab in Flexform
 		 * @return String with flexform content
 		 */
-		public function sGetFlexForm () {
+		public function sGetFlexForm ($pbShowDBTab = FALSE) {
 			// Begin document
 			$oXML = new SimpleXMLElement('<T3DataStructure></T3DataStructure>');
 
@@ -51,7 +52,11 @@
 
 			// Add tabs (notice: PHP5 always uses references for objects)
 			$oSheets = $oXML->addChild('sheets');
-			$aTabs = array_flip(array('sDEF','sTEMPLATE','sEMAIL','sSPAM','sDB'));
+			$aTabs = array('sDEF','sTEMPLATE','sEMAIL','sSPAM');
+			if ($pbShowDBTab) {
+				$aTabs[] = 'sDB';
+			}
+			$aTabs = array_flip($aTabs);
 			foreach($aTabs as $sKey => $sValue) {
 				$aTabs[$sKey] = $this->oGetTab($oSheets, $sKey);
 			}
@@ -72,6 +77,7 @@
 			$this->vAddCheckBox($aTabs['sTEMPLATE'], 'disableAutoTemplates', FALSE);
 			$this->vAddCheckBox($aTabs['sTEMPLATE'], 'redirectToAnchor', TRUE);
 			$this->vAddCheckBox($aTabs['sTEMPLATE'], 'highlightFields', TRUE);
+			$this->vAddCheckBox($aTabs['sTEMPLATE'], 'clearOnSuccess', TRUE);
 
 			// Add elements to tab "email"
 			$this->vAddInput($aTabs['sEMAIL'], 'emailRecipients', 40);
@@ -94,9 +100,11 @@
 			$this->vAddInput($aTabs['sSPAM'], 'waitingTime', 5, '60');
 
 			// Add elements to tab "db"
-			$this->vAddInput($aTabs['sDB'], 'database.table', 40);
-			$this->vAddCheckBox($aTabs['sDB'], 'database.useDefaultValues', FALSE);
-			$this->vAddText($aTabs['sDB'], 'database.fieldconf', 40, 20, $this->sGetDefaultTS(), 'off');
+			if ($pbShowDBTab) {
+				$this->vAddInput($aTabs['sDB'], 'database.table', 40);
+				$this->vAddCheckBox($aTabs['sDB'], 'database.useDefaultValues', FALSE);
+				$this->vAddText($aTabs['sDB'], 'database.fieldconf', 40, 20, $this->sGetDefaultTS(), 'off');
+			}
 
 			return $oXML->asXML();
 		}

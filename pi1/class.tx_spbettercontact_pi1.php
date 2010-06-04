@@ -97,7 +97,7 @@
 					$this->vSendWarning('user');
 				}
 				$this->oTemplate->vAddMarkers($this->oCheck->aGetMessages());
-				$this->oTemplate->vClearMalicious($this->oCheck->aGetMaliciousFields());
+				$this->oTemplate->vClearFields($this->oCheck->aGetMaliciousFields());
 				return $this->sGetContent();
 			}
 
@@ -127,6 +127,11 @@
 
 			// Call saveUserFunc to do something before redirect or output
 			$this->vCheckUserFunc('postUserFunc');
+
+			// Clear all input fields if configured
+			if (!empty($this->aConfig['clearOnSuccess'])) {
+				$this->oTemplate->vClearFields($this->aFields);
+			}
 
 			// Redirect if configured or return content
 			$this->vCheckRedirect('success');
