@@ -15,7 +15,8 @@
 			<label index="tt_content.flexform_pi1.wizard">Open wizard</label>
 			<label index="tt_content.flexform_pi1.sDEF">General</label>
 			<label index="tt_content.flexform_pi1.successRedirectPage">Show this page if email was sent (PID or URL):</label>
-			<label index="tt_content.flexform_pi1.spamRedirectPage">Show this page if a bot tries to send spam (PID or URL):</label>
+			<label index="tt_content.flexform_pi1.spamRedirectPage">Show this page if a someone tries to send spam (PID or URL):</label>
+			<label index="tt_content.flexform_pi1.exhaustedRedirectPage">Show this page if a visitor has sent too many requests (PID or URL):</label>
 			<label index="tt_content.flexform_pi1.errorRedirectPage">Show this page if an error occurs (PID or URL):</label>
 			<label index="tt_content.flexform_pi1.enableLog">Enable Log:</label>
 			<label index="tt_content.flexform_pi1.enableIPLog">Log IP address:</label>
@@ -97,7 +98,8 @@
 			<label index="tt_content.flexform_pi1.wizard">Assistenten öffnen</label>
 			<label index="tt_content.flexform_pi1.sDEF">Allgemein</label>
 			<label index="tt_content.flexform_pi1.successRedirectPage">Diese Seite anzeigen wenn E-Mail versandt wurde (PID oder URL):</label>
-			<label index="tt_content.flexform_pi1.spamRedirectPage">Diese Seite anzeigen wenn ein Bot versucht Spam zu senden (PID oder URL):</label>
+			<label index="tt_content.flexform_pi1.spamRedirectPage">Diese Seite anzeigen wenn jemand versucht Spam zu senden (PID oder URL):</label>
+			<label index="tt_content.flexform_pi1.exhaustedRedirectPage">Diese Seite anzeigen wenn ein Besucher zu viele Anfragen gesendet hat (PID oder URL):</label>
 			<label index="tt_content.flexform_pi1.errorRedirectPage">Diese Seite anzeigen wenn ein Fehler auftritt (PID or URL):</label>
 			<label index="tt_content.flexform_pi1.enableLog">Log aktivieren:</label>
 			<label index="tt_content.flexform_pi1.enableIPLog">IP-Adresse erfassen:</label>

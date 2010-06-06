@@ -9,6 +9,7 @@ plugin.tx_spbettercontact_pi1 {
 	# ====================================================================
 	successRedirectPage    =
 	spamRedirectPage       =
+	exhaustedRedirectPage  =
 	errorRedirectPage      =
 	formTemplate           =
 	stylesheetFile         =

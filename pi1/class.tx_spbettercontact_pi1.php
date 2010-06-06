@@ -95,6 +95,7 @@
 			if (!$this->oCheck->bCheckFields()) {
 				if (!$this->bIsFormEmpty($this->aGP)) {
 					$this->vSendWarning('user');
+					$this->vCheckRedirect('spam');
 				}
 				$this->oTemplate->vAddMarkers($this->oCheck->aGetMessages());
 				$this->oTemplate->vClearFields($this->oCheck->aGetMaliciousFields());
@@ -103,6 +104,7 @@
 
 			// Check if the user has already sent multiple emails
 			if ($this->oSession->bHasAlreadySent()) {
+				$this->vCheckRedirect('exhausted');
 				$this->oTemplate->vAddMarkers($this->oSession->aGetMessages());
 				return $this->sGetContent();
 			}

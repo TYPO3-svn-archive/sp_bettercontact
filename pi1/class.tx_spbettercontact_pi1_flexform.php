@@ -64,6 +64,7 @@
 			// Add elements to tab "default"
 			$this->vAddInput($aTabs['sDEF'], 'successRedirectPage', 40, '', TRUE, 'page', '');
 			$this->vAddInput($aTabs['sDEF'], 'spamRedirectPage', 40, '', TRUE, 'page', '');
+			$this->vAddInput($aTabs['sDEF'], 'exhaustedRedirectPage', 40, '', TRUE, 'page', '');
 			$this->vAddInput($aTabs['sDEF'], 'errorRedirectPage', 40, '', TRUE, 'page', '');
 			$this->vAddCheckBox($aTabs['sDEF'], 'enableLog', TRUE);
 			$this->vAddCheckBox($aTabs['sDEF'], 'enableIPLog', FALSE);
