@@ -95,7 +95,6 @@
 			if (!$this->oCheck->bCheckFields()) {
 				if (!$this->bIsFormEmpty($this->aGP)) {
 					$this->vSendWarning('user');
-					$this->vCheckRedirect('spam');
 				}
 				$this->oTemplate->vAddMarkers($this->oCheck->aGetMessages());
 				$this->oTemplate->vClearFields($this->oCheck->aGetMaliciousFields());
