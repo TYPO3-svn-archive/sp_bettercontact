@@ -621,7 +621,7 @@
 							<label>LLL:EXT:sp_bettercontact/locallang.php:tt_content.flexform_pi1.useRefererCheck</label>
 							<config>
 								<type>check</type>
-								<default>0</default>
+								<default>1</default>
 							</config>
 						</TCEforms>
 					</useRefererCheck>
