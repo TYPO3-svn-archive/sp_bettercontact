@@ -68,7 +68,7 @@
 				'deleted'   => 0,
 				'ip'        => (!empty($this->aConfig['enableIPLog'])) ? t3lib_div::getIndpEnv('REMOTE_ADDR') : '',
 				'agent'     => t3lib_div::getIndpEnv('HTTP_USER_AGENT'),
-				'method'    => (empty($_POST)) ? 'GET' : 'POST',
+				'method'    => ($_SERVER['REQUEST_METHOD'] == 'GET') ? 'GET' : 'POST',
 			);
 
 			// Add GPVars
