@@ -10,6 +10,7 @@ CREATE TABLE tx_spbettercontact_log (
 	deleted int(11) DEFAULT '0' NOT NULL,
 	ip varchar(15) DEFAULT '' NOT NULL,
 	agent varchar(255) DEFAULT '' NOT NULL,
+	method varchar(4) DEFAULT '' NOT NULL,
 	hash varchar(32) DEFAULT '' NOT NULL,
 	params text,
 

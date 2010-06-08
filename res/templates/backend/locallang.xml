@@ -22,6 +22,7 @@
 
 			<label index="table_header_datetime">Date / Time</label>
 			<label index="table_header_ip">IP-Address</label>
+			<label index="table_header_method">Method</label>
 			<label index="table_header_agent">User-Agent</label>
 			<label index="table_header_fields">User-Input</label>
 
@@ -29,6 +30,7 @@
 			<label index="csv_header_pid">PID</label>
 			<label index="csv_header_datetime">Date / Time</label>
 			<label index="csv_header_ip">IP-Address</label>
+			<label index="csv_header_method">Method</label>
 			<label index="csv_header_agent">User-Agent</label>
 			<label index="csv_header_hash">Hash</label>
 			<label index="csv_header_fields">User-Input</label>
@@ -51,6 +53,7 @@
 
 			<label index="table_header_datetime">Datum / Zeit</label>
 			<label index="table_header_ip">IP-Adresse</label>
+			<label index="table_header_method">Methode</label>
 			<label index="table_header_agent">User-Agent</label>
 			<label index="table_header_fields">Benutzereingaben</label>
 
@@ -58,6 +61,7 @@
 			<label index="csv_header_pid">PID</label>
 			<label index="csv_header_datetime">Datum / Zeit</label>
 			<label index="csv_header_ip">IP-Adresse</label>
+			<label index="csv_header_method">Methode</label>
 			<label index="csv_header_agent">User-Agent</label>
 			<label index="csv_header_hash">Hash</label>
 			<label index="csv_header_fields">Benutzereingaben</label>

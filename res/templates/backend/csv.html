@@ -18,21 +18,25 @@
     // Menus
     ###MENU_MODE###
     ###MENU_PERIOD###
-    
-    
-    // Show the value of input fields
+
+
+    // Show the value of db fields
+    ###<FIELDNAME>###
+
+
+    // Show the value of form input fields
     ###VALUE_<FIELDNAME>###
-    
-    
-    // Show whole prepered content
+
+
+    // Show whole prepered form content
     ###INPUT_HTML###
     ###INPUT_PLAIN###
-    
-    
+
+
     // Show your own locallang labels (see manual)
     ###LLL:<label_name>###
-    
-    
+
+
     // Show backend user information
     ###USER:<db_fieldname>###
 	</pre>
@@ -43,7 +47,7 @@
 
 
 <!-- ###TEMPLATE### begin -->
-"###LLL:csv_header_uid###";"###LLL:csv_header_pid###";"###LLL:csv_header_datetime###";"###LLL:csv_header_ip###";"###LLL:csv_header_agent###";"###LLL:csv_header_hash###";"###LLL:csv_header_fields###"
+"###LLL:csv_header_uid###";"###LLL:csv_header_pid###";"###LLL:csv_header_datetime###";"###LLL:csv_header_ip###";"###LLL:csv_header_method###";"###LLL:csv_header_agent###";"###LLL:csv_header_hash###";"###LLL:csv_header_fields###"
 ###CSV_ROWS###
 <!-- ###TEMPLATE### end -->
 
@@ -52,7 +56,7 @@
 
 
 <!-- ###SUB_TEMPLATE_CSV_ROWS### begin -->
-"###UID###";"###PID###";"###CRDATE###";"###IP###";"###AGENT###";"###HASH###";"###INPUT_PLAIN###"
+"###UID###";"###PID###";"###CRDATE###";"###IP###";"###METHOD###";"###AGENT###";"###HASH###";"###INPUT_PLAIN###"
 <!-- ###SUB_TEMPLATE_CSV_ROWS### end -->
 
 

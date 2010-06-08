@@ -18,21 +18,25 @@
     // Menus
     ###MENU_MODE###
     ###MENU_PERIOD###
-    
-    
-    // Show the value of input fields
+
+
+    // Show the value of db fields
+    ###<FIELDNAME>###
+
+
+    // Show the value of form input fields
     ###VALUE_<FIELDNAME>###
-    
-    
-    // Show whole prepered content
+
+
+    // Show whole prepered form content
     ###INPUT_HTML###
     ###INPUT_PLAIN###
-    
-    
+
+
     // Show your own locallang labels (see manual)
     ###LLL:<label_name>###
-    
-    
+
+
     // Show backend user information
     ###USER:<db_fieldname>###
 	</pre>
@@ -63,6 +67,7 @@ span.label {
 	<tr class="bgColor5 tableheader">
 		<td align="center">###LLL:table_header_datetime###</td>
 		<td align="center">###LLL:table_header_ip###</td>
+		<td align="center">###LLL:table_header_method###</td>
 		<td align="center">###LLL:table_header_agent###</td>
 		<td align="center">###LLL:table_header_fields###</td>
 	</tr>
@@ -80,6 +85,7 @@ span.label {
 <tr class="bgColor-20 highlight">
 	<td valign="top">###CRDATE###</td>
 	<td valign="top" align="right">###IP###</td>
+	<td valign="top" align="center">###METHOD###</td>
 	<td valign="top">###AGENT###</td>
 	<td valign="top">###INPUT_HTML###</td>
 </tr>

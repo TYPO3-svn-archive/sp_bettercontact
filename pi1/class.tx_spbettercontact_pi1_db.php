@@ -68,12 +68,18 @@
 				'deleted'   => 0,
 				'ip'        => (!empty($this->aConfig['enableIPLog'])) ? t3lib_div::getIndpEnv('REMOTE_ADDR') : '',
 				'agent'     => t3lib_div::getIndpEnv('HTTP_USER_AGENT'),
+				'method'    => (empty($_POST)) ? 'GET' : 'POST',
 			);
 
 			// Add GPVars
-			ksort($this->aGP);
-			$aFields['hash']   = md5(implode('|', array_keys($this->aGP)));
-			$aFields['params'] = json_encode($this->aGP);
+			$aInput = $this->aGP;
+			if (!empty($this->aConfig['fields.'])) {
+				$aConfFields = t3lib_div::removeDotsFromTS($this->aConfig['fields.']);
+				$aInput      = array_intersect_key($this->aGP, $aConfFields);
+			}
+			$aFields['params'] = json_encode($aInput);
+			ksort($aInput); // Keep order for hash if fields will be reordered in form
+			$aFields['hash']   = md5(implode('|', array_keys($aInput)));
 
 			// Insert new row
 			$sNoQuoteFields = 'pid,tstamp,crdate,cruser_id,deleted';
