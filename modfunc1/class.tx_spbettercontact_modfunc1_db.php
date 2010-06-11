@@ -60,7 +60,7 @@
 			$sWhere .= ($piPeriod) ? ' AND tstamp > ' . (int) $piPeriod : '';
 
 			// Get rows from current page
-			if (!$aRows = $GLOBALS['TYPO3_DB']->exec_SELECTgetRows('*', $this->sLogTable, $sWhere)) {
+			if (!$aRows = $GLOBALS['TYPO3_DB']->exec_SELECTgetRows('*', $this->sLogTable, $sWhere, '', 'tstamp DESC')) {
 				return array();
 			}
 
