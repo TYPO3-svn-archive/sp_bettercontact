@@ -31,11 +31,14 @@
 	 * @subpackage tx_spbettercontact
 	 */
 	class tx_spbettercontact_pi1_db {
-		protected $aConfig   = array();
-		protected $aGP       = array();
-		protected $aLL       = array();
-		protected $sLogTable = 'tx_spbettercontact_log';
-		protected $bHasError = FALSE;
+		protected $oCS        = NULL;
+		protected $aConfig    = array();
+		protected $aGP        = array();
+		protected $aLL        = array();
+		protected $sLastError = '';
+		protected $sLogTable  = 'tx_spbettercontact_log';
+		protected $sFormChar  = 'iso-8859-1';
+
 
 		/**
 		 * Set configuration for db object
@@ -43,9 +46,11 @@
 		 * @param object $poParent Instance of the parent object
 		 */
 		public function __construct ($poParent) {
-			$this->aConfig = $poParent->aConfig;
-			$this->aGP     = $poParent->aGP;
-			$this->aLL     = $poParent->aLL;
+			$this->aConfig   = $poParent->aConfig;
+			$this->aGP       = $poParent->aGP;
+			$this->aLL       = $poParent->aLL;
+			$this->oCS       = $poParent->oCS;
+			$this->sFormChar = $poParent->sFormCharset;
 		}
 
 
@@ -87,7 +92,7 @@
 				return $GLOBALS['TYPO3_DB']->sql_insert_id();
 			}
 
-			$this->bHasError = TRUE;
+			$this->sLastError = $GLOBALS['TYPO3_DB']->sql_error();
 			return 0;
 		}
 
@@ -139,7 +144,7 @@
 				return (int) $GLOBALS['TYPO3_DB']->sql_insert_id();
 			}
 
-			$this->bHasError = TRUE;
+			$this->sLastError = $GLOBALS['TYPO3_DB']->sql_error();
 			return 0;
 		}
 
@@ -160,12 +165,24 @@
 
 			require_once(t3lib_extMgm::extPath('adodb') . 'adodb/adodb.inc.php');
 
-			$sDriver   = (!empty($paDBConf['driver']))   ? $paDBConf['driver']     : 'mysql';
-			$sHost     = (!empty($paDBConf['host']))     ? $paDBConf['host']       : 'localhost';
-			$sHost    .= (!empty($paDBConf['port']))     ? ':' . $paDBConf['port'] : '';
-			$sUsername = (!empty($paDBConf['username'])) ? $paDBConf['username']   : '';
-			$sPassword = (!empty($paDBConf['password'])) ? $paDBConf['password']   : '';
+			// Set global variable to automatically quote values for external tables
+			global $ADODB_QUOTE_FIELDNAMES;
+			$bOldQuoteState = $ADODB_QUOTE_FIELDNAMES;
+			$ADODB_QUOTE_FIELDNAMES = TRUE;
+
+			// Get configuration
+			$sDriver   = (!empty($paDBConf['driver']))        ? $paDBConf['driver']        : 'mysql';
+			$sHost     = (!empty($paDBConf['host']))          ? $paDBConf['host']          : 'localhost';
+			$sHost    .= (!empty($paDBConf['port']))          ? ':' . $paDBConf['port']    : '';
+			$sUsername = (!empty($paDBConf['username']))      ? $paDBConf['username']      : '';
+			$sPassword = (!empty($paDBConf['password']))      ? $paDBConf['password']      : '';
+			$sCharset  = (!empty($paDBConf['force_charset'])) ? $paDBConf['force_charset'] : '';
 			$iReturn   = 0;
+
+			// Force given charset for field values
+			if ($sCharset) {
+				$this->oCS->convArray($paFields, $this->sFormChar, $sCharset);
+			}
 
 			// Connect
 			$oDB = &NewADOConnection($sDriver);
@@ -178,10 +195,11 @@
 			// Update
 			if (!empty($paFields[$psIDField])) {
 				$sWhere  = $psIDField . ' = ' . (int) $paFields[$psIDField];
-				$sSelect = 'SELECT ' . $psIDField . ' FROM ' . $paDBConf['table'] . ' WHERE ' . $sWhere;
+				$sSelect = 'SELECT COUNT(*) FROM ' . $paDBConf['table'] . ' WHERE ' . $sWhere . ' LIMIT 1';
+				$oResult = $oDB->Execute($sSelect);
 
 				// Check if row exists and update (else insert new row - see below)
-				if ($oResult = $oDB->RecordCount($sSelect)) {
+				if ($oResult->RowCount()) {
 					if ($oDB->AutoExecute($paDBConf['table'], $paFields, 'UPDATE', $sWhere)) {
 						$iReturn = (int) $paFields[$psIDField];
 					}
@@ -190,16 +208,18 @@
 
 			// Insert
 			if (!$iReturn && $oDB->AutoExecute($paDBConf['table'], $paFields, 'INSERT')) {
-				$iReturn = (int) $oDB->Insert_ID();
+				$iReturn = (int) $oDB->Insert_ID($paDBConf['table']);
 			}
 
 			// Check result
 			if (!$iReturn) {
-				$this->bHasError = TRUE;
+				$this->sLastError = $oDB->ErrorMsg();
 			}
 
-			// Close db connection
+			// Close db connection and revert global quoting variable
 			$oDB->Close();
+			$ADODB_QUOTE_FIELDNAMES = $bOldQuoteState;
+
 			return $iReturn;
 		}
 
@@ -215,35 +235,37 @@
 				return $paFields;
 			}
 
-			t3lib_div::loadTCA($psTable);
+			$aColumns   = array();
+			$aNewFields = array();
 
-			if (!isset($GLOBALS['TCA'][$psTable]['columns'], $GLOBALS['TCA'][$psTable]['ctrl'])) {
+			// Get table columns
+			if ($oResult  = $GLOBALS['TYPO3_DB']->sql_query('SHOW COLUMNS FROM ' . $psTable)) {
+				while ($aRow = $GLOBALS['TYPO3_DB']->sql_fetch_row($oResult)) {
+					$aColumns[$aRow[0]] = TRUE;
+				}
+			}
+
+			if (empty($aColumns)) {
 				return $paFields;
 			}
 
-			$aColumns   = $GLOBALS['TCA'][$psTable]['columns'];
-			$aCTRL      = $GLOBALS['TCA'][$psTable]['ctrl'];
-			$aNewFields = array();
-
 			// PID
-			if (isset($aColumns['pid']) || isset($aCTRL['pid'])) {
+			if (isset($aColumns['pid'])) {
 				$aNewFields['pid'] = (int) $GLOBALS['TSFE']->id;
 			}
 
 			// TSTAMP
-			if (isset($aColumns['tstamp']) || isset($aCTRL['tstamp'])) {
+			if (isset($aColumns['tstamp'])) {
 				$aNewFields['tstamp'] = (int) $GLOBALS['SIM_EXEC_TIME'];
 			}
 
 			// CRDATE
-			if (isset($aColumns['crdate']) || isset($aCTRL['crdate'])) {
+			if (isset($aColumns['crdate'])) {
 				$aNewFields['crdate'] = (int) $GLOBALS['SIM_EXEC_TIME'];
 			}
 
 			// CRUSER_ID
-			if ((isset($aColumns['cruser_id']) || isset($aCTRL['cruser_id']))
-			 && !empty($GLOBALS['TSFE']->fe_user->user['uid'])
-			) {
+			if ((isset($aColumns['cruser_id'])) && !empty($GLOBALS['TSFE']->fe_user->user['uid'])) {
 				$aNewFields['cruser_id'] = (int) $GLOBALS['TSFE']->fe_user->user['uid'];
 			}
 
@@ -252,12 +274,16 @@
 
 
 		/**
-		 * Get error state
+		 * Get last error
 		 *
-		 * @return TRUE if database work results in an error
+		 * @return String with last database error
 		 */
-		public function bHasError() {
-			return $this->bHasError;
+		public function sGetError() {
+			if ($this->sLastError) {
+				return sprintf($this->aLL['msg_db_failed'], $this->sLastError);
+			}
+
+			return '';
 		}
 	}
 

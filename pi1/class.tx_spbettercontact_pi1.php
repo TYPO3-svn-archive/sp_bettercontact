@@ -111,8 +111,8 @@
 			// Add new entry in log table and save values into specified table
 			$this->oSession->vAddValue('lastLogRowID', $this->oDB->iLog());
 			$this->oSession->vAddValue('lastRowID', $this->oDB->iSave());
-			if ($this->oDB->bHasError()) {
-				return $this->pi_wrapInBaseClass($this->aLL['msg_db_failed']);
+			if ($sMessage = $this->oDB->sGetError()) {
+				return $this->pi_wrapInBaseClass($sMessage);
 			}
 
 			// Send emails

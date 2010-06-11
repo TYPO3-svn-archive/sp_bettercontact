@@ -58,7 +58,7 @@
 			<label index="msg_email_failed">Message could not be sent. Please try again.</label>
 			<label index="msg_check_passed"></label>
 			<label index="msg_check_failed">A problem has occurred, your input contains errors.</label>
-			<label index="msg_db_failed">A problem has occurred. Please check your database configuration.</label>
+			<label index="msg_db_failed">A database problem has occurred: "%s"</label>
 			<label index="msg_not_allowed">This process is not allowed!</label>
 			<label index="msg_already_sent">You have already sent %d messages. Please wait %d minute(s).</label>
 			<label index="msg_captcha">Please enter the sequence of characters shown in the captcha image.</label>
@@ -129,7 +129,7 @@
 			<label index="msg_email_failed">Ihre Nachricht konnte nicht versandt werden. Bitte versuchen Sie es erneut.</label>
 			<label index="msg_check_passed"></label>
 			<label index="msg_check_failed">Bei den Formulareingaben ist ein Problem aufgetreten.</label>
-			<label index="msg_db_failed">Es ist ein Problem aufgetreten. Bitte prüfen Sie Ihre Datenbank-Konfiguration.</label>
+			<label index="msg_db_failed">Es ist ein Datenbank-Problem aufgetreten: "%s"</label>
 			<label index="msg_not_allowed">Dieser Prozess ist nicht erlaubt!</label>
 			<label index="msg_already_sent">Sie haben bereits %d Nachrichten versandt. Bitte warten Sie %d Minute(n).</label>
 			<label index="msg_captcha">Bitte übertragen Sie die Zeichen des Captcha-Bildes in das Textfeld.</label>
