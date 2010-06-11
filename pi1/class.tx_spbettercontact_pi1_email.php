@@ -392,7 +392,7 @@
 
 			// Check for recipient list
 			if (is_string($pmRecipients)) {
-				$pmRecipients = array($pmRecipients);
+				$pmRecipients = t3lib_div::trimExplode(',', $pmRecipients, TRUE);
 			}
 
 			// Send email to any user in array

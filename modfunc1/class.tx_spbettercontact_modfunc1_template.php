@@ -66,9 +66,9 @@
 			$aMarkers = array();
 
 			// Default markers
-			$aMarkers['###URL_SELF###']      = $this->sGetSelfURL();
-			$aMarkers['###CSV_IMAGE_SRC###'] = $this->sGetCSVImage();
-			$aMarkers['###INFO###']          = '';
+			$aMarkers['###URL_SELF###']  = $this->sGetSelfURL();
+			$aMarkers['###CSV_IMAGE###'] = $this->sGetCSVImage();
+			$aMarkers['###INFO###']      = '';
 
 			// BE-User info
 			if (!empty($GLOBALS['BE_USER']->user) && is_array($GLOBALS['BE_USER']->user)) {
@@ -104,7 +104,7 @@
 		 * @return Image of the link
 		 */
 		protected function sGetCSVImage () {
-			return t3lib_iconWorks::skinImg($GLOBALS['BACK_PATH'], 'gfx/csv.gif');
+			return t3lib_iconWorks::skinImg($GLOBALS['BACK_PATH'], 'gfx/csv.gif', '', 1);
 		}
 
 
