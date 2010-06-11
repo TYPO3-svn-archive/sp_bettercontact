@@ -325,8 +325,11 @@
 				$this->aMarkers['CAPTCHA_FIELD'] = $this->oCObj->substituteMarkerArray($sCaptchaTmpl, $this->aMarkers, '###|###');
 			}
 
-			// Output
-			return $this->oCObj->substituteMarkerArray($sTemplate, $this->aMarkers, '###|###', FALSE, TRUE);
+			// Get content
+			$sContent = $this->oCObj->substituteMarkerArray($sTemplate, $this->aMarkers, '###|###', FALSE);
+			$sContent = preg_replace('|###.*?###|i', '', $sContent); // removes also markers with colon
+
+			return $sContent;
 		}
 
 

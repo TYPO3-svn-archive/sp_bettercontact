@@ -7,7 +7,7 @@ mod.tx_spbettercontact_modfunc1 {
 	mainTemplate  = EXT:sp_bettercontact/res/templates/backend/template.html
 	csvTemplate   = EXT:sp_bettercontact/res/templates/backend/csv.html
 	locallangFile =
-	# dateFormat  = ## Use a valid "strftime" format to display dates
+	# dateFormat  = (?) Use a valid "strftime" format to display dates
 
 
 	## Overwrite or add locallang labels (better use your own locallang.xml)

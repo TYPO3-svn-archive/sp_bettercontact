@@ -219,7 +219,7 @@
 		protected function aGetGP () {
 			$aGP = t3lib_div::array_merge_recursive_overrule($_GET, $_POST);
 			t3lib_div::stripSlashesOnArray($aGP);
-			
+
 			// Add default piVars if configured
 			if (!empty($this->aConfig['_DEFAULT_PI_VARS.']) && is_array($this->aConfig['_DEFAULT_PI_VARS.'])) {
 				$aGP = t3lib_div::array_merge_recursive_overrule($this->aConfig['_DEFAULT_PI_VARS.'], $aGP);
@@ -349,13 +349,21 @@
 					}
 				}
 
+				// Add frontend user information
+				if (!empty($aRow['cruser_id'])) {
+					$aUser = $this->oDB->aGetUserInfo($aRow['cruser_id']);
+					foreach ($aUser as $sKey => $sValue) {
+						$aResult[$iKey]['FE_USER_' . $sKey] = $sValue;
+					}
+				}
+
 				// Add user input in different formats
 				if (!empty($aRow['params'])) {
 					$aUserInput = json_decode($aRow['params'], TRUE);
 
 					foreach ($aUserInput as $sKey => $sValue) {
 						$aResult[$iKey]['input_html']  .= htmlspecialchars($sKey) . ': ' . htmlspecialchars($sValue) . '<br />';
-						$aResult[$iKey]['input_plain'] .= $sKey . ': ' . $sValue . PHP_EOL;
+						$aResult[$iKey]['input_plain'] .= $sKey . ': ' . str_replace('"', '”', $sValue) . PHP_EOL; // Replace for CSV
 						$aResult[$iKey]['VALUE_' . $sKey] = $sValue;
 					}
 				}

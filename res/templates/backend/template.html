@@ -28,6 +28,10 @@
     ###VALUE_<FIELDNAME>###
 
 
+    // Show information about the frontend user (if cruser_id is not "0")
+    ###FE_USER_<DB_FIELDNAME>###
+
+
     // Show whole prepered form content
     ###INPUT_HTML###
     ###INPUT_PLAIN###
@@ -67,6 +71,7 @@ span.label {
 	<tr class="bgColor5 tableheader">
 		<td align="center">###LLL:table_header_datetime###</td>
 		<td align="center">###LLL:table_header_ip###</td>
+		<td align="center">###LLL:table_header_fe_user###</td>
 		<td align="center">###LLL:table_header_method###</td>
 		<td align="center">###LLL:table_header_agent###</td>
 		<td align="center">###LLL:table_header_fields###</td>
@@ -85,6 +90,7 @@ span.label {
 <tr class="bgColor-20 highlight">
 	<td valign="top">###CRDATE###</td>
 	<td valign="top" align="right">###IP###</td>
+	<td valign="top">###FE_USER_NAME###</td>
 	<td valign="top" align="center">###METHOD###</td>
 	<td valign="top">###AGENT###</td>
 	<td valign="top">###INPUT_HTML###</td>

@@ -111,8 +111,9 @@
 			// Check for sub templates
 			$this->vSubstituteSubTemplates($sRessource);
 
-			// Get whole content
-			$sContent = t3lib_parsehtml::substituteMarkerArray($sTemplate, $this->aMarkers, '', FALSE, TRUE);
+			// Get content
+			$sContent = t3lib_parsehtml::substituteMarkerArray($sTemplate, $this->aMarkers, '', FALSE);
+			$sContent = preg_replace('|###.*?###|i', '', $sContent); // removes also markers with colon
 
 			// Send headers
 			Header('Content-Type: application/octet-stream');

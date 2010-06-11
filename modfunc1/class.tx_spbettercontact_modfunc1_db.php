@@ -31,9 +31,11 @@
 	 * @subpackage tx_spbettercontact
 	 */
 	class tx_spbettercontact_modfunc1_db {
-		protected $aConfig   = array();
-		protected $sLogTable = 'tx_spbettercontact_log';
-		protected $id        = 0;
+		protected $aConfig    = array();
+		protected $aUsers     = array();
+		protected $sLogTable  = 'tx_spbettercontact_log';
+		protected $sUserTable = 'fe_users';
+		protected $id         = 0;
 
 
 		/**
@@ -65,6 +67,33 @@
 			}
 
 			return $aRows;
+		}
+
+
+		/**
+		 * Get information about a frontend user by uid
+		 *
+		 * @param integer $piUID UID of the user dataset
+		 * @return Array with user information
+		 */
+		public function aGetUserInfo ($piUID) {
+			if (!$piUID) {
+				return array();
+			}
+
+			// Check cache first
+			if (!isset($this->aUsers[$piUID])) {
+				// Get rows from frontend user
+				$sWhere = 'uid = ' . (int) $piUID . ' AND deleted = 0';
+				if (!$aRows = $GLOBALS['TYPO3_DB']->exec_SELECTgetRows('*', $this->sUserTable, $sWhere, '', '', 1)) {
+					return array();
+				}
+
+				// Add user to cache
+				$this->aUsers[$piUID] = reset($aRows);
+			}
+
+			return $this->aUsers[$piUID];
 		}
 	}
 

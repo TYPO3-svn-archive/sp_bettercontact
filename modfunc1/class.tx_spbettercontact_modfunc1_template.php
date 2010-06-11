@@ -136,8 +136,11 @@
 			// Check for sub templates
 			$this->vSubstituteSubTemplates($sRessource);
 
-			// Output
-			return t3lib_parsehtml::substituteMarkerArray($sTemplate, $this->aMarkers, '', FALSE, TRUE);
+			// Get content
+			$sContent = t3lib_parsehtml::substituteMarkerArray($sTemplate, $this->aMarkers, '', FALSE);
+			$sContent = preg_replace('|###.*?###|i', '', $sContent); // removes also markers with colon
+
+			return $sContent;
 		}
 
 
@@ -156,8 +159,7 @@
 					continue;
 				}
 
-				// Marker results in an error if it exists beside
-				// template subpart with same name
+				// Marker results in an error if it exists beside template subpart with same name
 				unset($this->aMarkers[$sMarkerKey]);
 
 				// Get subpart
