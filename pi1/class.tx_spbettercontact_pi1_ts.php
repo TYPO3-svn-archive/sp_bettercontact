@@ -63,7 +63,7 @@
 			// Get flexform content
 			$mFlex = t3lib_div::xml2array($this->oCObj->data['pi_flexform']);
 			if (!is_array($mFlex)) {
-				return array();
+				return $aResult;
 			}
 
 			// Check if DB tab is visible in Flexform
@@ -136,6 +136,9 @@
 
 		/**
 		 * Parse TypoScript configuration from a FlexForm field
+		 * 
+		 * This method finds include lines at any level of the
+		 * configuration and merges them with the other setup.
 		 *
 		 * @param  array  $paBaseArray Configuration array
 		 * @param  string $psKeys      Keys to add
@@ -155,7 +158,7 @@
 			// Check for includes
 			if (strpos($psValue, 'INCLUDE_TYPOSCRIPT') !== FALSE) {
 				// Remove uncommented lines
-				$psValue = preg_replace('|#.*|', '', $psValue);
+				$psValue = preg_replace('|#.*|', '', $psValue); // Todo: Remove only if in front of line
 				$psValue = preg_replace('|\/\*.*\*\/|s', '', $psValue); // All multiline comments
 				$psValue = trim($psValue);
 
@@ -199,7 +202,7 @@
 			$aResult = array_merge_recursive($aBase, $aResult);
 
 			// Return only plugin configuration
-			if (isset($aResult['plugin.']['tx_spbettercontact_pi1.'])) {
+			if (!empty($aResult['plugin.']['tx_spbettercontact_pi1.'])) {
 				return $this->aParseTS($aResult['plugin.']['tx_spbettercontact_pi1.']);
 			}
 

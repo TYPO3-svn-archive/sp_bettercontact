@@ -179,12 +179,12 @@
 
 			// Check email field
 			if (empty($this->aConfig['fields.']['email.']) || !is_array($this->aConfig['fields.']['email.'])) {
-				$aMessages[] = 'Please configure the required email field in your TypoScript!';
+				$aMessages[] = 'Please configure the required email field in your TypoScript setup!';
 			}
 
 			// Check captcha
 			if (!empty($this->aConfig['captchaSupport']) && empty($this->aConfig['fields.']['captcha.'])) {
-				$aMessages[] = 'Please configure the required captcha field in your TypoScript!';
+				$aMessages[] = 'Please configure the required captcha field in your TypoScript setup!';
 			}
 
 			// Check form template
@@ -212,10 +212,14 @@
 				$aMessages[] = 'Please define an email address for the admin!';
 			}
 
-			// Check if "sr_freecap" and php option "display_errors" are active
-			/*if (!empty($this->aConfig['captchaSupport']) && $this->aConfig['captchaSupport'] == 'sr_freecap' && ini_get('display_errors')) {
-				$aMessages[] = 'Please disable "display_errors" in your php.ini if you use "sr_freecap" as Captcha extension!';
-			}*/
+			// Check if adodb is installed to use an external database
+			if ((!empty($this->aConfig['database.']['driver'])   || !empty($this->aConfig['database.']['host'])
+			  || !empty($this->aConfig['database.']['port'])     || !empty($this->aConfig['database.']['database'])
+			  || !empty($this->aConfig['database.']['username']) || !empty($this->aConfig['database.']['password']))
+			  && !t3lib_extMgm::isLoaded('adodb')
+			) {
+				$aMessages[] = 'Please install the required extension "adodb" to use an external database!';
+			}
 
 			// Return a list of error messages
 			if (count($aMessages)) {

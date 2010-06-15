@@ -150,7 +150,7 @@
 
 
 		/**
-		 * Save valued into an external database
+		 * Save values into an external database
 		 *
 		 * @param  array  $paDBConf  Database configuration
 		 * @param  array  $paFields  Field configuration
@@ -159,7 +159,6 @@
 		 */
 		protected function iSaveExternal (array $paDBConf, array $paFields, $psIDField = 'uid') {
 			if (!count($paDBConf) || !count($paFields) || !strlen($psIDField) || !t3lib_extMgm::isLoaded('adodb')) {
-				$this->bHasError = TRUE;
 				return 0;
 			}
 
