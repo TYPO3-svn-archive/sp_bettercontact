@@ -100,7 +100,7 @@
 				foreach ($this->aFields as $sKey => $aField) {
 					$sName = strtolower(trim($sKey, ' .{}()='));
 					$aMarkers['HIDDEN']               .= '<input type="text" name="' . $sKey.'" value="" />' . PHP_EOL;
-					$aMarkers[$aField['valueName']]    = $aField['value'];
+					$aMarkers[$aField['valueName']]    = htmlspecialchars($aField['value']);
 					$aMarkers[$aField['labelName']]    = $aField['label'];
 					$aMarkers[$aField['messageName']]  = '';
 					$aMarkers[$aField['errClassName']] = (!empty($this->aConfig['classNoError'])) ? $this->aConfig['classNoError'] : '';

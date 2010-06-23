@@ -158,8 +158,8 @@
 			// Check for includes
 			if (strpos($psValue, 'INCLUDE_TYPOSCRIPT') !== FALSE) {
 				// Remove uncommented lines
-				$psValue = preg_replace('|#.*|', '', $psValue); // Todo: Remove only if in front of line
-				$psValue = preg_replace('|\/\*.*\*\/|s', '', $psValue); // All multiline comments
+				$psValue = preg_replace('|^\s*#.*|m', '', $psValue);    // Single line
+				$psValue = preg_replace('|\/\*.*\*\/|s', '', $psValue); // Multi line
 				$psValue = trim($psValue);
 
 				if (!strlen($psValue)) {
