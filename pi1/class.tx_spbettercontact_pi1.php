@@ -514,8 +514,9 @@
 				return;
 			}
 
-			$sURL = $this->aConfig[$psType . 'RedirectPage'];
-			$sURL = $this->pi_linkTP_keepPIvars_url(array(), 0, 0, $sURL);
+			$sURL = $this->cObj->typoLink_URL(array(
+				'parameter' => $this->aConfig[$psType . 'RedirectPage'],
+			));
 
 			Header('Location: ' . t3lib_div::locationHeaderUrl($sURL));
 			exit();
