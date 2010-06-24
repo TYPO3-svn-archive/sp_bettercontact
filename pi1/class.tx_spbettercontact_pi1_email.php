@@ -280,7 +280,7 @@
 			// Use own date and time format
 			foreach (array('Date', 'Time') as $sKey) {
 				if (!empty($this->aConfig['spam' . $sKey . 'Format'])) {
-					$sDateTime = strftime($this->aConfig['email' . $sKey . 'Format'], $GLOBALS['SIM_EXEC_TIME']);
+					$sDateTime = strftime($this->aConfig['spam' . $sKey . 'Format'], $GLOBALS['SIM_EXEC_TIME']);
 					$aMarkers['SPAM_' . strtoupper($sKey)] = $sDateTime;
 				}
 			}
