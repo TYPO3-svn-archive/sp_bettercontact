@@ -31,12 +31,12 @@
 	 * @subpackage tx_spbettercontact
 	 */
 	class tx_spbettercontact_pi1_flexform {
-		protected $sWizardIcon     = 'EXT:sp_bettercontact/res/images/popup.gif';
+		protected $sWizardIcon     = 'link_popup.gif';
 		protected $sLabelFile      = 'EXT:sp_bettercontact/locallang.php';
 
 
 		/**
-		 * Get flexform belonging to server configuration
+		 * Get flexform appropriate server configuration
 		 *
 		 * @param  boolean $pbShowDBTab Enable additional DB tab in Flexform
 		 * @return String with flexform content
@@ -50,7 +50,7 @@
 			$oMeta->addChild('langDisable', '1');
 			$oMeta->addChild('langChildren', '0');
 
-			// Add tabs (notice: PHP5 always uses references for objects)
+			// Add tabs
 			$oSheets = $oXML->addChild('sheets');
 			$aTabs = array('sDEF','sTEMPLATE','sEMAIL','sSPAM');
 			if ($pbShowDBTab) {

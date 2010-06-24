@@ -49,6 +49,7 @@ plugin.tx_spbettercontact_pi1 {
 	infoWrapNegative       = <span class="tx_spbettercontact_info_negative">|</span>
 
 	# preUserFunc          = (?) Define a userFunc which will be called before checks and rendering
+	# submitUserFunc       = (?) Define a userFunc which will be called if form was submitted
 	# postUserFunc         = (?) Define a userFunc which will be called before redirect and output
 
 

@@ -84,6 +84,9 @@
 				return $this->sGetContent();
 			}
 
+			// Call submitUserFunc to do something if form was submitted
+			$this->vCheckUserFunc('submitUserFunc');
+
 			// Check if a bot tries to send spam
 			if ($this->oCheck->bIsSpam()) {
 				$this->vSendWarning('bot');

@@ -80,9 +80,9 @@
 		 * @return TRUE if the form was filled by a spam-bot
 		 */
 		public function bIsSpam () {
-			$bRefererCheck = (isset($this->aConfig['useRefererCheck'])) ? $this->aConfig['useRefererCheck'] : FALSE;
+			$bRefererCheck = (isset($this->aConfig['useRefererCheck'])) ? (bool) $this->aConfig['useRefererCheck'] : FALSE;
 
-			// Check referer (TRUE = form was not sent from this server)
+			// Check referer (TRUE = form was not sent from current server)
 			if ($bRefererCheck) {
 				$sRefererHost = @parse_url(t3lib_div::getIndpEnv('HTTP_REFERER'), PHP_URL_HOST);
 				if ($sRefererHost != t3lib_div::getIndpEnv('HTTP_HOST')) {
