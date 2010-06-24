@@ -357,10 +357,6 @@
 				return;
 			}
 
-			// Get additional email addresses
-			$psReplyTo    = (strlen($psReplyTo))    ? $psReplyTo   : $psSender;
-			$psReturnPath = (strlen($psReturnPath)) ? $sReturnPath : $psSender;
-
 			// Start email
 			$oMail = t3lib_div::makeInstance('t3lib_htmlmail');
 			$oMail->start();
@@ -368,9 +364,14 @@
 			$oMail->mailer  = 'TYPO3'; // Do not show version because it is a security issue
 			$oMail->useQuotedPrintable();
 
+			// Enable returnPath (if $TYPO3_CONF_VARS['SYS']['forceReturnPath'] was not enabled)
+			if (!empty($this->aConfig['allowReturnPath'])) {
+				$oMail->forceReturnPath = TRUE;
+			}
+
 			// Set addresses
 			$oMail->from_email    = $psSender;
-			$oMail->replyto_email = $psReplyTo;
+			$oMail->replyto_email = (strlen($psReplyTo)) ? $psReplyTo : $psSender;
 			$oMail->returnPath    = $psReturnPath;
 
 			// Set subject and plain content

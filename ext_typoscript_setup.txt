@@ -28,6 +28,7 @@ plugin.tx_spbettercontact_pi1 {
 	replyTo                = user
 	emailCharset           = utf-8
 	emailFormat            = html
+	allowReturnPath        = 1
 
 	showMaliciousInput     = clean
 	adminMails             = bot
