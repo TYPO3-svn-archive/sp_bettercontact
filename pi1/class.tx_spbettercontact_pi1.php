@@ -41,6 +41,7 @@
 		public $sFormCharset  = 'iso-8859-1';
 		public $sFieldPrefix  = '';
 		public $aLL           = array();
+		public $aGP           = array();
 		public $aConfig       = array();
 		public $aFields       = array();
 		public $oTemplate     = NULL;

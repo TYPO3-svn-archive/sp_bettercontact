@@ -36,5 +36,10 @@
 	// Add new wizard item in Version 4.3
 	if (t3lib_div::int_from_ver(TYPO3_version) >= 4003000) {
 		$GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['cms']['db_new_content_el']['wizardItemsHook'][] = 'EXT:sp_bettercontact/pi1/class.tx_spbettercontact_pi1_wizard.php:&tx_spbettercontact_pi1_wizard';
+
+		// Templavoila
+		if (t3lib_extMgm::isLoaded('templavoila')) {
+			$GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['templavoila']['db_new_content_el']['wizardItemsHook'][] = 'EXT:sp_bettercontact/pi1/class.tx_spbettercontact_pi1_wizard.php:&tx_spbettercontact_pi1_wizard';
+		}
 	}
 ?>
