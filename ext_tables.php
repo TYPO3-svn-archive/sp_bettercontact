@@ -62,11 +62,16 @@
 	// Add plugin into correct position in list
 	$aCTypes    = $GLOBALS['TCA']['tt_content']['columns']['CType']['config']['items'];
 	$aNewItems  = array();
+	$bAdded     = FALSE;
 	foreach ($aCTypes as $aValue) {
 		if (strpos($aValue[0], 'special') !== FALSE) {
 			$aNewItems[] = $aPlugin;
+			$bAdded      = TRUE;
 		}
 		$aNewItems[] = $aValue;
+	}
+	if (!$bAdded) {
+		$aNewItems[] = $aPlugin;
 	}
 	$GLOBALS['TCA']['tt_content']['columns']['CType']['config']['items'] = $aNewItems;
 
