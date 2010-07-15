@@ -12,7 +12,7 @@
 
 $EM_CONF[$_EXTKEY] = array(
 	'title' => 'Better Contact',
-	'description' => 'Secure Contact form with solid Spam protection. Input can be checked for length, allowed and disallowed signs and with Regex. Attacker can be locked a configured number of requests. Admin can get detailed Spam notification. Captcha support included.',
+	'description' => 'Secure Contact form with solid Spam protection. Input can be checked for length, allowed and disallowed signs and with Regex. Attackers can be locked. Admin can get detailed Spam notification. Requests can be stored into DB. Captcha support included.',
 	'category' => 'plugin',
 	'shy' => 0,
 	'version' => '2.4.1',
