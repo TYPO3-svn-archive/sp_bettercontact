@@ -217,7 +217,7 @@
 			<label index="tt_content.flexform_pi1.replyTo.2">Adresse de l'utilisateur</label>
 			<label index="tt_content.flexform_pi1.sendTo">Envoyer les mails à:</label>
 			<label index="tt_content.flexform_pi1.sendTo.0">- défini en TypoScript -</label>
-			<label index="tt_content.flexform_pi1.sendTo.1">Nul</label>
+			<label index="tt_content.flexform_pi1.sendTo.1">Aucun</label>
 			<label index="tt_content.flexform_pi1.sendTo.2">Uniquement aux destinataires</label>
 			<label index="tt_content.flexform_pi1.sendTo.3">Uniquement à l'utilisateur</label>
 			<label index="tt_content.flexform_pi1.sendTo.4">Aux deux</label>
