@@ -19,7 +19,6 @@
 			<label index="period_day">Last 24 hours</label>
 			<label index="download_csv">Download table as CSV</label>
 
-
 			<label index="table_header_datetime">Date / Time</label>
 			<label index="table_header_ip">IP-Address</label>
 			<label index="table_header_method">Method</label>
@@ -71,6 +70,39 @@
 			<label index="csv_header_fe_user">Frontend Benutzer</label>
 
 			<label index="msg_no_rows">Keine Log-Einträge gefunden!</label>
+		</languageKey>
+		<languageKey index="fr" type="array">
+			<label index="headline">Log de Better Contact</label>
+			<label index="menu_mode">Afficher:</label>
+			<label index="menu_period">Période:</label>
+			<label index="menu_download">Télécharger:</label>
+			<label index="mode_all">Toutes les pages</label>
+			<label index="mode_this">Cette page</label>
+			<label index="period_all">Tout</label>
+			<label index="period_year">365 derniers jours</label>
+			<label index="period_month">30 derniers jours</label>
+			<label index="period_week">7 derniers jours</label>
+			<label index="period_day">Dernières 24 heures</label>
+			<label index="download_csv">Télécharger au format CSV</label>
+
+			<label index="table_header_datetime">Date / Heure</label>
+			<label index="table_header_ip">Adresse IP</label>
+			<label index="table_header_method">Méthode</label>
+			<label index="table_header_agent">Agent utilisateur (User-Agent)</label>
+			<label index="table_header_fields">Données utilisateur (User-Input)</label>
+			<label index="table_header_fe_user">Utilisateur Front-End</label>
+
+			<label index="csv_header_uid">UID</label>
+			<label index="csv_header_pid">PID</label>
+			<label index="csv_header_datetime">Date / Heure</label>
+			<label index="csv_header_ip">Adresse IP</label>
+			<label index="csv_header_method">Méthode</label>
+			<label index="csv_header_agent">Agent utilisateur (User-Agent)</label>
+			<label index="csv_header_hash">Hash</label>
+			<label index="csv_header_fields">Données utilisateur (User-Input)</label>
+			<label index="csv_header_fe_user">Utilisateur Front-End</label>
+
+			<label index="msg_no_rows">Aucune donnée enregistrée dans le log!</label>
 		</languageKey>
 	</data>
 </T3locallang>

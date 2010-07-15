@@ -367,14 +367,18 @@
 									</numIndex>
 									<numIndex index="1" type="array">
 										<numIndex index="0">LLL:EXT:sp_bettercontact/locallang.php:tt_content.flexform_pi1.sendTo.1</numIndex>
-										<numIndex index="1">recipients</numIndex>
+										<numIndex index="1">none</numIndex>
 									</numIndex>
 									<numIndex index="2" type="array">
 										<numIndex index="0">LLL:EXT:sp_bettercontact/locallang.php:tt_content.flexform_pi1.sendTo.2</numIndex>
-										<numIndex index="1">user</numIndex>
+										<numIndex index="1">recipients</numIndex>
 									</numIndex>
 									<numIndex index="3" type="array">
 										<numIndex index="0">LLL:EXT:sp_bettercontact/locallang.php:tt_content.flexform_pi1.sendTo.3</numIndex>
+										<numIndex index="1">user</numIndex>
+									</numIndex>
+									<numIndex index="4" type="array">
+										<numIndex index="0">LLL:EXT:sp_bettercontact/locallang.php:tt_content.flexform_pi1.sendTo.4</numIndex>
 										<numIndex index="1">both</numIndex>
 									</numIndex>
 								</items>
@@ -384,6 +388,33 @@
 							</config>
 						</TCEforms>
 					</sendTo>
+					<sendFrom>
+						<TCEforms>
+							<exclude>1</exclude>
+							<label>LLL:EXT:sp_bettercontact/locallang.php:tt_content.flexform_pi1.sendFrom</label>
+							<config>
+								<type>select</type>
+								<default></default>
+								<items type="array">
+									<numIndex index="0" type="array">
+										<numIndex index="0">LLL:EXT:sp_bettercontact/locallang.php:tt_content.flexform_pi1.sendFrom.0</numIndex>
+										<numIndex index="1"></numIndex>
+									</numIndex>
+									<numIndex index="1" type="array">
+										<numIndex index="0">LLL:EXT:sp_bettercontact/locallang.php:tt_content.flexform_pi1.sendFrom.1</numIndex>
+										<numIndex index="1">sender</numIndex>
+									</numIndex>
+									<numIndex index="2" type="array">
+										<numIndex index="0">LLL:EXT:sp_bettercontact/locallang.php:tt_content.flexform_pi1.sendFrom.2</numIndex>
+										<numIndex index="1">user</numIndex>
+									</numIndex>
+								</items>
+								<minitems>0</minitems>
+								<maxitems>1</maxitems>
+								<size>1</size>
+							</config>
+						</TCEforms>
+					</sendFrom>
 					<replyTo>
 						<TCEforms>
 							<exclude>1</exclude>

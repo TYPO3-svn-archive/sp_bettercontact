@@ -206,8 +206,9 @@
 				$aMessages[] = 'Please define an email address for the recipients!';
 			}
 
-			// Check sender email address ("none" will be available if db support was implemented)
-			if ($this->aConfig['sendTo'] != 'none' && empty($this->aConfig['emailSender'])) {
+			// Check sender email address
+			if ((($this->aConfig['sendTo'] == 'user' || $this->aConfig['sendTo'] == 'both') 
+			  || ($this->aConfig['sendTo'] == 'recipients' && $this->aConfig['sendFrom'] == 'sender')) && empty($this->aConfig['emailSender'])) {
 				$aMessages[] = 'Please define an email address for the sender!';
 			}
 

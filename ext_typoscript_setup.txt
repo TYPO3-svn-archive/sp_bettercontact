@@ -26,6 +26,7 @@ plugin.tx_spbettercontact_pi1 {
 	emailReturnPath        =
 	sendTo                 = both
 	replyTo                = user
+	sendFrom               = sender
 	emailCharset           = utf-8
 	emailFormat            = html
 	allowReturnPath        = 1

@@ -454,15 +454,16 @@
 		 */
 		public function vSendMails () {
 			// Get configuration
-			$sSendTo  = (!empty($this->aConfig['sendTo']))  ? strtolower($this->aConfig['sendTo'])  : 'both';
-			$sReplyTo = (!empty($this->aConfig['replyTo'])) ? strtolower($this->aConfig['replyTo']) : 'user';
-			$sReplyTo = (strtolower($sReplyTo) == 'user') ? 'user' : 'sender';
+			$sSendTo   = (!empty($this->aConfig['sendTo']))   ? strtolower($this->aConfig['sendTo'])   : 'both';
+			$sSendFrom = (!empty($this->aConfig['sendFrom'])) ? strtolower($this->aConfig['sendFrom']) : 'sender';
+			$sReplyTo  = (!empty($this->aConfig['replyTo']))  ? strtolower($this->aConfig['replyTo'])  : 'user';
+			$sReplyTo  = (strtolower($sReplyTo) == 'user') ? 'user' : 'sender';
 
 			// Send emails to all recipients
 			if (($sSendTo == 'both' || $sSendTo == 'recipients') && $this->bCheckMailAddresses('recipients', 'sender', $sReplyTo)) {
 				$this->vMail(
 					$this->aAddresses['recipients'],
-					$this->aAddresses['sender'],
+					$this->aAddresses[$sSendFrom],
 					$this->aAddresses[$sReplyTo],
 					$this->aTemplates['subject_admin'],
 					$this->aTemplates['message_admin_plain'],

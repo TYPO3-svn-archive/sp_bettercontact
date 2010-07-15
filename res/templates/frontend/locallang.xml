@@ -147,5 +147,76 @@
 			<label index="required">*</label>
 			<label index="required_info">Alle mit einem (*) versehenen Felder sind Pflichtangaben.</label>
 		</languageKey>
+		<languageKey index="fr" type="array">
+			<label index="msg_name_empty">Veuillez saisir votre nom.</label>
+			<label index="msg_tel_empty">Veuillez saisir un numéro de téléphone.</label>
+			<label index="msg_fax_empty">Veuillez saisir un numéro de fax.</label>
+			<label index="msg_street_empty">Veuillez saisir une adresse.</label>
+			<label index="msg_city_empty">Veuillez saisir un nom de ville.</label>
+			<label index="msg_email_empty">Veuillez saisir une adresse mail.</label>
+			<label index="msg_message_empty">Veuillez saisir un message.</label>
+
+			<label index="msg_name_short">Veuillez saisir un nom contenant plus de %d caractères.</label>
+			<label index="msg_tel_short">Veuillez saisir un numéro de téléphone contenant plus de %d caractères.</label>
+			<label index="msg_fax_short">Veuillez saisir un numéro de fax contenant plus de %d caractères.</label>
+			<label index="msg_street_short">Veuillez saisir une adresse contenant plus de %d caractères.</label>
+			<label index="msg_city_short">Veuillez saisir un nom de ville contenant plus de %d caractères.</label>
+			<label index="msg_email_short">Veuillez saisir une adresse mail contenant plus de %d caractères.</label>
+			<label index="msg_message_short">Veuillez saisir un message contenant plus de %d caractères.</label>
+
+			<label index="msg_name_long">Veuillez saisir un nom contenant moins de %d caractères.</label>
+			<label index="msg_tel_long">Veuillez saisir un numéro de téléphone contenant moins de %d caractères.</label>
+			<label index="msg_fax_long">Veuillez saisir un numéro de fax contenant moins de %d caractères.</label>
+			<label index="msg_street_long">Veuillez saisir une adresse contenant moins de %d caractères.</label>
+			<label index="msg_city_long">Veuillez saisir un nom de ville contenant moins de %d caractères.</label>
+			<label index="msg_email_long">Veuillez saisir une adresse mail contenant moins de %d caractères.</label>
+			<label index="msg_message_long">Veuillez saisir un message contenant moins de %d caractères.</label>
+
+			<label index="msg_name_regex">Veuillez saisir un nom ne contenant pas %s ni d'autres caractères spéciaux.</label>
+			<label index="msg_tel_regex">Veuillez saisir un numéro de téléphone ne contenant pas %s ni d'autres caractères spéciaux.</label>
+			<label index="msg_fax_regex">Veuillez saisir un numéro de fax ne contenant pas %s ni d'autres caractères spéciaux.</label>
+			<label index="msg_street_regex">Veuillez saisir une adresse valide.</label>
+			<label index="msg_city_regex">Veuillez saisir un nom de ville valide.</label>
+			<label index="msg_email_regex">Veuillez saisir une adresse mail valide.</label>
+			<label index="msg_message_regex">Veuillez saisir un message ne contenant pas %s ni d'autres caractères spéciaux.</label>
+
+			<label index="msg_name_disallowed">Veuillez saisir un nom ne contenant pas %s.</label>
+			<label index="msg_tel_disallowed">Veuillez saisir un numéro de téléphone ne contenant pas %s..</label>
+			<label index="msg_fax_disallowed">Veuillez saisir un numéro de fax ne contenant pas %s.</label>
+			<label index="msg_street_disallowed">Veuillez saisir une adresse ne contenant pas %s.</label>
+			<label index="msg_city_disallowed">Veuillez saisir un nom de ville ne contenant pas %s.</label>
+			<label index="msg_email_disallowed">Veuillez saisir une adresse mail valide.</label>
+			<label index="msg_message_disallowed">Veuillez saisir un message ne contenant pas %s.</label>
+
+			<label index="msg_name_allowed">Veuillez saisir un nom contenant uniquement les caractères suivants: %s.</label>
+			<label index="msg_tel_allowed">Veuillez saisir un numéro de téléphone contenant uniquement les caractères suivants: %s.</label>
+			<label index="msg_fax_allowed">Veuillez saisir un numéro de fax contenant uniquement les caractères suivants: %s.</label>
+			<label index="msg_street_allowed">Veuillez saisir une adresse contenant uniquement les caractères suivants: %s.</label>
+			<label index="msg_city_allowed">Veuillez saisir un nom de ville contenant uniquement les caractères suivants: %s.</label>
+			<label index="msg_email_allowed">Veuillez saisir une adresse mail valide.</label>
+			<label index="msg_message_allowed">Veuillez saisir un message contenant uniquement les caractères suivants: %s.</label>
+
+			<label index="msg_email_passed">Votre message a été envoyé. Merci!</label>
+			<label index="msg_email_failed">Votre message n'a pu être envoyé. Veuillez essayer à nouveau.</label>
+			<label index="msg_check_passed"></label>
+			<label index="msg_check_failed">Une erreur est survenue, les données que vous avez saisies comportent des erreurs.</label>
+			<label index="msg_db_failed">L'erreur suivante est survenue en base de données: "%s"</label>
+			<label index="msg_not_allowed">Cette procédure n'est pas autorisée!</label>
+			<label index="msg_already_sent">Vous avez déjà envoyé %d messages. Veuillez à présent patienter pendant %d minute(s).</label>
+			<label index="msg_captcha">Veuillez saisir la séquence de caractères affichée sur l'image.</label>
+
+			<label index="name">Nom:</label>
+			<label index="tel">Téléphone:</label>
+			<label index="fax">Fax:</label>
+			<label index="street">Adresse:</label>
+			<label index="city">Ville:</label>
+			<label index="email">Mail:</label>
+			<label index="message">Message:</label>
+			<label index="submit">Envoyer</label>
+			<label index="checked">oui</label>
+			<label index="unchecked">non</label>
+			<label index="required">*</label>
+			<label index="required_info">Les champs marqués d'une astérisque sont obligatoires.</label>
+		</languageKey>
 	</data>
 </T3locallang>
