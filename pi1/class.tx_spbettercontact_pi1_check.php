@@ -241,12 +241,12 @@
 					if (!strlen($sInput)) {
 						return FALSE;
 					}
-					require_once(t3lib_extMgm::extPath($sExtKey) . 'pi2/class.tx_srfreecap_pi2.php');
+					t3lib_div::requireOnce(t3lib_extMgm::extPath($sExtKey) . 'pi2/class.tx_srfreecap_pi2.php');
 					$oCaptcha = t3lib_div::makeInstance('tx_srfreecap_pi2');
 					return $oCaptcha->checkWord($sInput);
 					break;
 				case 'jm_recaptcha' :
-					require_once(t3lib_extMgm::extPath($sExtKey) . 'class.tx_jmrecaptcha.php');
+					t3lib_div::requireOnce(t3lib_extMgm::extPath($sExtKey) . 'class.tx_jmrecaptcha.php');
 					$oCaptcha  = t3lib_div::makeInstance('tx_jmrecaptcha');
 					$aResponse = $oCaptcha->validateReCaptcha();
 					return (isset($aResponse['verified']) && (bool) $aResponse['verified']);
@@ -257,7 +257,7 @@
 					return ($sInput === $sCaptcha);
 					break;
 				case 'mathguard' :
-					require_once(t3lib_extMgm::extPath($sExtKey) . 'class.tx_mathguard.php');
+					t3lib_div::requireOnce(t3lib_extMgm::extPath($sExtKey) . 'class.tx_mathguard.php');
 					$oCaptcha = t3lib_div::makeInstance('tx_mathguard');
 					return $oCaptcha->validateCaptcha();
 					break;

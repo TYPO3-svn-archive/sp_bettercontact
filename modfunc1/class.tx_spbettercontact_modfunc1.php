@@ -23,8 +23,8 @@
 	***************************************************************/
 
 
-	require_once(PATH_t3lib . 'class.t3lib_extobjbase.php');
-	require_once(PATH_t3lib . 'class.t3lib_befunc.php');
+	t3lib_div::requireOnce(PATH_t3lib . 'class.t3lib_extobjbase.php');
+	t3lib_div::requireOnce(PATH_t3lib . 'class.t3lib_befunc.php');
 
 
 	/**
@@ -309,7 +309,7 @@
 			$sFileName  = t3lib_extMgm::extPath($this->extKey) . 'modfunc1/class.' . $sClassName . '.php';
 
 			if (@file_exists($sFileName)) {
-				include_once($sFileName);
+				t3lib_div::requireOnce($sFileName);
 
 				if (t3lib_div::int_from_ver(TYPO3_version) >= 4003000) {
 					return t3lib_div::makeInstance($sClassName, $this);

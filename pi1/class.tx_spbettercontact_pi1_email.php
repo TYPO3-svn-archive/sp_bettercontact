@@ -23,8 +23,8 @@
 	***************************************************************/
 
 
-	require_once(PATH_t3lib . 'class.t3lib_htmlmail.php');
-	require_once(PATH_tslib . 'class.tslib_pibase.php');
+	t3lib_div::requireOnce(PATH_t3lib . 'class.t3lib_htmlmail.php');
+	t3lib_div::requireOnce(PATH_tslib . 'class.tslib_pibase.php');
 
 
 	/**

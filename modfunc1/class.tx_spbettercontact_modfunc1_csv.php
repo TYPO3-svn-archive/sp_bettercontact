@@ -23,7 +23,7 @@
 	***************************************************************/
 
 
-	require_once(PATH_t3lib . 'class.t3lib_parsehtml.php');
+	t3lib_div::requireOnce(PATH_t3lib . 'class.t3lib_parsehtml.php');
 
 
 	/**

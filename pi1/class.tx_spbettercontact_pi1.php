@@ -23,7 +23,7 @@
 	***************************************************************/
 
 
-	require_once(PATH_tslib . 'class.tslib_pibase.php');
+	t3lib_div::requireOnce(PATH_tslib . 'class.tslib_pibase.php');
 
 
 	/**
@@ -441,7 +441,7 @@
 			$sFileName  = t3lib_extMgm::extPath($this->extKey) . 'pi1/class.' . $sClassName . '.php';
 
 			if (@file_exists($sFileName)) {
-				include_once($sFileName);
+				t3lib_div::requireOnce($sFileName);
 
 				if (t3lib_div::int_from_ver(TYPO3_version) >= 4003000) {
 					return t3lib_div::makeInstance($sClassName, $this);

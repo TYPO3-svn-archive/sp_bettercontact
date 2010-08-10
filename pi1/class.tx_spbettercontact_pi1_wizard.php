@@ -23,8 +23,8 @@
 	***************************************************************/
 
 
-	require_once(PATH_typo3 . 'interfaces/interface.cms_newcontentelementwizarditemshook.php');
-	require_once(t3lib_extMgm::extPath('sp_bettercontact') . 'pi1/class.tx_spbettercontact_pi1_wizicon.php');
+	t3lib_div::requireOnce(PATH_typo3 . 'interfaces/interface.cms_newcontentelementwizarditemshook.php');
+	t3lib_div::requireOnce(t3lib_extMgm::extPath('sp_bettercontact') . 'pi1/class.tx_spbettercontact_pi1_wizicon.php');
 
 
 	/**

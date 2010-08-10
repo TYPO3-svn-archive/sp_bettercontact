@@ -36,7 +36,7 @@
 
 	// Check for required SimpleXML and get flexform
 	if (class_exists('SimpleXMLElement')) {
-		include_once(t3lib_extMgm::extPath('sp_bettercontact') . 'pi1/class.tx_spbettercontact_pi1_flexform.php');
+		t3lib_div::requireOnce(t3lib_extMgm::extPath('sp_bettercontact') . 'pi1/class.tx_spbettercontact_pi1_flexform.php');
 		$oFlexForm = t3lib_div::makeInstance('tx_spbettercontact_pi1_flexform');
 		$sFlexData = $oFlexForm->sGetFlexForm($bShowDBTab);
 		unset($oFlexForm);

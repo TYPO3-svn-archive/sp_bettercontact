@@ -207,7 +207,7 @@
 
 				switch ($sExtKey) {
 					case 'sr_freecap' :
-						require_once(t3lib_extMgm::extPath($sExtKey) . 'pi2/class.tx_srfreecap_pi2.php');
+						t3lib_div::requireOnce(t3lib_extMgm::extPath($sExtKey) . 'pi2/class.tx_srfreecap_pi2.php');
 						$oCaptcha = t3lib_div::makeInstance('tx_srfreecap_pi2');
 						$aMarkers = $oCaptcha->makeCaptcha();
 						foreach ($aMarkers as $sKey => $sValue) {
@@ -228,7 +228,7 @@
 						));
 					break;
 					case 'jm_recaptcha' :
-						require_once(t3lib_extMgm::extPath($sExtKey) . 'class.tx_jmrecaptcha.php');
+						t3lib_div::requireOnce(t3lib_extMgm::extPath($sExtKey) . 'class.tx_jmrecaptcha.php');
 						$oCaptcha = t3lib_div::makeInstance('tx_jmrecaptcha');
 						$this->aMarkers['CAPTCHA_DATA'] = $oCaptcha->getReCaptcha();
 					break;
@@ -244,7 +244,7 @@
 						));
 					break;
 					case 'mathguard' :
-						require_once(t3lib_extMgm::extPath($sExtKey) . 'class.tx_mathguard.php');
+						t3lib_div::requireOnce(t3lib_extMgm::extPath($sExtKey) . 'class.tx_mathguard.php');
 						$oCaptcha = t3lib_div::makeInstance('tx_mathguard');
 						$this->aMarkers['CAPTCHA_DATA'] = $oCaptcha->getCaptcha();
 					break;

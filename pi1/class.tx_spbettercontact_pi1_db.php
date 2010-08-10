@@ -162,7 +162,7 @@
 				return 0;
 			}
 
-			require_once(t3lib_extMgm::extPath('adodb') . 'adodb/adodb.inc.php');
+			t3lib_div::requireOnce(t3lib_extMgm::extPath('adodb') . 'adodb/adodb.inc.php');
 
 			// Set global variable to automatically quote values for external tables
 			global $ADODB_QUOTE_FIELDNAMES;
