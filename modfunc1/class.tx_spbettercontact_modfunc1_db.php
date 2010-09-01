@@ -50,7 +50,7 @@
 
 
 		/**
-		 * Get all rows from log table for current page
+		 * Get all rows from log table for given page
 		 *
 		 * @param  integer $piPID PID of page to show
 		 * @param  integer $piPeriod Period to show
@@ -61,7 +61,7 @@
 			$sWhere .= ($piPID) ? ' AND pid = ' . (int) $piPID : '';
 			$sWhere .= ($piPeriod) ? ' AND tstamp > ' . (int) $piPeriod : '';
 
-			// Get rows from current page
+			// Get rows from given page
 			if (!$aRows = $GLOBALS['TYPO3_DB']->exec_SELECTgetRows('*', $this->sLogTable, $sWhere, '', 'tstamp DESC')) {
 				return array();
 			}

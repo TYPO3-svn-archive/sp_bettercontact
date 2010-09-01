@@ -76,7 +76,12 @@
 				'method'    => ($_SERVER['REQUEST_METHOD'] == 'GET') ? 'GET' : 'POST',
 			);
 
-			// Add GPVars
+			// Force a user defined PID
+			if (!empty($this->aConfig['forceLogPID'])) {
+				$aFields['pid'] = (int) $this->aConfig['forceLogPID'];
+			}
+
+			// Add GPvars
 			$aInput = $this->aGP;
 			if (!empty($this->aConfig['fields.'])) {
 				$aConfFields = t3lib_div::removeDotsFromTS($this->aConfig['fields.']);

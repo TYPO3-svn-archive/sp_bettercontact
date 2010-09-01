@@ -43,6 +43,7 @@ plugin.tx_spbettercontact_pi1 {
 
 	enableLog              =
 	enableIPLog            =
+	forceLogPID            =
 	# highlightFields      = (?) Activate with "1" to add the "classError" class to malicious fields
 	# classError           = (?) Define own class name for malicious fields
 	# classNoError         = (?) Define a class for fields without an error

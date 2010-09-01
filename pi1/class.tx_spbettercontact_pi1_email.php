@@ -167,7 +167,7 @@
 				$sValue = $this->sGetCleaned($aField['value']);
 				$aMarkers[$aField['valueName']]    = $sValue;
 				$aMarkers[$aField['labelName']]    = $aField['label'];
-				$aMarkers[$aField['checkedName']]  = (isset($this->aGP[$sName]) || (int) $sValue == 1) ? $this->aLL['checked'] : $this->aLL['unchecked'];
+				$aMarkers[$aField['checkedName']]  = (!empty($this->aGP[$sName]))  ? $this->aLL['checked']  : $this->aLL['unchecked'];
 				$aMarkers[$aField['requiredName']] = (!empty($aField['required'])) ? $this->aLL['required'] : '';
 			}
 

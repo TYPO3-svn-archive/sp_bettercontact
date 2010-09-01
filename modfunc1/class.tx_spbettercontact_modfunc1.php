@@ -137,7 +137,11 @@
 		 * @return Instance of the csConvObj
 		 */
 		protected function oGetCSObject () {
-			if (isset($GLOBALS['LANG']))    {
+			if (!class_exists('t3lib_cs')) {
+				t3lib_div::requireOnce(PATH_t3lib . 'class.t3lib_cs.php');
+			}
+			
+			if (isset($GLOBALS['LANG']->csConvObj) && $GLOBALS['LANG']->csConvObj instanceof t3lib_cs) {
 				return $GLOBALS['LANG']->csConvObj;
 			}
 
@@ -155,7 +159,7 @@
 
 			if (!empty($GLOBALS['TYPO3_CONF_VARS']['BE']['forceCharset'])) {
 				$sCharset = $GLOBALS['TYPO3_CONF_VARS']['BE']['forceCharset'];
-			} else if (isset($GLOBALS['LANG'])) {
+			} else if (!empty($GLOBALS['LANG']->charSet)) {
 				$sCharset = $GLOBALS['LANG']->charSet;
 			}
 

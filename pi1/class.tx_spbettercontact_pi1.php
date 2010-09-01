@@ -275,9 +275,13 @@
 		 * @return Instance of the csConvObj
 		 */
 		protected function oGetCSObject () {
-			if (isset($GLOBALS['LANG']))    {
+			if (!class_exists('t3lib_cs')) {
+				t3lib_div::requireOnce(PATH_t3lib . 'class.t3lib_cs.php');
+			}
+
+			if (isset($GLOBALS['LANG']->csConvObj) && $GLOBALS['LANG']->csConvObj instanceof t3lib_cs) {
 				return $GLOBALS['LANG']->csConvObj;
-			} else if (isset($GLOBALS['TSFE']))  {
+			} else if (isset($GLOBALS['TSFE']->csConvObj) && $GLOBALS['TSFE']->csConvObj instanceof t3lib_cs) {
 				return $GLOBALS['TSFE']->csConvObj;
 			}
 
@@ -413,10 +417,12 @@
 			$sType    = strtolower(trim($psType)) . 'Charset';
 			$sCharset = 'iso-8859-1';
 
-			if (isset($GLOBALS['LANG'])) {
+			if (!empty($GLOBALS['LANG']->charSet)) {
 				$sCharset = $GLOBALS['LANG']->charSet;
-			} else if (isset($GLOBALS['TSFE'])) {
-				$sCharset = (strlen($GLOBALS['TSFE']->renderCharset)) ? $GLOBALS['TSFE']->renderCharset : $GLOBALS['TSFE']->defaultCharSet;
+			} else if (!empty($GLOBALS['TSFE']->renderCharset)) {
+				$sCharset = $GLOBALS['TSFE']->renderCharset;
+			} else if (!empty($GLOBALS['TSFE']->defaultCharSet)) {
+				$sCharset = $GLOBALS['TSFE']->defaultCharSet;
 			}
 
 			if (!empty($this->aConfig[$sType])) {
