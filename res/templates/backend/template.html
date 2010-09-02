@@ -51,35 +51,133 @@
 
 
 <!-- ###TEMPLATE### begin -->
-<style type="text/css">
-tr.highlight:hover {
-  background-color: #FFFFFF;
-  cursor: default;
-}
-span.label {
-  display: inline-block;
-  width: 90px;
-  padding-right: 6px;
-  font-weight: bold;
-}
-</style>
-<h2>###LLL:headline###</h2>
-<br />
-<p>###LLL:menu_mode### ###MENU_MODE###&nbsp;&nbsp;###LLL:menu_period### ###MENU_PERIOD###&nbsp;&nbsp;###LLL:menu_download### <a href="###URL_SELF###&csv=1" target="_self" title="###LLL:download_csv###"><img src="###CSV_IMAGE###" /></a></p>
-<br />
-<table>
-	<tr class="bgColor5 tableheader">
-		<td align="center">###LLL:table_header_datetime###</td>
-		<td align="center">###LLL:table_header_ip###</td>
-		<td align="center">###LLL:table_header_fe_user###</td>
-		<td align="center">###LLL:table_header_method###</td>
-		<td align="center">###LLL:table_header_agent###</td>
-		<td align="center">###LLL:table_header_fields###</td>
-	</tr>
-	###LOG_TABLE_ROWS###
-</table>
-<br />
-<p>###INFO###</p>
+<h4 class="tx_spbettercontact_headline">###LLL:headline###</h4>
+###LLL:mod_description###
+<div class="tx_spbettercontact_log">
+	<div class="tx_spbettercontact_log_top">
+		<div class="tx_spbettercontact_log_top_menu1">
+			###LLL:menu_mode### ###MENU_MODE###
+		</div>
+		<div class="tx_spbettercontact_log_top_menu2">
+			###LLL:menu_period### ###MENU_PERIOD###
+		</div>
+		<div class="tx_spbettercontact_log_top_menu3">
+			###LLL:menu_download### <a href="###URL_SELF###&csv=1" target="_self" title="###LLL:download_csv###"><img src="###CSV_IMAGE###" /></a>
+		</div>
+	</div>
+	<div class="tx_spbettercontact_log_body">
+		<div class="tx_spbettercontact_log_body_header">
+			<table cellspacing="0" cellpadding="2" width="100%">
+				<tr>
+					<th width="16" class="tx_spbettercontact_log_first"><div id="tx_spbettercontact_log_checkall"></div></th>
+					<th width="16"></th>
+					<th width="92">###LLL:table_header_datetime###</th>
+					<th width="92">###LLL:table_header_ip###</th>
+					<th width="120">###LLL:table_header_fe_user###</th>
+					<th width="50">###LLL:table_header_method###</th>
+					<th >###LLL:table_header_agent###</th>
+					<th width="25%" class="tx_spbettercontact_log_last">###LLL:table_header_fields###</th>
+				</tr>
+			</table>
+		</div>
+		<div class="tx_spbettercontact_log_body_content" id="tx_spbettercontact_log_body_content">
+			###INFO###
+			<table cellspacing="0" cellpadding="2" width="100%">
+				###LOG_TABLE_ROWS###
+			</table>
+		</div>
+	</div>
+	<div class="tx_spbettercontact_log_bottom">
+
+	</div>
+</div>
+<script language="javascript">
+	/**
+	 * Resize log table to fit in document
+	 */
+	function vCorrectHeight() {
+		var iMargin = 42; // Margin below log table
+		var iHeight = ($('typo3-docbody').getHeight() - $('typo3-inner-docbody').getHeight() + $('tx_spbettercontact_log_body_content').getHeight());
+		iHeight = (iHeight > 300) ? iHeight : 300; // Min height of log table
+
+		$('tx_spbettercontact_log_body_content').setStyle({
+			height: (iHeight - iMargin) + 'px'
+		});
+	}
+
+
+	/**
+	 * General event listners
+	 */
+	document.observe("dom:loaded", function() {
+		/* Initially correct height */
+		vCorrectHeight();
+
+		/* Single checkbox */
+		$$('.tx_spbettercontact_log_check').each(function(oElement) {
+			var sClass = 'tx_spbettercontact_log_check_checked';
+
+			$(oElement).observe('click', function() {
+				if ($(oElement).hasClassName(sClass)) {
+					$(oElement).removeClassName(sClass);
+				} else {
+					$(oElement).addClassName(sClass);
+				}
+			});
+		});
+
+		/* All checkboxes */
+		$('tx_spbettercontact_log_checkall').observe('click', function() {
+			var sClass    = 'tx_spbettercontact_log_check_checked';
+			var sClassAll = 'tx_spbettercontact_log_checkall_checked';
+			var oElement  = $('tx_spbettercontact_log_checkall');
+
+			if ($(oElement).hasClassName(sClassAll)) {
+				$$('.tx_spbettercontact_log_check').each(function(oCheckbox) {
+					$(oCheckbox).removeClassName(sClass);
+				});
+				$('tx_spbettercontact_log_checkall').removeClassName(sClassAll);
+			} else {
+				$$('.tx_spbettercontact_log_check').each(function(oCheckbox) {
+					$(oCheckbox).addClassName(sClass);
+				});
+				$('tx_spbettercontact_log_checkall').addClassName(sClassAll);
+			}
+		});
+
+		/* Expand */
+		$$('.tx_spbettercontact_log_expand').each(function(oElement) {
+			var sClass  = 'tx_spbettercontact_log_expanded';
+			var oParent = $(oElement).up().up();
+
+			$(oElement).observe('click', function() {
+				if ($(oParent).hasClassName(sClass)) {
+					$(oParent).removeClassName(sClass);
+				} else {
+					$(oParent).addClassName(sClass);
+				}
+			});
+		});
+
+		/* Hover */
+		$('tx_spbettercontact_log_body_content').select('tr').each(function(oElement) {
+			var sClass  = 'tx_spbettercontact_log_hover';
+
+			$(oElement).observe('mouseout', function() {
+				$(oElement).removeClassName(sClass);
+			});
+			$(oElement).observe('mouseover', function() {
+				$(oElement).addClassName(sClass);
+			});
+		});
+
+	});
+
+	/* Correct height on resize event */
+	Event.observe(document.onresize ? document : window, "resize", function() {
+		vCorrectHeight();
+	});
+</script>
 <!-- ###TEMPLATE### end -->
 
 
@@ -87,13 +185,15 @@ span.label {
 
 
 <!-- ###SUB_TEMPLATE_LOG_TABLE_ROWS### begin -->
-<tr class="bgColor-20 highlight">
-	<td valign="top">###CRDATE###</td>
-	<td valign="top" align="right">###IP###</td>
-	<td valign="top">###FE_USER_NAME###</td>
-	<td valign="top" align="center">###METHOD###</td>
-	<td valign="top">###AGENT###</td>
-	<td valign="top">###INPUT_HTML###</td>
+<tr>
+	<td valign="top" width="16"><div class="tx_spbettercontact_log_check"></div></td>
+	<td valign="top" width="16"><div class="tx_spbettercontact_log_expand"></div></td>
+	<td valign="top" width="92"><div>###CRDATE###</div></td>
+	<td valign="top" width="92"><div>###IP###</div></td>
+	<td valign="top" width="120"><div>###FE_USER_NAME###</div></td>
+	<td valign="top" width="50"><div>###METHOD###</div></td>
+	<td valign="top"><div>###AGENT###</div></td>
+	<td valign="top" width="25%"><div>###INPUT_HTML###</div></td>
 </tr>
 <!-- ###SUB_TEMPLATE_LOG_TABLE_ROWS### end -->
 

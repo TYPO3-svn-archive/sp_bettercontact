@@ -1,24 +1,35 @@
 # ==============================================================================
-# Default configuration for sp_bettercontact
+# Default configuration for extension "sp_bettercontact"
 # ==============================================================================
 mod.tx_spbettercontact_modfunc1 {
 
-	## Basic configuration (see manual for details)
-	mainTemplate  = EXT:sp_bettercontact/res/templates/backend/template.html
-	csvTemplate   = EXT:sp_bettercontact/res/templates/backend/csv.html
-	locallangFile =
-	# dateFormat  = (?) Use a valid "strftime" format to display dates
+
+	# ====================================================================
+	# Basic configuration (see manual for details)
+	# ====================================================================
+	mainTemplate           =
+	csvTemplate            =
+	stylesheetFile         =
+	locallangFile          =
+	# disableAutoTemplates = (?) If "1" default templates will not be used for missing ones
+	# dateFormat           = (?) Use a valid "strftime" format to display dates
 
 
-	## Overwrite or add locallang labels (better use your own locallang.xml)
+
+	# ====================================================================
+	# Overwrite / add locallang labels (better use your own locallang.xml)
+	# ====================================================================
 	_LOCAL_LANG.default {
-
+		# somelabel = Your text here...
 	}
 
 
-	## Set some default piVars or overwrite existing
-	_DEFAULT_PI_VARS {
 
+	# ====================================================================
+	# Default piVars
+	# ====================================================================
+	_DEFAULT_PI_VARS {
+		# email = user@domain.com
 	}
 
 }

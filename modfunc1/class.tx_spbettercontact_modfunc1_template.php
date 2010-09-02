@@ -34,11 +34,12 @@
 	 * @subpackage tx_spbettercontact
 	 */
 	class tx_spbettercontact_modfunc1_template {
-		protected $oPObj    = NULL;
-		protected $aLL      = array();
-		protected $aConfig  = array();
-		protected $aGP      = array();
-		protected $aMarkers = array();
+		protected $oPObj     = NULL;
+		protected $aLL       = array();
+		protected $aConfig   = array();
+		protected $aGP       = array();
+		protected $aMarkers  = array();
+		protected $sExtKey   = '';
 
 
 		/**
@@ -47,13 +48,17 @@
 		 * @param object $poParent Instance of the parent object
 		 */
 		public function __construct ($poParent) {
-			$this->oPObj   = $poParent->pObj;
-			$this->aLL     = $poParent->aLL;
-			$this->aConfig = $poParent->aConfig;
-			$this->aGP     = $poParent->aGP;
+			$this->oPObj     = $poParent->pObj;
+			$this->aLL       = $poParent->aLL;
+			$this->aConfig   = $poParent->aConfig;
+			$this->aGP       = $poParent->aGP;
+			$this->sExtKey   = $poParent->extKey;
 
 			// Get default markers
 			$this->aMarkers = $this->aGetDefaultMarkers();
+
+			// Set stylesheet
+			$this->vSetStylesheet();
 		}
 
 
@@ -105,6 +110,31 @@
 		 */
 		protected function sGetCSVImage () {
 			return t3lib_iconWorks::skinImg($GLOBALS['BACK_PATH'], 'gfx/csv.gif', '', 1);
+		}
+
+
+		/**
+		 * Add stylesheet to document
+		 *
+		 */
+		protected function vSetStylesheet () {
+			$sFile = $this->aConfig['stylesheetFile'];
+			$sTag  = '<link rel="stylesheet" href="%s" type="text/css" />';
+
+			// Check for extension relative path
+			if (substr($sFile, 0, 4) == 'EXT:') {
+				list($sExtKey, $sFilePath) = explode('/', substr($sFile, 4), 2);
+				$sExtKey = strtolower($sExtKey);
+
+				if ($sExtKey == $this->sExtKey || t3lib_extMgm::isLoaded($sExtKey)) {
+					$sFile = t3lib_extMgm::siteRelPath($sExtKey) . $sFilePath;
+				}
+			}
+
+			if (strlen($sFile)) {
+				$sFile = t3lib_div::resolveBackPath($this->oPObj->doc->backPath . '../' . $sFile);
+				$this->oPObj->doc->JScode .= PHP_EOL . sprintf($sTag, $sFile) . PHP_EOL;
+			}
 		}
 
 

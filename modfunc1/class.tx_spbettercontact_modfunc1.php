@@ -35,19 +35,20 @@
 	 * @subpackage tx_spbettercontact
 	 */
 	class tx_spbettercontact_modfunc1 extends t3lib_extobjbase {
-		public $modName   = 'tx_spbettercontact_modfunc1';
-		public $extKey    = 'sp_bettercontact';
-		public $LLkey     = 'default';
-		public $sCharset  = 'iso-8859-1';
-		public $thisPath  = '';
-		public $aLL       = array();
-		public $aGP       = array();
-		public $aConfig   = array();
-		public $oTemplate = NULL;
-		public $pObj      = NULL;
-		public $oCS       = NULL;
-		public $oDB       = NULL;
-		public $id        = 0;
+		public $modName     = 'tx_spbettercontact_modfunc1';
+		public $extKey      = 'sp_bettercontact';
+		public $LLkey       = 'default';
+		public $sCharset    = 'iso-8859-1';
+		public $sDateFormat = '';
+		public $thisPath    = '';
+		public $aLL         = array();
+		public $aGP         = array();
+		public $aConfig     = array();
+		public $oTemplate   = NULL;
+		public $pObj        = NULL;
+		public $oCS         = NULL;
+		public $oDB         = NULL;
+		public $id          = 0;
 
 		/**
 		 * Init module atributes
@@ -63,6 +64,14 @@
 			$this->sCharset = $this->sGetBECharset();
 			$this->aLL      = $this->aGetLL();
 			$this->aGP      = $this->aGetGP();
+
+			// Get default date format
+			if (isset($GLOBALS['TYPO3_CONF_VARS']['SYS']['ddmmyy'], $GLOBALS['TYPO3_CONF_VARS']['SYS']['hhmm'])) {
+				$this->sDateFormat = $GLOBALS['TYPO3_CONF_VARS']['SYS']['ddmmyy'] . ' ' . $GLOBALS['TYPO3_CONF_VARS']['SYS']['hhmm'];
+			}
+			
+			// Set default templates if not configured
+			$this->vSetDefaultTemplates();
 
 			// Get module menu
 			$aModuleItems         = $this->aGetModMenu();
@@ -234,6 +243,35 @@
 
 
 		/**
+		 * Set default templates if they are not configured
+		 *
+		 */
+		protected function vSetDefaultTemplates () {
+			if (!empty($this->aConfig['disableAutoTemplates'])) {
+				return;
+			}
+
+			// Get filenames
+			$aFiles = array(
+				'mainTemplate' => 'EXT:' . $this->extKey . '/res/templates/backend/template.html',
+				'csvTemplate'  => 'EXT:' . $this->extKey . '/res/templates/backend/csv.html',
+			);
+
+			// Add stylesheet only if mainTemplate is empty (will only be used if also not configured)
+			if (empty($this->aConfig['mainTemplate'])) {
+				$aFiles['stylesheetFile'] = 'EXT:' . $this->extKey . '/res/templates/backend/stylesheet.css';
+			}
+
+			// Add only these files which are not configured
+			foreach ($aFiles as $sKey => $sFileName) {
+				if (empty($this->aConfig[$sKey])) {
+					$this->aConfig[$sKey] = $sFileName;
+				}
+			}
+		}
+
+
+		/**
 		 * Returns the module menu
 		 *
 		 * @return Array with menuitems
@@ -333,7 +371,7 @@
 		 * @param  array $paRows Table rows
 		 * @return Array with rows
 		 */
-		protected function aPrepareLogTableRows (array $paRows, $pbHTMLOutput = TRUE) {
+		protected function aPrepareLogTableRows (array $paRows) {
 			if (!count($paRows)) {
 				return array();
 			}
@@ -347,7 +385,7 @@
 				// Make readable dates
 				foreach (array('tstamp', 'crdate') as $sKey) {
 					if (empty($this->aConfig['dateFormat'])) {
-						$aResult[$iKey][$sKey] = gmdate('M d Y', $aRow[$sKey]) . ' (GMT)';
+						$aResult[$iKey][$sKey] = date($this->sDateFormat, $aRow[$sKey]);
 					} else {
 						$aResult[$iKey][$sKey] = strftime($this->aConfig['dateFormat'], $aRow[$sKey]);
 					}

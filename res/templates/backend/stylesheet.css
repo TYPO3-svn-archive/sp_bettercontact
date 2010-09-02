@@ -1,0 +1,138 @@
+h4.tx_spbettercontact_headline {
+	border-bottom: 1px solid #CDCDCD;
+	padding-bottom: 6px;
+	margin: 6px 0;
+}
+
+div.tx_spbettercontact_log {
+	border: 1px solid #A2AAB8;
+	font-size: 10px;
+	cursor: default;
+}
+
+div.tx_spbettercontact_log_top {
+	background: #585858;
+	color: #FFFFFF;
+	height: 24px;
+	line-height: 24px;
+	padding-left: 6px;
+	border-bottom: 1px solid #A2AAB8;
+}
+
+div.tx_spbettercontact_log_top select {
+	padding: 1px;
+}
+
+div.tx_spbettercontact_log_top img {
+	margin-top: -4px;
+}
+
+div.tx_spbettercontact_log_top_menu1,
+div.tx_spbettercontact_log_top_menu2,
+div.tx_spbettercontact_log_top_menu3 {
+	float: left;
+}
+
+div.tx_spbettercontact_log_top_menu1,
+div.tx_spbettercontact_log_top_menu2 {
+	margin-right: 12px;
+	padding-right: 4px;
+	background: url(../../images/divider.gif) right center no-repeat;
+}
+
+div.tx_spbettercontact_log_body {
+	background: #FFFFFF;
+	margin-bottom: -1px;
+}
+
+div.tx_spbettercontact_log_body_header {
+	background: #F9F9F9;
+	border-bottom: 1px solid #A2AAB8;
+	height: 20px;
+	line-height: 20px;
+	/*padding-right: 18px;*/
+}
+
+div.tx_spbettercontact_log_body_header table tr th {
+	border-left: 1px solid #EFEFF4;
+	border-right: 1px solid #A2AAB8;
+	padding: 0 3px;
+	font-weight: normal;
+	text-align: left;
+}
+
+div.tx_spbettercontact_log_body_content {
+	/*height: 150px;
+	overflow: auto;*/
+}
+
+div.tx_spbettercontact_log_body_content table tr td {
+	border-bottom: 1px solid #A2AAB8;
+	padding: 3px 4px 0px 4px;
+	font-weight: normal;
+}
+
+div.tx_spbettercontact_log_body_content table tr td div {
+	height: 14px;
+	line-height: 14px;
+	overflow: hidden;
+	white-space: wrap;
+}
+
+div.tx_spbettercontact_log_body_content table tr.tx_spbettercontact_log_expanded td div {
+	height: auto;
+	overflow: visible;
+	padding-bottom: 3px;
+}
+
+th.tx_spbettercontact_log_first {
+	border-left: none !important;
+}
+
+th.tx_spbettercontact_log_last {
+	border-right: none !important;
+}
+
+div.tx_spbettercontact_log_check {
+	background: url(../../images/check.gif) 1px 0 no-repeat;
+	height: 18px !important;
+	width: 100%;
+}
+
+div.tx_spbettercontact_log_check_checked {
+	background-position: -24px 0;
+}
+
+div#tx_spbettercontact_log_checkall {
+	background: url(../../images/check.gif) 2px 2px no-repeat;
+	height: 18px !important;
+	width: 100%;
+}
+
+div.tx_spbettercontact_log_checkall_checked {
+	background-position: -23px 2px !important;
+}
+
+div.tx_spbettercontact_log_expand {
+	background: url(../../images/expand.gif) 3px 0px no-repeat;
+	height: 18px !important;
+	width: 100%;
+	cursor: pointer;
+}
+
+tr.tx_spbettercontact_log_expanded td div.tx_spbettercontact_log_expand {
+	background-position: -22px 0;
+}
+
+tr.tx_spbettercontact_log_hover {
+	background: #EFEFEF;
+}
+
+div.tx_spbettercontact_log_bottom {
+	background: #585858;
+	color: #FFFFFF;
+	height: 24px;
+	line-height: 23px;
+	padding-left: 6px;
+	border-top: 1px solid #A2AAB8;
+}
