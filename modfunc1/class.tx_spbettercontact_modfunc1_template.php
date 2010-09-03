@@ -71,9 +71,9 @@
 			$aMarkers = array();
 
 			// Default markers
-			$aMarkers['###URL_SELF###']  = $this->sGetSelfURL();
-			$aMarkers['###CSV_IMAGE###'] = $this->sGetCSVImage();
-			$aMarkers['###INFO###']      = '';
+			$aMarkers['###URL_SELF###']   = $this->sGetSelfURL();
+			$aMarkers['###IMAGE_PATH###'] = $this->sGetImagePath();
+			$aMarkers['###INFO###']       = '';
 
 			// BE-User info
 			if (!empty($GLOBALS['BE_USER']->user) && is_array($GLOBALS['BE_USER']->user)) {
@@ -94,22 +94,29 @@
 
 
 		/**
-		 * Get URL to current page
+		 * Get URL to current page and remove unwanted params
 		 *
 		 * @return URL to current page
 		 */
 		protected function sGetSelfURL () {
-			return t3lib_div::getIndpEnv('TYPO3_REQUEST_URL');
+			$sHost   = t3lib_div::getIndpEnv('TYPO3_REQUEST_HOST');
+			$aRemove = array(
+				'csv'  => '',
+				'del'  => '',
+				'rows' => '',
+			);
+
+			return $sHost . t3lib_div::linkThisScript($aRemove);
 		}
 
 
 		/**
-		 * Get image for CSV download link
+		 * Get theme image path
 		 *
-		 * @return Image of the link
+		 * @return Path to gfx icons
 		 */
-		protected function sGetCSVImage () {
-			return t3lib_iconWorks::skinImg($GLOBALS['BACK_PATH'], 'gfx/csv.gif', '', 1);
+		protected function sGetImagePath () {
+			return t3lib_iconWorks::skinImg($GLOBALS['BACK_PATH'], 'gfx/', '', 1);
 		}
 
 

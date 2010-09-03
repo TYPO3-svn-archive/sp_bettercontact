@@ -69,7 +69,7 @@
 			if (isset($GLOBALS['TYPO3_CONF_VARS']['SYS']['ddmmyy'], $GLOBALS['TYPO3_CONF_VARS']['SYS']['hhmm'])) {
 				$this->sDateFormat = $GLOBALS['TYPO3_CONF_VARS']['SYS']['ddmmyy'] . ' ' . $GLOBALS['TYPO3_CONF_VARS']['SYS']['hhmm'];
 			}
-			
+
 			// Set default templates if not configured
 			$this->vSetDefaultTemplates();
 
@@ -89,8 +89,14 @@
 			$this->oDB       = $this->oMakeInstance('db');
 
 			// Get filters
-			$iPID    = $this->iGetPID();
-			$iPeriod = $this->iGetPeriod();
+			$iPID      = $this->iGetPID();
+			$iPeriod   = $this->iGetPeriod();
+			$aSelected = $this->aGetSelected();
+
+			// Delete selected rows if param "del" exists
+			if (!empty($this->aGP['del'])) {
+				$this->oDB->vRemoveLogRows($aSelected);
+			}
 
 			// Get rows from log table
 			$aRows = $this->oDB->aGetLogTable($iPID, $iPeriod);
@@ -102,25 +108,36 @@
 				'###SUB_TEMPLATE_CSV_ROWS###'       => $aRows,
 				'###MENU_MODE###'                   => $this->sGetFuncMenu('mode'),
 				'###MENU_PERIOD###'                 => $this->sGetFuncMenu('period'),
+				'###ROW_COUNT###'                   => count($aRows),
 			);
 
 			// No rows found
-			if (!count($aRows)) {
+			if (empty($aRows)) {
 				$aMarkers['###INFO###'] = $this->aLL['msg_no_rows'];
 				$this->oTemplate->vAddMarkers($aMarkers);
 				return $this->oTemplate->sGetContent();
 			}
 
-			// Create CSV from current result if param "csv" exists
-			if (isset($this->aGP['csv']) && $this->aGP['csv']) {
+			// Get template content
+			$this->oTemplate->vAddMarkers($aMarkers);
+			$sContent = $this->oTemplate->sGetContent();
+
+			// Create CSV if param "csv" exists
+			if (!empty($this->aGP['csv'])) {
+				// Filter rows
+				$aRows = $this->aFilterLogTableRows($aRows, $aSelected); 
+				$aMarkers['###SUB_TEMPLATE_LOG_TABLE_ROWS###'] = $aRows;
+				$aMarkers['###SUB_TEMPLATE_CSV_ROWS###']       = $aRows;
+				$aMarkers['###ROW_COUNT###']                   = count($aRows);
+
+				// Create CSV file
 				$oCSV = $this->oMakeInstance('csv');
 				$oCSV->vAddMarkers($aMarkers);
 				$oCSV->vCreateCSV();
 			}
 
 			// Output
-			$this->oTemplate->vAddMarkers($aMarkers);
-			return $this->oTemplate->sGetContent();
+			return $sContent;
 		}
 
 
@@ -149,7 +166,7 @@
 			if (!class_exists('t3lib_cs')) {
 				t3lib_div::requireOnce(PATH_t3lib . 'class.t3lib_cs.php');
 			}
-			
+
 			if (isset($GLOBALS['LANG']->csConvObj) && $GLOBALS['LANG']->csConvObj instanceof t3lib_cs) {
 				return $GLOBALS['LANG']->csConvObj;
 			}
@@ -318,6 +335,20 @@
 
 
 		/**
+		 * Get selected rows in log table
+		 *
+		 * @return Array with uids
+		 */
+		protected function aGetSelected () {
+			if (!empty($this->aGP['rows'])) {
+				return t3lib_div::intExplode(',', $this->aGP['rows'], TRUE);
+			}
+
+			return array();
+		}
+
+
+		/**
 		 * Get selector for view mode and period
 		 *
 		 * @return String with menu
@@ -413,6 +444,27 @@
 
 			return $aResult;
 		}
+
+
+		/**
+		 * Filter log table rows with selected UIDs
+		 *
+		 * @param array $paRows     All log table rows
+		 * @param array $paSelected Selected UIDs
+		 * @return Array with filtered rows
+		 */
+		protected function aFilterLogTableRows (array $paRows, array $paSelected = array()) {
+			if (empty($paSelected)) {
+				return $paRows;
+			}
+
+			if (empty($paRows)) {
+				return array();
+			}
+
+			return array_intersect_key($paRows, array_flip($paSelected));
+		}
+
 	}
 
 

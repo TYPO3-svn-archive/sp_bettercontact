@@ -52,7 +52,7 @@
 		/**
 		 * Get all rows from log table for given page
 		 *
-		 * @param  integer $piPID PID of page to show
+		 * @param  integer $piPID    PID of page to show
 		 * @param  integer $piPeriod Period to show
 		 * @return Array with table rows
 		 */
@@ -62,7 +62,7 @@
 			$sWhere .= ($piPeriod) ? ' AND tstamp > ' . (int) $piPeriod : '';
 
 			// Get rows from given page
-			if (!$aRows = $GLOBALS['TYPO3_DB']->exec_SELECTgetRows('*', $this->sLogTable, $sWhere, '', 'tstamp DESC')) {
+			if (!$aRows = $GLOBALS['TYPO3_DB']->exec_SELECTgetRows('*', $this->sLogTable, $sWhere, '', 'tstamp DESC', '', 'uid')) {
 				return array();
 			}
 
@@ -94,6 +94,22 @@
 			}
 
 			return $this->aUsers[$piUID];
+		}
+
+
+		/**
+		 * Remove all rows with given UIDs
+		 *
+		 * @param array $paUIDs UIDs of the rows to remove
+		 */
+		public function vRemoveLogRows (array $paUIDs) {
+			if (empty($paUIDs)) {
+				return;
+			}
+
+			// Delete rows
+			$sWhere = 'uid IN (' . implode(',', $paUIDs) . ')';
+			$GLOBALS['TYPO3_DB']->exec_DELETEquery($this->sLogTable, $sWhere);
 		}
 	}
 

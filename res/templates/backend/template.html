@@ -11,7 +11,7 @@
 	<pre>
     // General markers
     ###URL_SELF###
-    ###CSV_IMAGE###
+    ###IMAGE_PATH###
     ###INFO###
 
 
@@ -56,13 +56,15 @@
 <div class="tx_spbettercontact_log">
 	<div class="tx_spbettercontact_log_top">
 		<div class="tx_spbettercontact_log_top_menu1">
-			###LLL:menu_mode### ###MENU_MODE###
+			###LLL:menu_mode###&nbsp;###MENU_MODE###
 		</div>
 		<div class="tx_spbettercontact_log_top_menu2">
-			###LLL:menu_period### ###MENU_PERIOD###
+			###LLL:menu_period###&nbsp;###MENU_PERIOD###
 		</div>
 		<div class="tx_spbettercontact_log_top_menu3">
-			###LLL:menu_download### <a href="###URL_SELF###&csv=1" target="_self" title="###LLL:download_csv###"><img src="###CSV_IMAGE###" /></a>
+			###LLL:menu_actions###&nbsp;
+			<a href="" target="_self" title="###LLL:action_download_csv###" id="tx_spbettercontact_log_csv"><img src="clear.gif" /></a>&nbsp;
+			<a href="" target="_self" title="###LLL:action_delete_entries###" id="tx_spbettercontact_log_delete"><img src="clear.gif" /></a>
 		</div>
 	</div>
 	<div class="tx_spbettercontact_log_body">
@@ -88,12 +90,12 @@
 		</div>
 	</div>
 	<div class="tx_spbettercontact_log_bottom">
-
+		###LLL:table_footer_rows### ###ROW_COUNT###
 	</div>
 </div>
 <script language="javascript">
 	/**
-	 * Resize log table to fit in document
+	 * Resize log table to fit into document
 	 */
 	function vCorrectHeight() {
 		var iMargin = 42; // Margin below log table
@@ -107,13 +109,46 @@
 
 
 	/**
-	 * General event listners
+	 * Get selected entries
+	 */
+	function sGetSelected() {
+		var sSeleted = '0';
+		var sPrefix  = 'tx_spbettercontact_log_check';
+		var sID      = '';
+
+		$$('.tx_spbettercontact_log_check_checked').each(function(oElement) {
+			sID = $(oElement).identify();
+			sID = sID.substr(sPrefix.length, sID.length);
+			sSeleted += ',' + sID;
+		});
+
+		return sSeleted;
+	}
+
+
+	/**
+	 * Correct height after window resize
+	 */
+	Event.observe(document.onresize ? document : window, "resize", function() {
+		vCorrectHeight();
+	});
+
+
+	/**
+	 * Observe several elements if DOM is loaded
 	 */
 	document.observe("dom:loaded", function() {
-		/* Initially correct height */
+
+
+		/**
+		 * Initially correct height
+		 */
 		vCorrectHeight();
 
-		/* Single checkbox */
+
+		/**
+		 * Observe all checkboxes
+		 */
 		$$('.tx_spbettercontact_log_check').each(function(oElement) {
 			var sClass = 'tx_spbettercontact_log_check_checked';
 
@@ -126,7 +161,10 @@
 			});
 		});
 
-		/* All checkboxes */
+
+		/**
+		 * Observe checkbox to activate / deactivate all
+		 */
 		$('tx_spbettercontact_log_checkall').observe('click', function() {
 			var sClass    = 'tx_spbettercontact_log_check_checked';
 			var sClassAll = 'tx_spbettercontact_log_checkall_checked';
@@ -145,7 +183,10 @@
 			}
 		});
 
-		/* Expand */
+
+		/**
+		 * Observe all expand links
+		 */
 		$$('.tx_spbettercontact_log_expand').each(function(oElement) {
 			var sClass  = 'tx_spbettercontact_log_expanded';
 			var oParent = $(oElement).up().up();
@@ -159,7 +200,10 @@
 			});
 		});
 
-		/* Hover */
+
+		/**
+		 * Observe all rows for hover effect
+		 */
 		$('tx_spbettercontact_log_body_content').select('tr').each(function(oElement) {
 			var sClass  = 'tx_spbettercontact_log_hover';
 
@@ -171,11 +215,31 @@
 			});
 		});
 
-	});
 
-	/* Correct height on resize event */
-	Event.observe(document.onresize ? document : window, "resize", function() {
-		vCorrectHeight();
+		/**
+		 * Generate a CSV file from selected entries
+		 */
+		$('tx_spbettercontact_log_csv').observe('click', function() {
+			var sURL = '###URL_SELF###?csv=1&rows=' + sGetSelected();
+			$('tx_spbettercontact_log_csv').writeAttribute('href', sURL);
+		});
+
+
+		/**
+		 * Delete selected rows
+		 */
+		$('tx_spbettercontact_log_delete').observe('click', function(oEvent) {
+			var sSelected = sGetSelected();
+
+			if (sSelected == '0' || !confirm('###LLL:confirm_delete_entries###')) {
+				Event.stop(oEvent);
+				return false;
+			}
+
+			var sURL = '###URL_SELF###?del=1&rows=' + sSelected;
+			$('tx_spbettercontact_log_delete').writeAttribute('href', sURL);
+		});
+
 	});
 </script>
 <!-- ###TEMPLATE### end -->
@@ -186,7 +250,7 @@
 
 <!-- ###SUB_TEMPLATE_LOG_TABLE_ROWS### begin -->
 <tr>
-	<td valign="top" width="16"><div class="tx_spbettercontact_log_check"></div></td>
+	<td valign="top" width="16"><div class="tx_spbettercontact_log_check" id="tx_spbettercontact_log_check###UID###"></div></td>
 	<td valign="top" width="16"><div class="tx_spbettercontact_log_expand"></div></td>
 	<td valign="top" width="92"><div>###CRDATE###</div></td>
 	<td valign="top" width="92"><div>###IP###</div></td>

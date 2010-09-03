@@ -71,10 +71,39 @@
 			<label index="email">Email:</label>
 			<label index="message">Message:</label>
 			<label index="submit">Submit</label>
+			<label index="date">Date:</label>
+			<label index="time">Time:</label>
+			<label index="ip">IP:</label>
+			<label index="browser">Browser:</label>
+			<label index="system">System:</label>
+			<label index="referer">Referer:</label>
+			<label index="method">Method:</label>
 			<label index="checked">yes</label>
 			<label index="unchecked">no</label>
 			<label index="required">*</label>
 			<label index="required_info">All with a symbol (*) are required fields.</label>
+
+			<label index="email_sender_subject">Thank you for your message</label>
+			<label index="email_sender_dear">Hello</label>
+			<label index="email_sender_greetings">Best regards,</label>
+			<label index="email_sender_sender">Your company</label>
+			<label index="email_sender_body1">Thank you for your message.</label>
+			<label index="email_sender_body2">We will answer your question as soon as possible.</label>
+
+			<label index="email_admin_subject">has sent an message</label>
+			<label index="email_admin_dear">Hello,</label>
+			<label index="email_admin_greetings">Best regards,</label>
+			<label index="email_admin_sender">Your contact form</label>
+			<label index="email_admin_body1">Someone has sent a message:</label>
+
+			<label index="email_spam_subject">Someone has tried to send a message</label>
+			<label index="email_spam_dear">Hello,</label>
+			<label index="email_spam_gretings">Best regards,</label>
+			<label index="email_spam_sender">Your contact form</label>
+			<label index="email_spam_body1">Someone has tried to send a message:</label>
+			<label index="email_spam_headline1">General data:</label>
+			<label index="email_spam_headline2">Visible fields:</label>
+			<label index="email_spam_headline3">Hidden fields:</label>
 		</languageKey>
 		<languageKey index="de" type="array">
 			<label index="msg_name_empty">Bitte geben Sie Ihren Namen ein.</label>
@@ -142,10 +171,39 @@
 			<label index="email">E-Mail:</label>
 			<label index="message">Nachricht:</label>
 			<label index="submit">Absenden</label>
+			<label index="date">Datum:</label>
+			<label index="time">Uhrzeit:</label>
+			<label index="ip">IP:</label>
+			<label index="browser">Browser:</label>
+			<label index="system">System:</label>
+			<label index="referer">Referer:</label>
+			<label index="method">Methode:</label>
 			<label index="checked">ja</label>
 			<label index="unchecked">nein</label>
 			<label index="required">*</label>
 			<label index="required_info">Alle mit einem (*) versehenen Felder sind Pflichtangaben.</label>
+
+			<label index="email_sender_subject">Danke für Ihre Nachricht</label>
+			<label index="email_sender_dear">Hallo</label>
+			<label index="email_sender_greetings">Beste Grüße,</label>
+			<label index="email_sender_sender">Ihre Firma</label>
+			<label index="email_sender_body1">Vielen Dank für Ihre Nachricht.</label>
+			<label index="email_sender_body2">Wir werden Ihre Frage schnellstmöglichst beantworten.</label>
+
+			<label index="email_admin_subject">hat eine Nachricht versandt</label>
+			<label index="email_admin_dear">Hallo,</label>
+			<label index="email_admin_greetings">Beste Grüße,</label>
+			<label index="email_admin_sender">Ihr Kontaktformular</label>
+			<label index="email_admin_body1">Jemand hat eine Nachricht versandt:</label>
+
+			<label index="email_spam_subject">Jemand hat versucht eine Nachricht zu senden</label>
+			<label index="email_spam_dear">Hallo,</label>
+			<label index="email_spam_gretings">Beste Grüße,</label>
+			<label index="email_spam_sender">Ihr Kontaktformular</label>
+			<label index="email_spam_body1">Jemand hat versucht eine Nachricht zu senden:</label>
+			<label index="email_spam_headline1">Allgemeine Informationen:</label>
+			<label index="email_spam_headline2">Sichtbare Felder:</label>
+			<label index="email_spam_headline3">Versteckte Felder:</label>
 		</languageKey>
 		<languageKey index="fr" type="array">
 			<label index="msg_name_empty">Veuillez saisir votre nom.</label>
@@ -213,10 +271,39 @@
 			<label index="email">Mail:</label>
 			<label index="message">Message:</label>
 			<label index="submit">Envoyer</label>
+			<label index="date">Date:</label>
+			<label index="time">Temps:</label>
+			<label index="ip">IP:</label>
+			<label index="browser">Navigateur:</label>
+			<label index="system">Système:</label>
+			<label index="referer">Referer:</label>
+			<label index="method">Méthode:</label>
 			<label index="checked">oui</label>
 			<label index="unchecked">non</label>
 			<label index="required">*</label>
 			<label index="required_info">Les champs marqués d'une astérisque sont obligatoires.</label>
+
+			<label index="email_sender_subject">Je vous remercie pour votre message</label>
+			<label index="email_sender_dear">Bonjour</label>
+			<label index="email_sender_greetings">Cordialement,</label>
+			<label index="email_sender_sender">Votre Société</label>
+			<label index="email_sender_body1">Je vous remercie pour votre message.</label>
+			<label index="email_sender_body2">Nous allons répondre à votre question le plus rapidement.</label>
+
+			<label index="email_admin_subject">a envoyé un message</label>
+			<label index="email_admin_dear">Bonjour,</label>
+			<label index="email_admin_greetings">Cordialement,</label>
+			<label index="email_admin_sender">Votre formulaire de contact</label>
+			<label index="email_admin_body1">Quelqu'un a envoyé un message:</label>
+
+			<label index="email_spam_subject">Quelqu'un a essayé d'envoyer un message</label>
+			<label index="email_spam_dear">Bonjour,</label>
+			<label index="email_spam_gretings">Cordialement,</label>
+			<label index="email_spam_sender">Votre formulaire de contact</label>
+			<label index="email_spam_body1">Quelqu'un a essayé d'envoyer un message:</label>
+			<label index="email_spam_headline1">Information générale:</label>
+			<label index="email_spam_headline2">Champs visibles:</label>
+			<label index="email_spam_headline3">Champs masqués:</label>
 		</languageKey>
 	</data>
 </T3locallang>
