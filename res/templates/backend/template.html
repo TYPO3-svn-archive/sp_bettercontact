@@ -95,20 +95,6 @@
 </div>
 <script language="javascript">
 	/**
-	 * Resize log table to fit into document
-	 */
-	function vCorrectHeight() {
-		var iMargin = 42; // Margin below log table
-		var iHeight = ($('typo3-docbody').getHeight() - $('typo3-inner-docbody').getHeight() + $('tx_spbettercontact_log_body_content').getHeight());
-		iHeight = (iHeight > 300) ? iHeight : 300; // Min height of log table
-
-		$('tx_spbettercontact_log_body_content').setStyle({
-			height: (iHeight - iMargin) + 'px'
-		});
-	}
-
-
-	/**
 	 * Get selected entries
 	 */
 	function sGetSelected() {
@@ -127,23 +113,9 @@
 
 
 	/**
-	 * Correct height after window resize
-	 */
-	Event.observe(document.onresize ? document : window, "resize", function() {
-		vCorrectHeight();
-	});
-
-
-	/**
 	 * Observe several elements if DOM is loaded
 	 */
 	document.observe("dom:loaded", function() {
-
-
-		/**
-		 * Initially correct height
-		 */
-		vCorrectHeight();
 
 
 		/**

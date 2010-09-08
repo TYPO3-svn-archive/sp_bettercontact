@@ -35,45 +35,28 @@
 		/**
 		 * Processing the wizard items array
 		 *
-		 * @param  array $wizardItems The wizard items
+		 * @param  array $aWizardItems The wizard items
 		 * @return Modified array with wizard items
 		 */
 		public function proc (array $aWizardItems) {
-			if (!count($aWizardItems)) {
-				return array();
+			if (empty($aWizardItems)) {
+				$aWizardItems = array(
+					'forms'         => $this->aGetHeader(),
+					'forms_contact' => $this->aGetPlugin(),
+				);
 			}
 
-			// Get configuration
-			$sLangFile = t3lib_extMgm::extPath('sp_bettercontact') . 'locallang.xml';
-			$aLL       = t3lib_div::readLLXMLfile($sLangFile, $GLOBALS['LANG']->lang);
-			$sLastKey  = '';
-			$aNewItems = array();
-			$bHasForms = array_key_exists('forms', $aWizardItems);
+			$sSearchKey = (array_key_exists('forms', $aWizardItems) ? 'forms' : 'special');
+			$aNewItems  = array();
+			$sLastKey   = '';
 
-			// Get plugin
-			$aPlugin = array(
-				'icon'                 => t3lib_extMgm::extRelPath('sp_bettercontact') . 'res/images/wizard.gif',
-				'title'                => $GLOBALS['LANG']->getLLL('pi1_title', $aLL),
-				'description'          => $GLOBALS['LANG']->getLLL('pi1_plus_wiz_description', $aLL),
-				'tt_content_defValues' => array('CType' => 'sp_bettercontact_pi1'),
-			);
-
-			// Add plugin in forms area
+			// Add plugin to forms area
 			foreach ($aWizardItems as $sKey => $aValue) {
-				if (!$bHasForms && strpos($sLastKey, 'special') !== FALSE && strpos($sKey, 'special') === FALSE) {
-					$sLangFile = t3lib_extMgm::extPath('cms') . 'layout/locallang_db_new_content_el.xml';
-					$aLLCms    = t3lib_div::readLLXMLfile($sLangFile, $GLOBALS['LANG']->lang);
-
-					$aNewItems['forms'] = array(
-						'header' => $GLOBALS['LANG']->getLLL('forms', $aLLCms),
-					);
-					$aNewItems['forms_contact'] = $aPlugin;
-				} else if (strpos($sLastKey, 'forms') !== FALSE && strpos($sKey, 'forms') === FALSE) {
-					$aNewItems['forms_contact'] = $aPlugin;
-				}
-
-				if (strpos($sLastKey, 'forms') !== FALSE && strpos($sKey, 'forms') === FALSE) {
-					$aNewItems['forms_contact'] = $aPlugin;
+				if (strpos($sLastKey, $sSearchKey) !== FALSE && strpos($sKey, $sSearchKey) === FALSE) {
+					if ($sSearchKey == 'special') {
+						$aNewItems['forms'] = $this->aGetHeader();
+					}
+					$aNewItems['forms_contact'] = $this->aGetPlugin();
 				}
 
 				$aNewItems[$sKey] = $aValue;
@@ -82,6 +65,40 @@
 
 			return $aNewItems;
 		}
+
+
+		/**
+		 * Get forms header
+		 *
+		 * @return Header data array
+		 */
+		protected function aGetHeader () {
+			$sLangFile = t3lib_extMgm::extPath('cms') . 'layout/locallang_db_new_content_el.xml';
+			$aLLCms    = t3lib_div::readLLXMLfile($sLangFile, $GLOBALS['LANG']->lang);
+
+			return array(
+				'header' => $GLOBALS['LANG']->getLLL('forms', $aLLCms),
+			);
+		}
+
+
+		/**
+		 * Get plugin data
+		 *
+		 * @return Plugin data array
+		 */
+		protected function aGetPlugin () {
+			$sLangFile = t3lib_extMgm::extPath('sp_bettercontact') . 'locallang.xml';
+			$aLL       = t3lib_div::readLLXMLfile($sLangFile, $GLOBALS['LANG']->lang);
+
+			return array(
+				'icon'                 => t3lib_extMgm::extRelPath('sp_bettercontact') . 'res/images/wizard.gif',
+				'title'                => $GLOBALS['LANG']->getLLL('pi1_title', $aLL),
+				'description'          => $GLOBALS['LANG']->getLLL('pi1_plus_wiz_description', $aLL),
+				'tt_content_defValues' => array('CType' => 'sp_bettercontact_pi1'),
+			);
+		}
+
 	}
 
 

@@ -30,7 +30,10 @@ div.tx_spbettercontact_log_top img {
 div.tx_spbettercontact_log_top_menu1,
 div.tx_spbettercontact_log_top_menu2,
 div.tx_spbettercontact_log_top_menu3 {
-	float: left;
+	display: inline;
+	height: 24px;
+	line-height: 24px;
+	color: #FFFFFF;
 }
 
 div.tx_spbettercontact_log_top_menu1,
@@ -38,10 +41,6 @@ div.tx_spbettercontact_log_top_menu2 {
 	margin-right: 12px;
 	padding-right: 4px;
 	background: url(../../images/divider.gif) right center no-repeat;
-}
-
-div.tx_spbettercontact_log_top_menu3 {
-	text-wrap: nowrap;
 }
 
 div.tx_spbettercontact_log_body {

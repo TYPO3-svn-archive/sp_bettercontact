@@ -75,6 +75,23 @@
 	}
 	$GLOBALS['TCA']['tt_content']['columns']['CType']['config']['items'] = $aNewItems;
 
+	/*
+	  TODO:
+
+		mod.wizards.newContentElement.wizardItems.common {
+			elements {
+				my_ext {
+					icon = gfx/c_wiz/regular_text.gif
+					title = Title
+					description = Description 
+					tt_content_defValues {
+						CType = th_myext_pi1
+					}
+				}
+			}
+			show := addToList(my_ext)
+		}
+	*/
 
 	if (TYPO3_MODE == 'BE') {
 		// Add wizard icon
