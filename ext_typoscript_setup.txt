@@ -35,6 +35,7 @@ plugin.tx_spbettercontact_pi1 {
 	adminMails             = bot
 	messageCount           = 10
 	waitingTime            = 60
+	minElapsedTime         = 1
 	postOnly               = 1
 	useRefererCheck        =
 	# captchaSupport       = (?) Supported are: sr_freecap, jm_recaptcha, captcha and mathguard

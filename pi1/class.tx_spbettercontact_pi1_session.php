@@ -47,12 +47,31 @@
 		 * @param object $poParent Instance of the parent object
 		 */
 		public function __construct ($poParent) {
-			$this->aConfig      = $poParent->aConfig;
-			$this->aFields      = $poParent->aFields;
-			$this->aGP          = $poParent->aGP;
-			$this->aLL          = $poParent->aLL;
-			$this->sExtKey      = $poParent->extKey;
-			$this->iPluginID    = $poParent->cObj->data['uid'];
+			$this->aConfig   = $poParent->aConfig;
+			$this->aFields   = $poParent->aFields;
+			$this->aGP       = $poParent->aGP;
+			$this->aLL       = $poParent->aLL;
+			$this->sExtKey   = $poParent->extKey;
+			$this->iPluginID = $poParent->cObj->data['uid'];
+
+			// Load session content
+			$this->aSessionContent = $this->aLoad();
+		}
+
+
+		/**
+		 * Load session data
+		 *
+		 * @return Array with session content
+		 */
+		public function aLoad () {
+			$aSession = $GLOBALS['TSFE']->fe_user->getKey('ses', $this->sExtKey);
+
+			if (isset($aSession[$this->iPluginID]) && is_array($aSession[$this->iPluginID])) {
+				return $aSession[$this->iPluginID];
+			}
+
+			return array();
 		}
 
 
@@ -62,10 +81,7 @@
 		 * @return TRUE if current fe user has already sent a lot of emails
 		 */
 		public function bHasAlreadySent () {
-			$aSessionContent = $GLOBALS['TSFE']->fe_user->getKey('ses', $this->sExtKey);
-			$aSessionContent = (isset($aSessionContent[$this->iPluginID])) ? $aSessionContent[$this->iPluginID] : array();
-
-			if (empty($aSessionContent) || !is_array($aSessionContent)) {
+			if (empty($this->aSessionContent) || !is_array($this->aSessionContent)) {
 				return FALSE;
 			}
 
@@ -73,15 +89,15 @@
 			$this->aConfig['waitingTime']  = ($this->aConfig['waitingTime'] > 0)   ? $this->aConfig['waitingTime']     : 1;
 
 			// Set counter
-			$this->iCount = $aSessionContent['cnt'];
+			$this->iCount = $this->aSessionContent['cnt'];
 
 			// Check for message count
-			if ($aSessionContent['cnt'] < $this->aConfig['messageCount']) {
+			if ($this->iCount < $this->aConfig['messageCount']) {
 				return FALSE;
 			}
 
 			// Check waiting time
-			$iLockEnd = $aSessionContent['tstmp'] + ($this->aConfig['waitingTime'] * 60); // minutes
+			$iLockEnd = $this->aSessionContent['tstmp'] + ($this->aConfig['waitingTime'] * 60); // minutes
 
 			if ($GLOBALS['SIM_EXEC_TIME'] < $iLockEnd) {
 				$this->iWaitingTime = ($iLockEnd - $GLOBALS['SIM_EXEC_TIME']);
@@ -96,18 +112,16 @@
 
 
 		/**
-		 * Get messages
+		 * Get a value from session data
 		 *
-		 * @return Array of messages form session check
+		 * @return Mixed value
 		 */
-		public function aGetMessages () {
-			$sWrapNegative = $this->aConfig['infoWrapNegative'] ? $this->aConfig['infoWrapNegative'] : '|';
-			$iTime         = ($this->iWaitingTime > 60) ? ($this->iWaitingTime / 60) : 1;
-			$iCount        = ($this->iCount <= $this->aConfig['messageCount']) ? $this->iCount : $this->aConfig['messageCount']; // bugfix
-			$sMessage      = sprintf($this->aLL['msg_already_sent'], $iCount, $iTime);
-			$sMessage      = str_replace('|', $sMessage, $sWrapNegative);
+		public function mGetValue ($psKey) {
+			if (strlen($psKey) && isset($this->aSessionContent[$psKey])) {
+				return $this->aSessionContent[$psKey];
+			}
 
-			return array('INFO' => $sMessage);
+			return FALSE;
 		}
 
 
@@ -127,15 +141,21 @@
 
 
 		/**
-		 * Save important information (including GPVars) into session
+		 * Add informations about last sending
 		 *
 		 */
-		public function vSave () {
-			// Get new session content
+		public function vAddSubmitData () {
 			$this->aSessionContent['tstmp']  = $GLOBALS['SIM_EXEC_TIME'];
 			$this->aSessionContent['cnt']    = ++$this->iCount;
 			$this->aSessionContent['gpVars'] = $this->aGP;
+		}
 
+
+		/**
+		 * Store data into session
+		 *
+		 */
+		public function vSave () {
 			// Add a new entry for each plugin and update "lastEntryID"
 			$aContent = $GLOBALS['TSFE']->fe_user->getKey('ses', $this->sExtKey);
 			$aContent[$this->iPluginID] = $this->aSessionContent;
@@ -144,6 +164,22 @@
 			// Update session content
 			$GLOBALS['TSFE']->fe_user->setKey('ses', $this->sExtKey, $aContent);
 			$GLOBALS['TSFE']->storeSessionData();
+		}
+
+
+		/**
+		 * Get messages
+		 *
+		 * @return Array of messages form session check
+		 */
+		public function aGetMessages () {
+			$sWrapNegative = $this->aConfig['infoWrapNegative'] ? $this->aConfig['infoWrapNegative'] : '|';
+			$iTime         = ($this->iWaitingTime > 60) ? ($this->iWaitingTime / 60) : 1;
+			$iCount        = ($this->iCount <= $this->aConfig['messageCount']) ? $this->iCount : $this->aConfig['messageCount']; // bugfix
+			$sMessage      = sprintf($this->aLL['msg_already_sent'], $iCount, $iTime);
+			$sMessage      = str_replace('|', $sMessage, $sWrapNegative);
+
+			return array('INFO' => $sMessage);
 		}
 
 	}

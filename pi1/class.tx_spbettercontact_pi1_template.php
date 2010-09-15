@@ -169,7 +169,8 @@
 				'returnLast'      => 'url',
 				'addQueryString'  => 1,
 				'addQueryString.' => array(
-					'method' => 'GET',
+					'method'  => 'GET',
+					'exclude' => 'id',
 				),
 			);
 

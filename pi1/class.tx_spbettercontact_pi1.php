@@ -82,6 +82,9 @@
 
 			// Stop here if form was not submitted
 			if ((!empty($this->aConfig['postOnly']) && empty($_POST)) || !isset($this->aGP['submit'])) {
+				// Add timestamp to session for elapsed time check
+				$this->oSession->vAddValue('start', $GLOBALS['SIM_EXEC_TIME']);
+				$this->oSession->vSave();
 				return $this->sGetContent();
 			}
 
@@ -89,7 +92,7 @@
 			$this->vCheckUserFunc('submitUserFunc');
 
 			// Check if a bot tries to send spam
-			if ($this->oCheck->bIsSpam()) {
+			if ($this->oCheck->bIsSpam($this->oSession->mGetValue('start'))) {
 				$this->vSendWarning('bot');
 				$this->vCheckRedirect('spam');
 				return $this->pi_wrapInBaseClass($this->aLL['msg_not_allowed']);
@@ -128,6 +131,7 @@
 			}
 
 			// Save timestamp into session for multiple mails check
+			$this->oSession->vAddSubmitData();
 			$this->oSession->vSave();
 
 			// Call saveUserFunc to do something before redirect or output
@@ -207,7 +211,7 @@
 			}
 
 			// Check sender email address
-			if ((($this->aConfig['sendTo'] == 'user' || $this->aConfig['sendTo'] == 'both') 
+			if ((($this->aConfig['sendTo'] == 'user' || $this->aConfig['sendTo'] == 'both')
 			  || ($this->aConfig['sendTo'] == 'recipients' && $this->aConfig['sendFrom'] == 'sender')) && empty($this->aConfig['emailSender'])) {
 				$aMessages[] = 'Please define an email address for the sender!';
 			}

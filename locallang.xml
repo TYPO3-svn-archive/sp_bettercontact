@@ -86,6 +86,7 @@
 			<label index="tt_content.flexform_pi1.adminMails.3">User-Spam (slow)</label>
 			<label index="tt_content.flexform_pi1.adminMails.4">Both (slow)</label>
 			<label index="tt_content.flexform_pi1.useRefererCheck">Check referer (HTTP_REFERER):</label>
+			<label index="tt_content.flexform_pi1.minElapsedTime">Minimum time required to fill out the form (in seconds):</label>
 			<label index="tt_content.flexform_pi1.messageCount">Max count of allowed mailings:</label>
 			<label index="tt_content.flexform_pi1.waitingTime">Waiting time if max count was reached (in minutes):</label>
 			<label index="tt_content.flexform_pi1.sDB">DB</label>
@@ -174,6 +175,7 @@
 			<label index="tt_content.flexform_pi1.adminMails.3">User-Spam (langsam)</label>
 			<label index="tt_content.flexform_pi1.adminMails.4">Beides (langsam)</label>
 			<label index="tt_content.flexform_pi1.useRefererCheck">Herkunft prüfen (HTTP_REFERER):</label>
+			<label index="tt_content.flexform_pi1.minElapsedTime">Minimale erforderliche Zeit zum Ausfüllen des Formulars (in Sekunden):</label>
 			<label index="tt_content.flexform_pi1.messageCount">Maximale Anzahl erlaubter Sendungen:</label>
 			<label index="tt_content.flexform_pi1.waitingTime">Wartezeit wenn maximale Anzahl erreicht wurde (in Minuten):</label>
 			<label index="tt_content.flexform_pi1.sDB">DB</label>
@@ -262,6 +264,7 @@
 			<label index="tt_content.flexform_pi1.adminMails.3">Spam via utilisateur (lent)</label>
 			<label index="tt_content.flexform_pi1.adminMails.4">Les deux (lent)</label>
 			<label index="tt_content.flexform_pi1.useRefererCheck">Vérifier le referer (HTTP_REFERER):</label>
+			<label index="tt_content.flexform_pi1.minElapsedTime">Temps minimum requis pour remplir le formulaire (seconde):</label>
 			<label index="tt_content.flexform_pi1.messageCount">Nombre maximum d'envois autorisés:</label>
 			<label index="tt_content.flexform_pi1.waitingTime">Temps (minutes):</label>
 			<label index="tt_content.flexform_pi1.sDB">Base de données</label>
