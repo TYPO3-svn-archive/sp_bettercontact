@@ -29,7 +29,7 @@ mod.tx_spbettercontact_modfunc1 {
 	# Default piVars
 	# ====================================================================
 	_DEFAULT_PI_VARS {
-		# email = user@domain.com
+		# param = value
 	}
 
 }

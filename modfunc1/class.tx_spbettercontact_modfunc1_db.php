@@ -84,7 +84,7 @@
 			// Check cache first
 			if (!isset($this->aUsers[$piUID])) {
 				// Get rows from frontend user
-				$sWhere = 'uid = ' . (int) $piUID . ' AND deleted = 0';
+				$sWhere = 'uid = ' . (int) $piUID . t3lib_BEfunc::BEenableFields($this->sUserTable);
 				if (!$aRows = $GLOBALS['TYPO3_DB']->exec_SELECTgetRows('*', $this->sUserTable, $sWhere, '', '', 1)) {
 					return array();
 				}
@@ -108,8 +108,9 @@
 			}
 
 			// Delete rows
-			$sWhere = 'uid IN (' . implode(',', $paUIDs) . ')';
-			$GLOBALS['TYPO3_DB']->exec_DELETEquery($this->sLogTable, $sWhere);
+			$sWhere  = 'uid IN (' . implode(',', $paUIDs) . ')';
+			$aFields = array('deleted' => 1);
+			$GLOBALS['TYPO3_DB']->exec_UPDATEquery($this->sLogTable, $sWhere, $aFields, 'deleted');
 		}
 	}
 

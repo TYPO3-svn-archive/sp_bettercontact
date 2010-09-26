@@ -18,7 +18,7 @@
 			<label index="period_week">Last 7 days</label>
 			<label index="period_day">Last 24 hours</label>
 
-			<label index="action_download_csv">Download table as CSV</label>
+			<label index="action_download_csv">Download selected entries as CSV</label>
 			<label index="action_delete_entries">Delete selected entries</label>
 			<label index="confirm_delete_entries">Really delete selected entries?</label>
 
@@ -56,7 +56,7 @@
 			<label index="period_week">Die letzten 7 Tage</label>
 			<label index="period_day">Die letzten 24 Stunden</label>
 
-			<label index="action_download_csv">Tabelle als CSV-Datei herunterladen</label>
+			<label index="action_download_csv">Ausgewählte Einträge als CSV-Datei herunterladen</label>
 			<label index="action_delete_entries">Ausgewählte Einträge löschen</label>
 			<label index="confirm_delete_entries">Ausgewählte Einträge wirklich löschen?</label>
 
@@ -93,7 +93,10 @@
 			<label index="period_month">30 derniers jours</label>
 			<label index="period_week">7 derniers jours</label>
 			<label index="period_day">Dernières 24 heures</label>
-			<label index="download_csv">Télécharger au format CSV</label>
+
+			<label index="action_download_csv">Certaines entrées dans un fichier CSV téléchargement</label>
+			<label index="action_delete_entries">Supprimer la sélection des entrées</label>
+			<label index="confirm_delete_entries">Entrées sélectionnées supprimer?</label>
 
 			<label index="table_header_datetime">Date / Heure</label>
 			<label index="table_header_ip">Adresse IP</label>
@@ -101,6 +104,8 @@
 			<label index="table_header_agent">Agent utilisateur (User-Agent)</label>
 			<label index="table_header_fields">Données utilisateur (User-Input)</label>
 			<label index="table_header_fe_user">Utilisateur Front-End</label>
+
+			<label index="table_footer_rows">Les entrées dans cette liste:</label>
 
 			<label index="csv_header_uid">UID</label>
 			<label index="csv_header_pid">PID</label>

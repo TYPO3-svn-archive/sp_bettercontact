@@ -11,7 +11,7 @@
 	<pre>
     // General markers
     ###URL_SELF###
-    ###IMAGE_PATH###
+    ###URL_SCRIPT###
     ###INFO###
 
 
@@ -99,7 +99,7 @@
 	 */
 	function sGetSelected() {
 		var sSeleted = '0';
-		var sPrefix  = 'tx_spbettercontact_log_check';
+		var sPrefix  = 'tx_spbettercontact_log_check_';
 		var sID      = '';
 
 		$$('.tx_spbettercontact_log_check_checked').each(function(oElement) {
@@ -192,7 +192,7 @@
 		 * Generate a CSV file from selected entries
 		 */
 		$('tx_spbettercontact_log_csv').observe('click', function() {
-			var sURL = '###URL_SELF###?csv=1&rows=' + sGetSelected();
+			var sURL = '###URL_SCRIPT###csv=1&rows=' + sGetSelected();
 			$('tx_spbettercontact_log_csv').writeAttribute('href', sURL);
 		});
 
@@ -208,7 +208,7 @@
 				return false;
 			}
 
-			var sURL = '###URL_SELF###?del=1&rows=' + sSelected;
+			var sURL = '###URL_SCRIPT###del=1&rows=' + sSelected;
 			$('tx_spbettercontact_log_delete').writeAttribute('href', sURL);
 		});
 
@@ -222,7 +222,7 @@
 
 <!-- ###SUB_TEMPLATE_LOG_TABLE_ROWS### begin -->
 <tr>
-	<td valign="top" width="16"><div class="tx_spbettercontact_log_check" id="tx_spbettercontact_log_check###UID###"></div></td>
+	<td valign="top" width="16"><div class="tx_spbettercontact_log_check" id="tx_spbettercontact_log_check_###UID###"></div></td>
 	<td valign="top" width="16"><div class="tx_spbettercontact_log_expand"></div></td>
 	<td valign="top" width="92"><div>###CRDATE###</div></td>
 	<td valign="top" width="92"><div>###IP###</div></td>

@@ -69,10 +69,11 @@
 		 */
 		protected function aGetDefaultMarkers () {
 			$aMarkers = array();
+			$sURL     = $this->sGetSelfURL();
 
 			// Default markers
-			$aMarkers['###URL_SELF###']   = $this->sGetSelfURL();
-			$aMarkers['###IMAGE_PATH###'] = $this->sGetImagePath();
+			$aMarkers['###URL_SELF###']   = $sURL;
+			$aMarkers['###URL_SCRIPT###'] = $sURL . ((strpos($sURL, '?') === FALSE) ? '?' : '&');
 			$aMarkers['###INFO###']       = '';
 
 			// BE-User info
@@ -99,24 +100,20 @@
 		 * @return URL to current page
 		 */
 		protected function sGetSelfURL () {
-			$sHost   = t3lib_div::getIndpEnv('TYPO3_REQUEST_HOST');
-			$aRemove = array(
-				'csv'  => '',
-				'del'  => '',
-				'rows' => '',
-			);
+			$sURL    = t3lib_div::getIndpEnv('TYPO3_REQUEST_SCRIPT');
+			$aParams = $this->aGP;
+			$aRemove = array('csv','del','rows');
+			$sParams = '';
 
-			return $sHost . t3lib_div::linkThisScript($aRemove);
-		}
+			foreach ($aRemove as $sName) {
+				unset($aParams[$sName]);
+			}
 
+			if ($sParams = http_build_query($aParams)) {
+				$sParams = '?' . $sParams;
+			}
 
-		/**
-		 * Get theme image path
-		 *
-		 * @return Path to gfx icons
-		 */
-		protected function sGetImagePath () {
-			return t3lib_iconWorks::skinImg($GLOBALS['BACK_PATH'], 'gfx/', '', 1);
+			return $sURL . $sParams;
 		}
 
 
