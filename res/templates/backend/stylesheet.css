@@ -57,68 +57,72 @@ div.tx_spbettercontact_log_body_header {
 }
 
 div.tx_spbettercontact_log_body_header table tr th {
-	border-left: 1px solid #EFEFF4;
-	border-right: 1px solid #A2AAB8;
 	padding: 0 3px;
 	font-weight: normal;
 	text-align: left;
 }
 
-div.tx_spbettercontact_log_body_content {
-	/*height: 150px;
-	overflow: auto;*/
+th.tx_spbettercontact_log_header_row {
+	border-left: 1px solid #EFEFF4;
+	border-right: 1px solid #A2AAB8;
 }
 
-div.tx_spbettercontact_log_body_content table tr td {
+th.tx_spbettercontact_log_header_row_first {
+	border-right: 1px solid #A2AAB8;
+}
+
+th.tx_spbettercontact_log_header_row_last {
+	border-left: 1px solid #EFEFF4;
+}
+
+div.tx_spbettercontact_log_body_content td {
 	border-bottom: 1px solid #A2AAB8;
 	padding: 3px 4px 0px 4px;
 	font-weight: normal;
 }
 
-div.tx_spbettercontact_log_body_content table tr td div {
-	height: 14px;
-	line-height: 14px;
+div.tx_spbettercontact_log_body_content td div {
+	height: 18px;
+	line-height: 17px;
 	overflow: hidden;
 	white-space: wrap;
 }
 
-div.tx_spbettercontact_log_body_content table tr.tx_spbettercontact_log_expanded td div {
+tr.tx_spbettercontact_log_expanded td div {
 	height: auto;
 	overflow: visible;
 	padding-bottom: 3px;
 }
 
-th.tx_spbettercontact_log_first {
-	border-left: none !important;
-}
 
-th.tx_spbettercontact_log_last {
-	border-right: none !important;
-}
-
-div.tx_spbettercontact_log_check {
+div.tx_spbettercontact_log_check,
+tr.tx_spbettercontact_log_expanded td div.tx_spbettercontact_log_check {
 	background: url(../../images/check.gif) 1px 0 no-repeat;
-	height: 18px !important;
+	height: 18px;
 	width: 100%;
+	cursor: pointer;
 }
 
-div.tx_spbettercontact_log_check_checked {
+div.tx_spbettercontact_log_check_checked,
+tr.tx_spbettercontact_log_expanded td div.tx_spbettercontact_log_check_checked {
 	background-position: -24px 0;
 }
 
-div#tx_spbettercontact_log_checkall {
+div.tx_spbettercontact_log_checkall {
 	background: url(../../images/check.gif) 2px 2px no-repeat;
-	height: 18px !important;
+	height: 18px;
 	width: 100%;
+	cursor: pointer;
 }
 
 div.tx_spbettercontact_log_checkall_checked {
-	background-position: -23px 2px !important;
+	background-position: -23px 2px;
 }
 
-div.tx_spbettercontact_log_expand {
+div.tx_spbettercontact_log_expand,
+tr.tx_spbettercontact_log_expanded td div.tx_spbettercontact_log_expand {
 	background: url(../../images/expand.gif) 3px 0px no-repeat;
-	height: 18px !important;
+	height: 18px;
 	width: 100%;
 	cursor: pointer;
 }

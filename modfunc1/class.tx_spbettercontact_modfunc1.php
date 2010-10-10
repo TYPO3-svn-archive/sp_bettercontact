@@ -277,6 +277,7 @@
 			// Add stylesheet only if mainTemplate is empty (will only be used if also not configured)
 			if (empty($this->aConfig['mainTemplate'])) {
 				$aFiles['stylesheetFile'] = 'EXT:' . $this->extKey . '/res/templates/backend/stylesheet.css';
+				$aFiles['javascriptFile'] = 'EXT:' . $this->extKey . '/res/templates/backend/javascript.js';
 			}
 
 			// Add only these files which are not configured

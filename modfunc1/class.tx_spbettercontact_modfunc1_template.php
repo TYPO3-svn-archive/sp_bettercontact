@@ -57,8 +57,8 @@
 			// Get default markers
 			$this->aMarkers = $this->aGetDefaultMarkers();
 
-			// Set stylesheet
-			$this->vSetStylesheet();
+			// Set stylesheet and javascript
+			$this->vAddFilesToHead();
 		}
 
 
@@ -118,26 +118,32 @@
 
 
 		/**
-		 * Add stylesheet to document
+		 * Add stylesheet and javascript to document head
 		 *
 		 */
-		protected function vSetStylesheet () {
-			$sFile = $this->aConfig['stylesheetFile'];
-			$sTag  = '<link rel="stylesheet" href="%s" type="text/css" />';
+		protected function vAddFilesToHead () {
+			$aTags = array(
+				'stylesheet' => '<link rel="stylesheet" href="%s" type="text/css" />',
+				'javascript' => '<script src="%s" language="javascript"></script>',
+			);
 
-			// Check for extension relative path
-			if (substr($sFile, 0, 4) == 'EXT:') {
-				list($sExtKey, $sFilePath) = explode('/', substr($sFile, 4), 2);
-				$sExtKey = strtolower($sExtKey);
+			foreach ($aTags as $sType => $sTag) {
+				$sFile = $this->aConfig[$sType . 'File'];
 
-				if ($sExtKey == $this->sExtKey || t3lib_extMgm::isLoaded($sExtKey)) {
-					$sFile = t3lib_extMgm::siteRelPath($sExtKey) . $sFilePath;
+				// Check for extension relative path
+				if (substr($sFile, 0, 4) == 'EXT:') {
+					list($sExtKey, $sFilePath) = explode('/', substr($sFile, 4), 2);
+					$sExtKey = strtolower($sExtKey);
+
+					if ($sExtKey == $this->sExtKey || t3lib_extMgm::isLoaded($sExtKey)) {
+						$sFile = t3lib_extMgm::siteRelPath($sExtKey) . $sFilePath;
+					}
 				}
-			}
 
-			if (strlen($sFile)) {
-				$sFile = t3lib_div::resolveBackPath($this->oPObj->doc->backPath . '../' . $sFile);
-				$this->oPObj->doc->JScode .= PHP_EOL . sprintf($sTag, $sFile) . PHP_EOL;
+				if (strlen($sFile)) {
+					$sFile = t3lib_div::resolveBackPath($this->oPObj->doc->backPath . '../' . $sFile);
+					$this->oPObj->doc->JScode .= PHP_EOL . sprintf($sTag, $sFile) . PHP_EOL;
+				}
 			}
 		}
 

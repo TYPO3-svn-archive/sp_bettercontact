@@ -10,6 +10,7 @@ mod.tx_spbettercontact_modfunc1 {
 	mainTemplate           =
 	csvTemplate            =
 	stylesheetFile         =
+	javascriptFile         =
 	locallangFile          =
 	# disableAutoTemplates = (?) If "1" default templates will not be used for missing ones
 	# dateFormat           = (?) Use a valid "strftime" format to display dates
