@@ -155,3 +155,8 @@ div.tx_spbettercontact_log_bottom {
 	height: 100%;
 	background: url(../../images/delete.gif) center center no-repeat;
 }
+
+br.ie_bugfix {
+	line-height: 0px;
+	height: 0px;
+}
