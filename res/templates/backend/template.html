@@ -63,22 +63,50 @@
 		</div>
 		<div class="tx_spbettercontact_log_top_menu3">
 			###LLL:menu_actions###&nbsp;
-			<a href="" target="_self" title="###LLL:action_download_csv###" id="tx_spbettercontact_log_csv"><img src="clear.gif" /></a>&nbsp;
-			<a href="" target="_self" title="###LLL:action_delete_entries###" id="tx_spbettercontact_log_delete"><img src="clear.gif" /></a>
+			<span title="###LLL:action_download_csv###" id="tx_spbettercontact_log_csv"><img src="clear.gif" /></span>&nbsp;
+			<span title="###LLL:action_delete_entries###" id="tx_spbettercontact_log_delete"><img src="clear.gif" /></span>
 		</div>
 	</div>
 	<div class="tx_spbettercontact_log_body">
 		<div class="tx_spbettercontact_log_body_header">
 			<table cellspacing="0" cellpadding="2" width="100%">
 				<tr>
-					<th width="16" class="tx_spbettercontact_log_header_row_first"><div id="tx_spbettercontact_log_checkall" class="tx_spbettercontact_log_checkall"></div></th>
-					<th width="16" class="tx_spbettercontact_log_header_row"></th>
-					<th width="92" class="tx_spbettercontact_log_header_row">###LLL:table_header_datetime###</th>
-					<th width="92" class="tx_spbettercontact_log_header_row">###LLL:table_header_ip###</th>
-					<th width="120" class="tx_spbettercontact_log_header_row">###LLL:table_header_fe_user###</th>
-					<th width="50" class="tx_spbettercontact_log_header_row">###LLL:table_header_method###</th>
-					<th class="tx_spbettercontact_log_header_row">###LLL:table_header_agent###</th>
-					<th width="25%" class="tx_spbettercontact_log_header_row_last">###LLL:table_header_fields###</th>
+					<th width="16" class="tx_spbettercontact_log_header_row_first">
+						<div id="tx_spbettercontact_log_checkall" class="tx_spbettercontact_log_checkall" style="width:16px;"></div>
+					</th>
+					<th width="16" class="tx_spbettercontact_log_header_row">
+						<div style="width:16px;"></div>
+					</th>
+					<th width="92" class="tx_spbettercontact_log_header_row">
+						<div style="width:92px;">
+							###LLL:table_header_datetime###
+						</div>
+					</th>
+					<th width="92" class="tx_spbettercontact_log_header_row">
+						<div style="width:92px;">
+							###LLL:table_header_ip###
+						</div>
+					</th>
+					<th width="120" class="tx_spbettercontact_log_header_row">
+						<div style="width:120px;">
+							###LLL:table_header_fe_user###
+						</div>
+					</th>
+					<th width="50" class="tx_spbettercontact_log_header_row">
+						<div style="width:50px;">
+							###LLL:table_header_method###
+						</div>
+					</th>
+					<th class="tx_spbettercontact_log_header_row">
+						<div style="width:100%;">
+							###LLL:table_header_agent###
+						</div>
+					</th>
+					<th width="25%" class="tx_spbettercontact_log_header_row_last">
+						<div style="width:100%;">
+							###LLL:table_header_fields###
+						</div>
+					</th>
 				</tr>
 			</table>
 		</div>
@@ -108,35 +136,35 @@
 <!-- ###SUB_TEMPLATE_LOG_TABLE_ROWS### begin -->
 <tr>
 	<td valign="top" width="16">
-		<div class="tx_spbettercontact_log_check" id="tx_spbettercontact_log_check_###UID###"></div>
+		<div class="tx_spbettercontact_log_check" id="tx_spbettercontact_log_check_###UID###" style="width:16px;"></div>
 		<br class="ie_bugfix" />
 	</td>
 	<td valign="top" width="16">
-		<div class="tx_spbettercontact_log_expand"></div>
+		<div class="tx_spbettercontact_log_expand" style="width:16px;"></div>
 		<br class="ie_bugfix" />
 	</td>
 	<td valign="top" width="92">
-		<div>###CRDATE###</div>
+		<div style="width:92px;">###CRDATE###</div>
 		<br class="ie_bugfix" />
 	</td>
 	<td valign="top" width="92">
-		<div>###IP###</div>
+		<div style="width:92px;">###IP###</div>
 		<br class="ie_bugfix" />
 	</td>
 	<td valign="top" width="120">
-		<div>###FE_USER_NAME###</div>
+		<div style="width:120px;">###FE_USER_NAME###</div>
 		<br class="ie_bugfix" />
 	</td>
 	<td valign="top" width="50">
-		<div>###METHOD###</div>
+		<div style="width:50px;">###METHOD###</div>
 		<br class="ie_bugfix" />
 	</td>
 	<td valign="top">
-		<div>###AGENT###</div>
+		<div style="width:100%;">###AGENT###</div>
 		<br class="ie_bugfix" />
 	</td>
 	<td valign="top" width="25%">
-		<div>###INPUT_HTML###</div>
+		<div style="width:100%;">###INPUT_HTML###</div>
 		<br class="ie_bugfix" />
 	</td>
 </tr>

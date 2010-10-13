@@ -17,6 +17,7 @@ div.tx_spbettercontact_log_top {
 	line-height: 24px;
 	padding-left: 6px;
 	border-bottom: 1px solid #A2AAB8;
+	overflow: hidden;
 }
 
 div.tx_spbettercontact_log_top select {
@@ -25,6 +26,17 @@ div.tx_spbettercontact_log_top select {
 
 div.tx_spbettercontact_log_top img {
 	margin-top: -4px;
+	width: 16px;
+	height: 100%;
+	cursor: pointer;
+}
+
+#tx_spbettercontact_log_csv img {
+	background: url(../../images/csv.gif) center center no-repeat;
+}
+
+#tx_spbettercontact_log_delete img {
+	background: url(../../images/delete.gif) center center no-repeat;
 }
 
 div.tx_spbettercontact_log_top_menu1,
@@ -56,7 +68,7 @@ div.tx_spbettercontact_log_body_header {
 	/*padding-right: 18px;*/
 }
 
-div.tx_spbettercontact_log_body_header table tr th {
+div.tx_spbettercontact_log_body_header th {
 	padding: 0 3px;
 	font-weight: normal;
 	text-align: left;
@@ -93,7 +105,6 @@ tr.tx_spbettercontact_log_expanded td div {
 	overflow: visible;
 	padding-bottom: 3px;
 }
-
 
 div.tx_spbettercontact_log_check,
 tr.tx_spbettercontact_log_expanded td div.tx_spbettercontact_log_check {
@@ -144,19 +155,10 @@ div.tx_spbettercontact_log_bottom {
 	border-top: 1px solid #A2AAB8;
 }
 
-#tx_spbettercontact_log_csv img {
-	width: 16px;
-	height: 100%;
-	background: url(../../images/csv.gif) center center no-repeat;
-}
-
-#tx_spbettercontact_log_delete img {
-	width: 16px;
-	height: 100%;
-	background: url(../../images/delete.gif) center center no-repeat;
-}
-
 br.ie_bugfix {
-	line-height: 0px;
-	height: 0px;
+	line-height: 0;
+	height: 0;
+	margin: 0;
+	padding: 0;
+	display: none;
 }

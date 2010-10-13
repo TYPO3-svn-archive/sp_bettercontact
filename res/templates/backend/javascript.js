@@ -90,7 +90,7 @@ document.observe("dom:loaded", function() {
 	 * Observe all rows for hover effect
 	 */
 	$('tx_spbettercontact_log_body_content').select('tr').each(function(oElement) {
-		var sClass  = 'tx_spbettercontact_log_hover';
+		var sClass = 'tx_spbettercontact_log_hover';
 
 		$(oElement).observe('mouseout', function() {
 			$(oElement).removeClassName(sClass);
@@ -105,24 +105,21 @@ document.observe("dom:loaded", function() {
 	 * Generate a CSV file from selected entries
 	 */
 	$('tx_spbettercontact_log_csv').observe('click', function() {
-		var sURL = oConfig.sScriptURL + 'csv=1&rows=' + sGetSelected();
-		$('tx_spbettercontact_log_csv').writeAttribute('href', sURL);
+		window.location.href = oConfig.sScriptURL + 'csv=1&rows=' + sGetSelected();
 	});
 
 
 	/**
 	 * Delete selected rows
 	 */
-	$('tx_spbettercontact_log_delete').observe('click', function(oEvent) {
+	$('tx_spbettercontact_log_delete').observe('click', function() {
 		var sSelected = sGetSelected();
 
 		if (sSelected == '0' || !confirm(oConfig.sLabelDelete)) {
-			Event.stop(oEvent);
-			return false;
+			return;
 		}
 
-		var sURL = oConfig.sScriptURL + 'del=1&rows=' + sSelected;
-		$('tx_spbettercontact_log_delete').writeAttribute('href', sURL);
+		window.location.href = oConfig.sScriptURL + 'del=1&rows=' + sSelected;
 	});
 
 });
