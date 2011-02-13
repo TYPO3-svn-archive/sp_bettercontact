@@ -2,7 +2,7 @@
 	/***************************************************************
 	*  Copyright notice
 	*
-	*  (c) 2010 Kai Vogel <kai.vogel ( at ) speedprogs.de>
+	*  (c) 2011 Kai Vogel <kai.vogel ( at ) speedprogs.de>
 	*  All rights reserved
 	*
 	*  This script is part of the TYPO3 project. The TYPO3 project is
@@ -37,8 +37,8 @@
 		protected $aFields      = array();
 		protected $aGP          = array();
 		protected $aMarkers     = array();
-		protected $sExtKey      = 'sp_bettercontact';
-		protected $sFormChar    = 'iso-8859-1';
+		protected $sExtKey      = '';
+		protected $sFormChar    = '';
 		protected $sFieldPrefix = '';
 		protected $iPluginId    = 0;
 

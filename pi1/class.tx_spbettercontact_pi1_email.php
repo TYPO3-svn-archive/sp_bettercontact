@@ -2,7 +2,7 @@
 	/***************************************************************
 	*  Copyright notice
 	*
-	*  (c) 2010 Kai Vogel <kai.vogel ( at ) speedprogs.de>
+	*  (c) 2011 Kai Vogel <kai.vogel ( at ) speedprogs.de>
 	*  All rights reserved
 	*
 	*  This script is part of the TYPO3 project. The TYPO3 project is
@@ -46,8 +46,8 @@
 		protected $oCObj        = NULL;
 		protected $oCS          = NULL;
 		protected $bHasError    = FALSE;
-		protected $sEmailChar   = 'iso-8859-1';
-		protected $sFormChar    = 'iso-8859-1';
+		protected $sEmailChar   = '';
+		protected $sFormChar    = '';
 		protected $sEmailFormat = 'plain';
 
 
@@ -532,7 +532,7 @@
 	}
 
 
-	if (defined('TYPO3_MODE') && $TYPO3_CONF_VARS[TYPO3_MODE]['XCLASS']['ext/sp_bettercontact/pi1/class.tx_spbettercontact_pi1_email.php'])	{
+	if (defined('TYPO3_MODE') && $TYPO3_CONF_VARS[TYPO3_MODE]['XCLASS']['ext/sp_bettercontact/pi1/class.tx_spbettercontact_pi1_email.php']) {
 		include_once($TYPO3_CONF_VARS[TYPO3_MODE]['XCLASS']['ext/sp_bettercontact/pi1/class.tx_spbettercontact_pi1_email.php']);
 	}
 ?>

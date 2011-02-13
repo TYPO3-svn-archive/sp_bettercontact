@@ -2,7 +2,7 @@
 	/***************************************************************
 	*  Copyright notice
 	*
-	*  (c) 2010 Kai Vogel <kai.vogel ( at ) speedprogs.de>
+	*  (c) 2011 Kai Vogel <kai.vogel ( at ) speedprogs.de>
 	*  All rights reserved
 	*
 	*  This script is part of the TYPO3 project. The TYPO3 project is
@@ -37,7 +37,7 @@
 		protected $aLL        = array();
 		protected $sLastError = '';
 		protected $sLogTable  = 'tx_spbettercontact_log';
-		protected $sFormChar  = 'iso-8859-1';
+		protected $sFormChar  = '';
 
 
 		/**
@@ -145,23 +145,11 @@
 			}
 
 			// Check for unique fields
-			if (!empty($aDBConf['uniqueFields'])) {
-				$aWhere  = array();
-				$aFields = t3lib_div::trimExplode(',', $aDBConf['uniqueFields'], TRUE);
-				foreach ($aFields as $sFieldName) {
-					if (!empty($aFields[$sFieldName])) {
-						$sValue   = $GLOBALS['TYPO3_DB']->fullQuoteStr($aFields[$sFieldName], $this->aConfig['database.']['table']);
-						$aWhere[] = $sFieldName . ' = ' . $sValue;
-					}
-				}
-
-				// Check if a row exists with this values
-				if (!empty($aWhere) {
-					$sWhere = implode(' OR ', $aWhere);
-					if ($GLOBALS['TYPO3_DB']->exec_SELECTcountRows($sIDField, $aDBConf['table'], $sWhere)) {
-						$this->sLastError = 'Duplicate entry found in table!';
-						return 0;
-					}
+			$sUniqueWhere = $this->sGetUniqueWhere();
+			if (!empty($sUniqueWhere)) {
+				if ($GLOBALS['TYPO3_DB']->exec_SELECTcountRows($sIDField, $aDBConf['table'], $sUniqueWhere)) {
+					$this->sLastError = 'Duplicate entry found in table!';
+					return 0;
 				}
 			}
 
@@ -232,25 +220,13 @@
 			}
 
 			// Check for unique fields
-			if (!empty($aDBConf['uniqueFields'])) {
-				$aWhere  = array();
-				$aFields = t3lib_div::trimExplode(',', $aDBConf['uniqueFields'], TRUE);
-				foreach ($aFields as $sFieldName) {
-					if (!empty($aFields[$sFieldName])) {
-						$sValue   = $GLOBALS['TYPO3_DB']->fullQuoteStr($aFields[$sFieldName], 'foo');
-						$aWhere[] = $sFieldName . ' = ' . $sValue;
-					}
-				}
-
-				// Check if a row exists with this values
-				if (!empty($aWhere) {
-					$sWhere = implode(' OR ', $aWhere);
-					$sSelect = 'SELECT COUNT(' . $psIDField . ') FROM ' . $paDBConf['table'] . ' WHERE ' . $sWhere . ' LIMIT 1';
-					$oResult = $oDB->Execute($sSelect);
-					if ($oResult->RowCount()) {
-						$this->sLastError = 'Duplicate entry found in table!';
-						$iReturn = 0;
-					}
+			$sUniqueWhere = $this->sGetUniqueWhere($oDB);
+			if (!empty($sUniqueWhere)) {
+				$sSelect = 'SELECT COUNT(' . $psIDField . ') FROM ' . $paDBConf['table'] . ' WHERE ' . $sUniqueWhere . ' LIMIT 1';
+				$oResult = $oDB->Execute($sSelect);
+				if ($oResult->RowCount()) {
+					$this->sLastError = 'Duplicate entry found in table!';
+					$iReturn = 0;
 				}
 			}
 
@@ -322,11 +298,40 @@
 
 
 		/**
+		 * Get unique fields WHERE statement
+		 *
+		 * @param object $poConnection External DB Connection
+		 * @return String with statement
+		 */
+		protected function sGetUniqueWhere (&$poDB = NULL) {
+			if (empty($this->aConfig['database.']['uniqueFields'])) {
+				return '';
+			}
+
+			$aWhere  = array();
+			$aFields = t3lib_div::trimExplode(',', $this->aConfig['database.']['uniqueFields'], TRUE);
+
+			foreach ($aFields as $sFieldName) {
+				if (!empty($aFields[$sFieldName])) {
+					if (empty($poDB)) {
+						$sValue = $GLOBALS['TYPO3_DB']->fullQuoteStr($aFields[$sFieldName], $this->aConfig['database.']['table']);
+					} else {
+						$sValue = $poDB->qstr($aFields[$sFieldName]);
+					}
+					$aWhere[] = $sFieldName . ' = "' . $sValue . '"';
+				}
+			}
+
+			return implode(' OR ', $aWhere);
+		}
+
+
+		/**
 		 * Get last error
 		 *
 		 * @return String with last database error
 		 */
-		public function sGetError() {
+		public function sGetError () {
 			if ($this->sLastError) {
 				return sprintf($this->aLL['msg_db_failed'], $this->sLastError);
 			}

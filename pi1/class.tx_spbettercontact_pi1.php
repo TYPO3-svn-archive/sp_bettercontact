@@ -2,7 +2,7 @@
 	/***************************************************************
 	*  Copyright notice
 	*
-	*  (c) 2010 Kai Vogel <kai.vogel ( at ) speedprogs.de>
+	*  (c) 2011 Kai Vogel <kai.vogel ( at ) speedprogs.de>
 	*  All rights reserved
 	*
 	*  This script is part of the TYPO3 project. The TYPO3 project is
@@ -37,8 +37,8 @@
 		public $prefixId      = 'tx_spbettercontact_pi1';
 		public $scriptRelPath = 'pi1/class.tx_spbettercontact_pi1.php';
 		public $extKey        = 'sp_bettercontact';
-		public $sEmailCharset = 'iso-8859-1';
-		public $sFormCharset  = 'iso-8859-1';
+		public $sEmailCharset = '';
+		public $sFormCharset  = '';
 		public $sFieldPrefix  = '';
 		public $aLL           = array();
 		public $aGP           = array();
@@ -159,8 +159,8 @@
 
 			// Get filenames
 			$aFiles = array(
-				'formTemplate'   => 'EXT:' . $this->extKey . '/res/templates/frontend/form.html',
-				'emailTemplate'  => 'EXT:' . $this->extKey . '/res/templates/frontend/email.html',
+				'formTemplate'  => 'EXT:' . $this->extKey . '/res/templates/frontend/form.html',
+				'emailTemplate' => 'EXT:' . $this->extKey . '/res/templates/frontend/email.html',
 			);
 
 			// Add stylesheet only if formTemplate is empty (will only be used if also not configured)
@@ -419,7 +419,7 @@
 		 */
 		protected function sGetCharset ($psType = 'form') {
 			$sType    = strtolower(trim($psType)) . 'Charset';
-			$sCharset = 'iso-8859-1';
+			$sCharset = (t3lib_div::compat_version('4.5') ? 'utf-8' : 'iso-8859-1');
 
 			if (!empty($GLOBALS['LANG']->charSet)) {
 				$sCharset = $GLOBALS['LANG']->charSet;

@@ -2,7 +2,7 @@
 	/***************************************************************
 	*  Copyright notice
 	*
-	*  (c) 2010 Kai Vogel <kai.vogel ( at ) speedprogs.de>
+	*  (c) 2011 Kai Vogel <kai.vogel ( at ) speedprogs.de>
 	*  All rights reserved
 	*
 	*  This script is part of the TYPO3 project. The TYPO3 project is
@@ -31,12 +31,13 @@
 	 * @subpackage tx_spbettercontact
 	 */
 	class tx_spbettercontact_pi1_check {
-		protected $aConfig  = array();
-		protected $aLL      = array();
-		protected $aGP      = array();
-		protected $aFields  = array();
-		protected $aMarkers = array();
-		protected $oCS      = NULL;
+		protected $aConfig    = array();
+		protected $aLL        = array();
+		protected $aGP        = array();
+		protected $aFields    = array();
+		protected $aMarkers   = array();
+		protected $oCS        = NULL;
+		protected $sBECharset = '';
 
 
 		/**
@@ -62,7 +63,7 @@
 		 * @return Charset of the ts configuration
 		 */
 		protected function sGetBECharset () {
-			$sCharset = 'iso-8859-1';
+			$sCharset = (t3lib_div::compat_version('4.5') ? 'utf-8' : 'iso-8859-1');
 
 			if (!empty($GLOBALS['TYPO3_CONF_VARS']['BE']['forceCharset'])) {
 				$sCharset = $GLOBALS['TYPO3_CONF_VARS']['BE']['forceCharset'];

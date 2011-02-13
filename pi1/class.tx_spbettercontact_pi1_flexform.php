@@ -2,7 +2,7 @@
 	/***************************************************************
 	*  Copyright notice
 	*
-	*  (c) 2010 Kai Vogel <kai.vogel ( at ) speedprogs.de>
+	*  (c) 2011 Kai Vogel <kai.vogel ( at ) speedprogs.de>
 	*  All rights reserved
 	*
 	*  This script is part of the TYPO3 project. The TYPO3 project is
@@ -273,7 +273,7 @@
 
 # Save submitted name in field "name"
 # name = TEXT
-# name.data = GPvar : tx_spbettercontact_pi1-9|name
+# name.data = GPvar : tx_spbettercontact_pi1-123|name
 
 # Include external TypoScript configuration
 # <INCLUDE_TYPOSCRIPT: source="FILE:fileadmin/my_setup.txt">
