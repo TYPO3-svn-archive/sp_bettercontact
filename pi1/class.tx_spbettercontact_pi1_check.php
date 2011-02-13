@@ -308,10 +308,14 @@
 				return array();
 			}
 
-			$aMessages   = array();
-			$sErrorClass = (!empty($this->aConfig['classError'])) ? $this->aConfig['classError'] : 'error';
+			$aMessages        = array();
+			$sErrorClass      = (!empty($this->aConfig['classError'])       ? $this->aConfig['classError']       : 'error');
+			$sWrapMessage     = (!empty($this->aConfig['messageWrap'])      ? $this->aConfig['messageWrap']      : '|');
+			$sWrapMessageList = (!empty($this->aConfig['messageListWrap'])  ? $this->aConfig['messageListWrap']  : '|');
+			$sWrapNegative    = (!empty($this->aConfig['infoWrapNegative']) ? $this->aConfig['infoWrapNegative'] : '|');
+			$sWrapPositive    = (!empty($this->aConfig['infoWrapPositive']) ? $this->aConfig['infoWrapPositive'] : '|');
 
-			// Get field order from GPVars
+			// Get field order from GPvars
 			$aFields = $this->aGP;
 			unset($aFields['submit']);
 
@@ -321,7 +325,7 @@
 				}
 
 				$sMessage = $this->aMarkers[$this->aFields[$sKey]['messageName']];
-				if (strlen($sMessage)) {
+				if (!empty($sMessage)) {
 					// Add message to list
 					$aMessages[] = '<li>' . $sMessage . '</li>';
 
@@ -329,16 +333,23 @@
 					if ($this->aConfig['highlightFields']) {
 						$this->aMarkers[$this->aFields[$sKey]['errClassName']] = $sErrorClass;
 					}
+
+					// Wrap message if configured
+					if (!empty($sWrapMessage)) {
+						$this->aMarkers[$this->aFields[$sKey]['messageName']] = str_replace('|', $sMessage, $sWrapMessage);
+					}
 				}
 			}
 
+			// Add message list
 			if (count($aMessages)) {
 				$this->aMarkers['MESSAGES'] = '<ul>' . implode(PHP_EOL, $aMessages) . '</ul>';
+				if (!empty($sWrapMessageList)) {
+					$this->aMarkers['MESSAGES'] = str_replace('|', $this->aMarkers['MESSAGES'], $sWrapMessageList);
+				}
 			}
 
 			// Add info text
-			$sWrapNegative = $this->aConfig['infoWrapNegative'] ? $this->aConfig['infoWrapNegative'] : '|';
-			$sWrapPositive = $this->aConfig['infoWrapPositive'] ? $this->aConfig['infoWrapPositive'] : '|';
 			if (count($this->aMarkers)) {
 				$this->aMarkers['INFO'] = str_replace('|', $this->aLL['msg_check_failed'], $sWrapNegative);
 			} else {

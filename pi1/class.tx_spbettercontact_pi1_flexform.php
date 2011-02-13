@@ -107,6 +107,7 @@
 				$this->vAddInput($aTabs['sDB'], 'database.table', 40);
 				$this->vAddCheckBox($aTabs['sDB'], 'database.useDefaultValues', FALSE);
 				$this->vAddText($aTabs['sDB'], 'database.fieldconf', 40, 20, $this->sGetDefaultTS(), 'off');
+				$this->vAddInput($aTabs['sDB'], 'database.uniqueFields', 40);
 			}
 
 			return $oXML->asXML();
@@ -146,6 +147,7 @@
 		protected function vAddInput ($poTab, $psName, $piWidth = 40, $psDefault = '', $pbWizard = FALSE, $psType = 'file', $psExtensions = '', $psEval = 'trim') {
 			$oElement = $poTab->addChild($psName);
 			$oTCEforms = $oElement->addChild('TCEforms');
+			$oTCEforms->addChild('exclude', '1');
 			$oTCEforms->addChild('label', 'LLL:' . $this->sLabelFile . ':tt_content.flexform_pi1.' . $psName);
 			$oConfig = $oTCEforms->addChild('config');
 			$oConfig->addChild('type', 'input');
@@ -183,6 +185,7 @@
 		protected function vAddCheckBox ($poTab, $psName, $pbDefault = TRUE) {
 			$oElement = $poTab->addChild($psName);
 			$oTCEforms = $oElement->addChild('TCEforms');
+			$oTCEforms->addChild('exclude', '1');
 			$oTCEforms->addChild('label', 'LLL:' . $this->sLabelFile . ':tt_content.flexform_pi1.' . $psName);
 			$oConfig = $oTCEforms->addChild('config');
 			$oConfig->addChild('type', 'check');
@@ -200,6 +203,7 @@
 		protected function vAddDropDown ($poTab, $psName, array $paItems) {
 			$oElement = $poTab->addChild($psName);
 			$oTCEforms = $oElement->addChild('TCEforms');
+			$oTCEforms->addChild('exclude', '1');
 			$oTCEforms->addChild('label', 'LLL:' . $this->sLabelFile . ':tt_content.flexform_pi1.' . $psName);
 			$oConfig = $oTCEforms->addChild('config');
 			$oConfig->addChild('type', 'select');
@@ -235,6 +239,7 @@
 		protected function vAddText ($poTab, $psName, $piWidth = 40, $piHeight = 1, $psDefault = '', $psWrap = 'virtual') {
 			$oElement = $poTab->addChild($psName);
 			$oTCEforms = $oElement->addChild('TCEforms');
+			$oTCEforms->addChild('exclude', '1');
 			$oTCEforms->addChild('label', 'LLL:' . $this->sLabelFile . ':tt_content.flexform_pi1.' . $psName);
 			$oConfig = $oTCEforms->addChild('config');
 			$oConfig->addChild('type', 'text');

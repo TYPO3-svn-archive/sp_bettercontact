@@ -349,9 +349,9 @@
 		 * @param string $psMessagePlain Plain message
 		 * @param string $psMessageHTML  HTML message
 		 * @param string $psReturnPath   Return-Path
-		 * @param string $psAttachement  Attachement
+		 * @param mixed  $pmAttachements List or array of attachements
 		 */
-		protected function vMail ($pmRecipients, $psSender, $psReplyTo = '', $psSubject = '', $psMessagePlain = '', $psMessageHTML = '', $psReturnPath = '', $psAttachement = '') {
+		protected function vMail ($pmRecipients, $psSender, $psReplyTo = '', $psSubject = '', $psMessagePlain = '', $psMessageHTML = '', $psReturnPath = '', $pmAttachements = '') {
 			if (empty($pmRecipients) || !strlen($psSender) || (!strlen($psMessagePlain) && !strlen($psMessageHTML))) {
 				$this->bHasError = TRUE;
 				return;
@@ -371,7 +371,7 @@
 
 			// Set addresses
 			$oMail->from_email    = $psSender;
-			$oMail->replyto_email = (strlen($psReplyTo)) ? $psReplyTo : $psSender;
+			$oMail->replyto_email = (!empty($psReplyTo) ? $psReplyTo : $psSender);
 			$oMail->returnPath    = $psReturnPath;
 
 			// Set subject and plain content
@@ -380,14 +380,28 @@
 
 			// Set HTML content
 			if ($this->sEmailFormat == 'html' && strlen($psMessageHTML)) {
-				$oMail->setHTML($oMail->encodeMsg($psMessageHTML));
+				// Parse HTML content. Thanks to Jens Schmietendorf
+				$oMail->theParts['html']['content'] = $psMessageHTML;
+				$oMail->extractMediaLinks();
+				$oMail->extractHyperLinks();
+				$oMail->fetchHTMLMedia();
+				$oMail->substMediaNamesInHTML(0); // 0 = relative
+				$oMail->substHREFsInHTML();
+				$oMail->setHtml($oMail->encodeMsg($oMail->theParts['html']['content']));
 			}
 
-			// Add attachement if given
-			if (strlen($psAttachement)) {
-				$psAttachement = t3lib_div::getFileAbsFileName($psAttachement);
-				if (file_exists($psAttachement)) {
-					$oMail->addAttachment($psAttachement);
+			// Add attachements if given
+			if (!empty($pmAttachements)) {
+				if (is_string($pmAttachements)) {
+					$pmAttachements = t3lib_div::trimExplode(',', $pmAttachements);
+				}
+				if (is_array($pmAttachements)) {
+					foreach ($pmAttachements as $sAttachement) {
+						$sAttachement = t3lib_div::getFileAbsFileName($sAttachement);
+						if (file_exists($sAttachement)) {
+							$oMail->addAttachment($sAttachement);
+						}
+					}
 				}
 			}
 

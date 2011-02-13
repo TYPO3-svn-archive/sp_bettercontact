@@ -117,7 +117,7 @@
 
 			$aDBConf    = $this->aConfig['database.'];
 			$aFields    = $this->aConfig['database.']['fieldconf.'];
-			$sIDField   = (!empty($aDBConf['idField'])) ? $aDBConf['idField'] : 'uid';
+			$sIDField   = (!empty($aDBConf['idField']) ? $aDBConf['idField'] : 'uid');
 			$aTableConf = array();
 
 			// Check for external database first
@@ -133,13 +133,34 @@
 			}
 
 			// Update
-			if (!empty($aFields['uid'])) {
+			if (!empty($aFields[$sIDField])) {
 				$sWhere = $sIDField . ' = ' . (int) $aFields[$sIDField];
 
 				// Check if row exists and update (else insert new row - see below)
 				if ($GLOBALS['TYPO3_DB']->exec_SELECTcountRows($sIDField, $aDBConf['table'], $sWhere)) {
 					if ($GLOBALS['TYPO3_DB']->exec_UPDATEquery($aDBConf['table'], $sWhere, $aFields)) {
 						return (int) $aFields[$sIDField];
+					}
+				}
+			}
+
+			// Check for unique fields
+			if (!empty($aDBConf['uniqueFields'])) {
+				$aWhere  = array();
+				$aFields = t3lib_div::trimExplode(',', $aDBConf['uniqueFields'], TRUE);
+				foreach ($aFields as $sFieldName) {
+					if (!empty($aFields[$sFieldName])) {
+						$sValue   = $GLOBALS['TYPO3_DB']->fullQuoteStr($aFields[$sFieldName], $this->aConfig['database.']['table']);
+						$aWhere[] = $sFieldName . ' = ' . $sValue;
+					}
+				}
+
+				// Check if a row exists with this values
+				if (!empty($aWhere) {
+					$sWhere = implode(' OR ', $aWhere);
+					if ($GLOBALS['TYPO3_DB']->exec_SELECTcountRows($sIDField, $aDBConf['table'], $sWhere)) {
+						$this->sLastError = 'Duplicate entry found in table!';
+						return 0;
 					}
 				}
 			}
@@ -199,13 +220,36 @@
 			// Update
 			if (!empty($paFields[$psIDField])) {
 				$sWhere  = $psIDField . ' = ' . (int) $paFields[$psIDField];
-				$sSelect = 'SELECT COUNT(*) FROM ' . $paDBConf['table'] . ' WHERE ' . $sWhere . ' LIMIT 1';
+				$sSelect = 'SELECT COUNT(' . $psIDField . ') FROM ' . $paDBConf['table'] . ' WHERE ' . $sWhere . ' LIMIT 1';
 				$oResult = $oDB->Execute($sSelect);
 
 				// Check if row exists and update (else insert new row - see below)
 				if ($oResult->RowCount()) {
 					if ($oDB->AutoExecute($paDBConf['table'], $paFields, 'UPDATE', $sWhere)) {
 						$iReturn = (int) $paFields[$psIDField];
+					}
+				}
+			}
+
+			// Check for unique fields
+			if (!empty($aDBConf['uniqueFields'])) {
+				$aWhere  = array();
+				$aFields = t3lib_div::trimExplode(',', $aDBConf['uniqueFields'], TRUE);
+				foreach ($aFields as $sFieldName) {
+					if (!empty($aFields[$sFieldName])) {
+						$sValue   = $GLOBALS['TYPO3_DB']->fullQuoteStr($aFields[$sFieldName], 'foo');
+						$aWhere[] = $sFieldName . ' = ' . $sValue;
+					}
+				}
+
+				// Check if a row exists with this values
+				if (!empty($aWhere) {
+					$sWhere = implode(' OR ', $aWhere);
+					$sSelect = 'SELECT COUNT(' . $psIDField . ') FROM ' . $paDBConf['table'] . ' WHERE ' . $sWhere . ' LIMIT 1';
+					$oResult = $oDB->Execute($sSelect);
+					if ($oResult->RowCount()) {
+						$this->sLastError = 'Duplicate entry found in table!';
+						$iReturn = 0;
 					}
 				}
 			}

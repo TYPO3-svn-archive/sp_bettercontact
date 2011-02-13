@@ -93,6 +93,7 @@
 			<label index="tt_content.flexform_pi1.database.table">Save user input into this table (see manual for external table):</label>
 			<label index="tt_content.flexform_pi1.database.useDefaultValues">Fill default fields automatically (pid,tstamp,crdate,cruser_id):</label>
 			<label index="tt_content.flexform_pi1.database.fieldconf">TypoScript field configuration:</label>
+			<label index="tt_content.flexform_pi1.database.uniqueFields">Check content of this fields to be unique in table (separate with ","):</label>
 		</languageKey>
 		<languageKey index="de" type="array">
 			<label index="pi1_title">Kontaktformular</label>
@@ -182,6 +183,7 @@
 			<label index="tt_content.flexform_pi1.database.table">Eingaben in in diese Tabelle speichern (siehe Manual für externe Tabelle):</label>
 			<label index="tt_content.flexform_pi1.database.useDefaultValues">Standard-Felder automatisch befüllen (pid,tstamp,crdate,cruser_id):</label>
 			<label index="tt_content.flexform_pi1.database.fieldconf">TypoScript Feld-Konfiguration:</label>
+			<label index="tt_content.flexform_pi1.database.uniqueFields">Inhalt dieser Felder auf Einmaligkeit (unique) prüfen (durch "," trennen):</label>
 		</languageKey>
 		<languageKey index="fr" type="array">
 			<label index="pi1_title">Formulaire de Contact</label>
@@ -271,6 +273,7 @@
 			<label index="tt_content.flexform_pi1.database.table">Sauvegarder les données saisies par l'utilisateur dans cette table (cf. manuel pour configurer une table externe):</label>
 			<label index="tt_content.flexform_pi1.database.useDefaultValues">Remplir les champs par défaut automatiquement (pid, tstamp, crdate, cruser_id):</label>
 			<label index="tt_content.flexform_pi1.database.fieldconf">Configuration du champ TypoScript:</label>
+			<label index="tt_content.flexform_pi1.database.uniqueFields">Le contenu de ce test sur le terrain pour l'unicité (séparer par ","):</label>
 		</languageKey>
 	</data>
 </T3locallang>

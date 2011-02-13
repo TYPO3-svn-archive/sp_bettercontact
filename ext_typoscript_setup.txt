@@ -49,8 +49,10 @@ plugin.tx_spbettercontact_pi1 {
 	# classError           = (?) Define own class name for malicious fields
 	# classNoError         = (?) Define a class for fields without an error
 
-	infoWrapPositive       = <span class="tx_spbettercontact_info_positive">|</span>
-	infoWrapNegative       = <span class="tx_spbettercontact_info_negative">|</span>
+	infoWrapPositive       = <p class="tx_spbettercontact_info tx_spbettercontact_info_positive">|</p>
+	infoWrapNegative       = <p class="tx_spbettercontact_info tx_spbettercontact_info_negative">|</p>
+	messageWrap            = <p class="tx_spbettercontact_message">|</p>
+	# messageListWrap      = (?) Wrap around ###MESSAGES####
 
 	# preUserFunc          = (?) Define a userFunc which will be called before checks and rendering
 	# submitUserFunc       = (?) Define a userFunc which will be called if form was submitted
@@ -151,7 +153,7 @@ plugin.tx_spbettercontact_pi1 {
 	# User defined template markers
 	# ====================================================================
 	markers {
-		# static_marker= I am a static marker
+		# static_marker = I am a static marker
 
 		# dynamic_marker = TEXT
 		# dynamic_marker.field = title
@@ -173,6 +175,7 @@ plugin.tx_spbettercontact_pi1 {
 		# table            = (?) Internal or external table (e.g. tt_news, tt_address, ...)
 		# idField          = (?) Field name to identify and update a row (default "uid")
 		# useDefaultValues = (?) Automatically fill default fields pid, tstamp, crdate and cruser_id
+		# uniqueFields     = (?) Values in this fields will be checked to be unique in table
 
 		## Demo field configuration (see manual for details)
 		fieldconf {
