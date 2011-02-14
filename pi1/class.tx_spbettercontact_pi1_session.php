@@ -173,9 +173,9 @@
 		 * @return Array of messages form session check
 		 */
 		public function aGetMessages () {
-			$sWrapNegative = $this->aConfig['infoWrapNegative'] ? $this->aConfig['infoWrapNegative'] : '|';
-			$iTime         = ($this->iWaitingTime > 60) ? ($this->iWaitingTime / 60) : 1;
-			$iCount        = ($this->iCount <= $this->aConfig['messageCount']) ? $this->iCount : $this->aConfig['messageCount']; // bugfix
+			$sWrapNegative = ($this->aConfig['infoWrapNegative'] ? $this->aConfig['infoWrapNegative'] : '|');
+			$iTime         = ($this->iWaitingTime > 60 ? ($this->iWaitingTime / 60) : 1);
+			$iCount        = ($this->iCount <= $this->aConfig['messageCount'] ? $this->iCount : $this->aConfig['messageCount']); // bugfix
 			$sMessage      = sprintf($this->aLL['msg_already_sent'], $iCount, $iTime);
 			$sMessage      = str_replace('|', $sMessage, $sWrapNegative);
 

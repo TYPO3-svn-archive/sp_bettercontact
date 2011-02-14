@@ -65,85 +65,101 @@ plugin.tx_spbettercontact_pi1 {
 	# ====================================================================
 	fields {
 		name {
-			required    = 1
-			minLength   = 3
-			maxLength   = 70
-			regex       =
-			disallowed  = 0123456789<>(){}!?%&§$/*+-\
-			allowed     =
-			default     =
+			required     = 1
+			minLength    = 3
+			maxLength    = 70
+			regex        =
+			disallowed   = 0123456789<>(){}!?%&§$/*+-\
+			allowed      =
+			default      =
 		}
 
 		tel {
-			required    = 0
-			minLength   = 3
-			maxLength   = 30
-			regex       =
-			disallowed  =
-			allowed     = 0123456789()/+-
-			default     =
+			required     = 0
+			minLength    = 3
+			maxLength    = 30
+			regex        =
+			disallowed   =
+			allowed      = 0123456789()/+-
+			default      =
 		}
 
 		fax {
-			required    = 0
-			minLength   = 3
-			maxLength   = 30
-			regex       =
-			disallowed  =
-			allowed     = 0123456789()/+-
-			default     =
+			required     = 0
+			minLength    = 3
+			maxLength    = 30
+			regex        =
+			disallowed   =
+			allowed      = 0123456789()/+-
+			default      =
 		}
 
 		street {
-			required    = 0
-			minLength   = 3
-			maxLength   = 70
-			regex       =
-			disallowed  = <>&
-			allowed     =
-			default     =
+			required     = 0
+			minLength    = 3
+			maxLength    = 70
+			regex        =
+			disallowed   = <>&
+			allowed      =
+			default      =
 		}
 
 		city {
-			required    = 0
-			minLength   = 3
-			maxLength   = 70
-			regex       =
-			disallowed  = <>&
-			allowed     =
-			default     =
+			required     = 0
+			minLength    = 3
+			maxLength    = 70
+			regex        =
+			disallowed   = <>&
+			allowed      =
+			default      =
 		}
 
 		## Required email field (!)
 		email {
-			required    = 1
-			minLength   = 5
-			maxLength   = 70
-			regex       = /^[\w-]+(?:\.[\w-]+)*@(?:[\w-]+\.)+[a-zA-Z]{2,7}/
-			disallowed  =
-			allowed     =
-			default     =
+			required     = 1
+			minLength    = 5
+			maxLength    = 70
+			regex        = /^[\w-]+(?:\.[\w-]+)*@(?:[\w-]+\.)+[a-zA-Z]{2,7}/
+			disallowed   =
+			allowed      =
+			default      =
 		}
 
 		message {
-			required    = 1
-			minLength   = 10
-			maxLength   = 2000
-			regex       =
-			disallowed  = <>&
-			allowed     =
-			default     =
+			required     = 1
+			minLength    = 10
+			maxLength    = 2000
+			regex        =
+			disallowed   = <>&
+			allowed      =
+			default      =
+		}
+
+		picture {
+			required     = 0
+			file {
+				maxSize    = 1024
+				minSize    = 0
+				allowed    = gif,jpg,jpeg,tif,tiff,bmp,pcx,tga,png
+				disallowed = 
+			}
+			image {
+				maxSize    = 1024x768
+				minSize    = 10x10
+				convertTo  = jpg
+				quality    = 80
+			}
 		}
 
 		## Required dummy configuration if captcha is activated (!)
 		captcha {
-			required    =
-			minLength   =
-			maxLength   =
-			regex       =
-			disallowed  =
-			allowed     =
-			default     =
+			required     =
+			minLength    =
+			maxLength    =
+			regex        =
+			disallowed   =
+			allowed      =
+			default      =
 		}
 	}
 

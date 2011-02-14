@@ -302,6 +302,16 @@
 
 
 		/**
+		 * Add markers for uploaded files
+		 * 
+		 * @param array $psFiles Uploaded files
+		 */
+		protected function vAddFileMarkers (array $psFiles) {
+			
+		}
+
+
+		/**
 		 * Set email templates and replace markers
 		 *
 		 */

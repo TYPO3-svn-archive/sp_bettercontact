@@ -180,6 +180,7 @@
 					if (!preg_match($aField['regex'], $aField['value'])) {
 						$this->aMarkers[$aField['messageName']] = $this->sGetMessage($sKey, 'regex', 'regex');
 						$bResult = FALSE;
+						continue;
 					}
 				}
 			}
@@ -272,6 +273,17 @@
 			}
 
 			return FALSE;
+		}
+
+
+		/**
+		 * Check uploaded files
+		 * 
+		 * @param array $psFiles Uploaded files
+		 * @return FALSE if the file check fails
+		 */
+		protected function bCheckFiles (array $psFiles) {
+			return TRUE;
 		}
 
 

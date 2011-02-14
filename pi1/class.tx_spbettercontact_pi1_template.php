@@ -195,6 +195,16 @@
 
 
 		/**
+		 * Add markers for uploaded files
+		 * 
+		 * @param array $psFiles Uploaded files
+		 */
+		protected function vAddFileMarkers (array $psFiles) {
+			
+		}
+
+
+		/**
 		 * Add captcha markers
 		 *
 		 */

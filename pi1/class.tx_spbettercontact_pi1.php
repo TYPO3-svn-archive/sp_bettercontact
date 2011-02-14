@@ -48,6 +48,7 @@
 		public $oSession      = NULL;
 		public $oCheck        = NULL;
 		public $oEmail        = NULL;
+		public $oUpload       = NULL;
 		public $cObj          = NULL;
 		public $oCS           = NULL;
 
@@ -113,6 +114,17 @@
 				$this->vCheckRedirect('exhausted');
 				$this->oTemplate->vAddMarkers($this->oSession->aGetMessages());
 				return $this->sGetContent();
+			}
+
+			// Check uploaded files
+			if ($aFiles = $this->oUpload->aGetFiles()) {
+				if (!$this->oCheck->bCheckFiles($aFiles)) {
+					$this->oTemplate->vAddMarkers($this->oCheck->aGetMessages());
+					return $this->sGetContent();
+				}
+				$this->oTemplate->vAddFileMarkers($aFiles);
+				$this->oEmail->vAddFileMarkers($aFiles);
+				$this->oSession->vAddValue('uploadedFiles', $aFiles);
 			}
 
 			// Add new entry in log table and save values into specified table
@@ -256,6 +268,7 @@
 			$this->oCheck        = $this->oMakeInstance('check');
 			$this->oEmail        = $this->oMakeInstance('email');
 			$this->oDB           = $this->oMakeInstance('db');
+			$this->oUpload       = $this->oMakeInstance('upload');
 		}
 
 
@@ -385,7 +398,7 @@
 				$sUpperName = strtoupper($sName);
 				$sMultiName = $sUpperName . '_' . md5($sValue);
 
-				// Build the field
+				// Build the basic field
 				$aFields[$sName] = array (
 					'markerName'   => $sUpperName,
 					'messageName'  => 'MSG_'      . $sUpperName,
@@ -404,7 +417,29 @@
 					'maxLength'    => (isset($aField['maxLength']))  ? $aField['maxLength']  : 0,
 					'label'        => (isset($this->aLL[$sName]))    ? $this->aLL[$sName]    : ucfirst($sName),
 					'value'        => $sValue,
+					'file'         => array(),
+					'image'        => array(),
 				);
+
+				// Add file settings if configured
+				if (!empty($aField['file.'])) {
+					$aFields[$sName]['file'] = array(
+						'maxSize'    => 0,
+						'minSize'    => 0,
+						'allowed'    => '',
+						'disallowed' => '',
+					);
+				}
+
+				// Add image settings if configured
+				if (!empty($aField['image.'])) {
+					$aFields[$sName]['image'] = array(
+						'maxSize'   => '',
+						'minSize'   => '',
+						'convertTo' => '',
+						'quality'   => 100,
+					);
+				}
 			}
 
 			return $aFields;
