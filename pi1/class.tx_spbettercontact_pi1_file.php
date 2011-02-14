@@ -24,16 +24,17 @@
 
 
 	require_once(PATH_t3lib . 'class.t3lib_basicfilefunc.php');
+	require_once(PATH_t3lib . 'class.t3lib_stdgraphic.php');
 
 
 	/**
-	 * Uploaded files handling class for the 'sp_bettercontact' extension.
+	 * File handling class for the 'sp_bettercontact' extension.
 	 *
 	 * @author     Kai Vogel <kai.vogel ( at ) speedprogs.de>
 	 * @package    TYPO3
 	 * @subpackage tx_spbettercontact
 	 */
-	class tx_spbettercontact_pi1_upload {
+	class tx_spbettercontact_pi1_file {
 		protected $aConfig      = array();
 		protected $aLL          = array();
 		protected $aGP          = array();
@@ -43,7 +44,7 @@
 
 
 		/**
-		 * Set configuration for upload object
+		 * Set configuration for file object
 		 *
 		 * @param object $poParent Instance of the parent object
 		 */
@@ -62,7 +63,7 @@
 		 * 
 		 * @return array All valid uploaded files
 		 */
-		public function aGetFiles () {
+		public function aGetUploadedFiles () {
 			if (empty($_FILES) || !is_array($_FILES)) {
 				return array();
 			}
@@ -78,14 +79,7 @@
 
 			// Get files
 			$aFiles = array();
-			foreach ($_FILES as $sFieldName => $aFile) {
-				$sFieldName = strtolower(trim($sFieldName));
-
-				// No configuration found, continue
-				if (empty($this->aFields[$sFieldName]['file']) && empty($this->aFields[$sFieldName]['image'])) {
-					continue;
-				}
-
+			foreach ($_FILES as $sKey => $aFile) {
 				// Check if uploaded file is valid
 				if (!is_uploaded_file($aFile['tmp_name']) || $aFile['error'] != 'UPLOAD_ERR_OK' || $aFile['size'] <= 0) {
 					continue;
@@ -102,16 +96,12 @@
 
 				// Check file again
 				if (is_readable($sFileName)) {
-					$aFiles[$sFieldName] = array(
+					$aFiles[$sKey] = array(
 						'name' => $sFileName,
 						'type' => $aFileInfo['fileext'],
 						'real' => $aFileInfo['filebody'],
+						'size' => ((int) @filesize($sFileName) * 1024), // KB
 					);
-				}
-
-				// Manipulate file if its an image and image settings are configured
-				if (!empty($this->aFields[$sFieldName]['image'])) {
-					// Todo
 				}
 			}
 
@@ -122,46 +112,57 @@
 
 
 		/**
-		 * Convert an image
+		 * Convert all image files
 		 * 
-		 * @param string $psFileName Path to image file
+		 * @param string $paFiles All uploaded files
 		 * @return string New file name
 		 */
-		public function sConvertImage ($psFileName) {
-			return '';
-		}
+		public function vConvertImages (array &$paFiles) {
+			if (empty($paFiles)) {
+				return;
+			}
 
+			// Get basic image functions
+			$oImageFunc = t3lib_div::makeInstance('t3lib_stdGraphic');
+			$oImageFunc->init();
+			$oImageFunc->absPrefix = PATH_site;
 
-		/**
-		 * Get files from session
-		 * Compare with uploaded files and use only not already set files
-		 * Generate temp name
-		 * move_uploaded_file to temp name
-		 * Add file to session (!)
-		 * 
-		 * Add file markers to use files in templates
-		 * Log files in table / Show in backend
-		 * Add error messages for invalid files
-		 * Add configuration settings for files
-		 */ 
-
-		/**
-			picture {
-				required     = 0
-				file {
-					maxSize    = 1024
-					minSize    = 0
-					allowed    = gif,jpg,jpeg,tif,tiff,bmp,pcx,tga,png
-					disallowed = 
+			// Convert images into new format
+			foreach ($paFiles as $sKey => $aFile) {
+				if (empty($this->aFields[$sKey]['image'])) {
+					continue;
 				}
-				image {
-					maxSize    = 1024x768
-					minSize    = 10x10
-					convertTo  = jpg
-					quality    = 80
+
+				$aField     = $this->aFields[$sKey];
+				$sFileName  = $aFile['name'];
+				$sFileType  = (!empty($aField['imageConvertTo']) ? ltrim($aField['imageConvertTo'], '.') : '');
+				$aOptions   = array(
+					'maxW' => (!empty($aField['imageMaxWidth'])  ? $aField['imageMaxWidth'])  : ''),
+					'maxH' => (!empty($aField['imageMaxHeight']) ? $aField['imageMaxHeight']) : ''),
+					'minH' => (!empty($aField['imageMinWidth'])  ? $aField['imageMinWidth'])  : ''),
+					'minH' => (!empty($aField['imageMinHeight']) ? $aField['imageMinHeight']) : ''),
+				);
+
+				// Convert...
+				$aFileInfo = $oImageFunc->imageMagickConvert($aFile['name'], $sFileType, '', '', '', '', $aOptions, TRUE);
+
+				// Overwrite current file with new one
+				if (!empty($aFileInfo[3]) && copy($aFileInfo[3], $sFileName)) {
+					continue;
+				}
+
+				// Remove temp file
+				unlink($aFileInfo[3]);
+
+				// Set new file type
+				if (!empty($aFileInfo[2])) {
+					$paFiles[$sKey]['type'] = $aFileInfo[2];
 				}
 			}
-		*/
+
+			unset($oImageFunc);
+		}
+
 	}
 
 

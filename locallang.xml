@@ -91,7 +91,8 @@
 			<label index="tt_content.flexform_pi1.waitingTime">Waiting time if max count was reached (in minutes):</label>
 			<label index="tt_content.flexform_pi1.sDB">DB</label>
 			<label index="tt_content.flexform_pi1.database.table">Save user input into this table (see manual for external table):</label>
-			<label index="tt_content.flexform_pi1.database.useDefaultValues">Fill default fields automatically (pid,tstamp,crdate,cruser_id):</label>
+			<label index="tt_content.flexform_pi1.database.autoFillDefault">Fill default fields automatically (pid,tstamp,crdate,cruser_id):</label>
+			<label index="tt_content.flexform_pi1.database.autoFillExisting">Fill configured fields automatically:</label>
 			<label index="tt_content.flexform_pi1.database.fieldconf">TypoScript field configuration:</label>
 			<label index="tt_content.flexform_pi1.database.uniqueFields">Check content of this fields to be unique in table (separate with ","):</label>
 		</languageKey>
@@ -181,7 +182,8 @@
 			<label index="tt_content.flexform_pi1.waitingTime">Wartezeit wenn maximale Anzahl erreicht wurde (in Minuten):</label>
 			<label index="tt_content.flexform_pi1.sDB">DB</label>
 			<label index="tt_content.flexform_pi1.database.table">Eingaben in in diese Tabelle speichern (siehe Manual für externe Tabelle):</label>
-			<label index="tt_content.flexform_pi1.database.useDefaultValues">Standard-Felder automatisch befüllen (pid,tstamp,crdate,cruser_id):</label>
+			<label index="tt_content.flexform_pi1.database.autoFillDefault">Standard-Felder automatisch befüllen (pid,tstamp,crdate,cruser_id):</label>
+			<label index="tt_content.flexform_pi1.database.autoFillExisting">Konfigurierte Felder automatisch befüllen:</label>
 			<label index="tt_content.flexform_pi1.database.fieldconf">TypoScript Feld-Konfiguration:</label>
 			<label index="tt_content.flexform_pi1.database.uniqueFields">Inhalt dieser Felder auf Einmaligkeit (unique) prüfen (durch "," trennen):</label>
 		</languageKey>
@@ -271,7 +273,8 @@
 			<label index="tt_content.flexform_pi1.waitingTime">Temps (minutes):</label>
 			<label index="tt_content.flexform_pi1.sDB">Base de données</label>
 			<label index="tt_content.flexform_pi1.database.table">Sauvegarder les données saisies par l'utilisateur dans cette table (cf. manuel pour configurer une table externe):</label>
-			<label index="tt_content.flexform_pi1.database.useDefaultValues">Remplir les champs par défaut automatiquement (pid, tstamp, crdate, cruser_id):</label>
+			<label index="tt_content.flexform_pi1.database.autoFillDefault">Remplir les champs par défaut automatiquement (pid, tstamp, crdate, cruser_id):</label>
+			<label index="tt_content.flexform_pi1.database.autoFillExisting">Remplir les champs par configuré automatiquement:</label>
 			<label index="tt_content.flexform_pi1.database.fieldconf">Configuration du champ TypoScript:</label>
 			<label index="tt_content.flexform_pi1.database.uniqueFields">Le contenu de ce test sur le terrain pour l'unicité (séparer par ","):</label>
 		</languageKey>

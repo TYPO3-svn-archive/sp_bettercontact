@@ -44,11 +44,12 @@
 		public $aGP           = array();
 		public $aConfig       = array();
 		public $aFields       = array();
+		public $aFiles        = array();
 		public $oTemplate     = NULL;
 		public $oSession      = NULL;
 		public $oCheck        = NULL;
 		public $oEmail        = NULL;
-		public $oUpload       = NULL;
+		public $oFile         = NULL;
 		public $cObj          = NULL;
 		public $oCS           = NULL;
 
@@ -116,15 +117,16 @@
 				return $this->sGetContent();
 			}
 
-			// Check uploaded files
-			if ($aFiles = $this->oUpload->aGetFiles()) {
-				if (!$this->oCheck->bCheckFiles($aFiles)) {
+			// Check uploaded files, convert images and set markers / session value
+			if ($this->aFiles = $this->oFile->aGetUploadedFiles()) {
+				if (!$this->oCheck->bCheckFiles($this->aFiles)) {
 					$this->oTemplate->vAddMarkers($this->oCheck->aGetMessages());
 					return $this->sGetContent();
 				}
-				$this->oTemplate->vAddFileMarkers($aFiles);
-				$this->oEmail->vAddFileMarkers($aFiles);
-				$this->oSession->vAddValue('uploadedFiles', $aFiles);
+				$this->oFile->vConvertImages($this->aFiles);
+				$this->oTemplate->vAddFileMarkers($this->aFiles);
+				$this->oEmail->vAddFileMarkers($this->aFiles);
+				$this->oSession->vAddValue('uploadedFiles', $this->aFiles);
 			}
 
 			// Add new entry in log table and save values into specified table
@@ -268,7 +270,7 @@
 			$this->oCheck        = $this->oMakeInstance('check');
 			$this->oEmail        = $this->oMakeInstance('email');
 			$this->oDB           = $this->oMakeInstance('db');
-			$this->oUpload       = $this->oMakeInstance('upload');
+			$this->oFile         = $this->oMakeInstance('file');
 		}
 
 
@@ -400,46 +402,33 @@
 
 				// Build the basic field
 				$aFields[$sName] = array (
-					'markerName'   => $sUpperName,
-					'messageName'  => 'MSG_'      . $sUpperName,
-					'errClassName' => 'ERR_'      . $sUpperName,
-					'valueName'    => 'VALUE_'    . $sUpperName,
-					'labelName'    => 'LABEL_'    . $sUpperName,
-					'checkedName'  => 'CHECKED_'  . $sUpperName,
-					'requiredName' => 'REQUIRED_' . $sUpperName,
-					'multiChkName' => 'CHECKED_'  . $sMultiName,
-					'multiSelName' => 'SELECTED_' . $sMultiName,
-					'regex'        => (isset($aField['regex']))      ? $aField['regex']      : '',
-					'disallowed'   => (isset($aField['disallowed'])) ? $aField['disallowed'] : '',
-					'allowed'      => (isset($aField['allowed']))    ? $aField['allowed']    : '',
-					'required'     => (isset($aField['required']))   ? $aField['required']   : 0,
-					'minLength'    => (isset($aField['minLength']))  ? $aField['minLength']  : 0,
-					'maxLength'    => (isset($aField['maxLength']))  ? $aField['maxLength']  : 0,
-					'label'        => (isset($this->aLL[$sName]))    ? $this->aLL[$sName]    : ucfirst($sName),
-					'value'        => $sValue,
-					'file'         => array(),
-					'image'        => array(),
+					'markerName'     => $sUpperName,
+					'messageName'    => 'MSG_'      . $sUpperName,
+					'errClassName'   => 'ERR_'      . $sUpperName,
+					'valueName'      => 'VALUE_'    . $sUpperName,
+					'labelName'      => 'LABEL_'    . $sUpperName,
+					'checkedName'    => 'CHECKED_'  . $sUpperName,
+					'requiredName'   => 'REQUIRED_' . $sUpperName,
+					'multiChkName'   => 'CHECKED_'  . $sMultiName,
+					'multiSelName'   => 'SELECTED_' . $sMultiName,
+					'regex'          => (isset($aField['regex']))          ? $aField['regex']          : '',
+					'disallowed'     => (isset($aField['disallowed']))     ? $aField['disallowed']     : '',
+					'allowed'        => (isset($aField['allowed']))        ? $aField['allowed']        : '',
+					'required'       => (isset($aField['required']))       ? $aField['required']       : 0,
+					'minLength'      => (isset($aField['minLength']))      ? $aField['minLength']      : 0,
+					'maxLength'      => (isset($aField['maxLength']))      ? $aField['maxLength']      : 0,
+					'fileMaxSize'    => (isset($aField['fileMaxSize']))    ? $aField['fileMaxSize']    : 0,
+					'fileMinSize'    => (isset($aField['fileMinSize']))    ? $aField['fileMinSize']    : 0,
+					'fileAllowed'    => (isset($aField['fileAllowed']))    ? $aField['fileAllowed']    : '',
+					'fileDisallowed' => (isset($aField['fileDisallowed'])) ? $aField['fileDisallowed'] : '',
+					'imageMaxWidth'  => (isset($aField['imageMaxWidth']))  ? $aField['imageMaxWidth']  : 0,
+					'imageMaxHeight' => (isset($aField['imageMaxHeight'])) ? $aField['imageMaxHeight'] : 0,
+					'imageMinWidth'  => (isset($aField['imageMinWidth']))  ? $aField['imageMinWidth']  : 0,
+					'imageMinHeight' => (isset($aField['imageMinHeight'])) ? $aField['imageMinHeight'] : 0,
+					'imageConvertTo' => (isset($aField['imageConvertTo'])) ? $aField['imageConvertTo'] : '',
+					'label'          => (isset($this->aLL[$sName]))        ? $this->aLL[$sName]        : ucfirst($sName),
+					'value'          => $sValue,
 				);
-
-				// Add file settings if configured
-				if (!empty($aField['file.'])) {
-					$aFields[$sName]['file'] = array(
-						'maxSize'    => 0,
-						'minSize'    => 0,
-						'allowed'    => '',
-						'disallowed' => '',
-					);
-				}
-
-				// Add image settings if configured
-				if (!empty($aField['image.'])) {
-					$aFields[$sName]['image'] = array(
-						'maxSize'   => '',
-						'minSize'   => '',
-						'convertTo' => '',
-						'quality'   => 100,
-					);
-				}
 			}
 
 			return $aFields;

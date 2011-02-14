@@ -63,6 +63,12 @@
 			<label index="msg_already_sent">You have already sent %d messages. Please wait %d minute(s).</label>
 			<label index="msg_captcha">Please enter the sequence of characters shown in the captcha image.</label>
 
+			<label index="msg_picture_file_invalid">Please select a valid file.</label>
+			<label index="msg_picture_file_big">Please select a file with at least %d KB.</label>
+			<label index="msg_picture_file_small">Please select a file with at most %d KB.</label>
+			<label index="msg_picture_file_allowed">Please select a file with one of this types: %s.</label>
+			<label index="msg_picture_file_disallowed">Please select a file with a type other than: %s.</label>
+
 			<label index="name">Name:</label>
 			<label index="tel">Phone:</label>
 			<label index="fax">Fax:</label>
@@ -162,6 +168,12 @@
 			<label index="msg_not_allowed">Dieser Prozess ist nicht erlaubt!</label>
 			<label index="msg_already_sent">Sie haben bereits %d Nachrichten versandt. Bitte warten Sie %d Minute(n).</label>
 			<label index="msg_captcha">Bitte übertragen Sie die Zeichen des Captcha-Bildes in das Textfeld.</label>
+
+			<label index="msg_picture_file_invalid">Bitte wählen Sie eine gültige Datei.</label>
+			<label index="msg_picture_file_big">Bitte wählen Sie eine Datei mit maximal %d KB.</label>
+			<label index="msg_picture_file_small">Bitte wählen Sie eine Datei mit mindestens %d KB.</label>
+			<label index="msg_picture_file_allowed">Bitte wählen Sie eine Datei mit einem der folgenden Typen: %s.</label>
+			<label index="msg_picture_file_disallowed">Bitte wählen Sie eine Datei mit keinem der folgenden Typen: %s.</label>
 
 			<label index="name">Name:</label>
 			<label index="tel">Telefon:</label>
@@ -263,6 +275,12 @@
 			<label index="msg_already_sent">Lähetit jo %d viestin/viestiä. Ole hyvä ja odota %d minuutti(a).</label>
 			<label index="msg_captcha">Ole hyvä ja kirjoita kuvavarmennuksessa olevat merkit tekstikenttään.</label>
 
+			<label index="msg_picture_file_invalid"></label>
+			<label index="msg_picture_file_big"></label>
+			<label index="msg_picture_file_small"></label>
+			<label index="msg_picture_file_allowed"></label>
+			<label index="msg_picture_file_disallowed"></label>
+
 			<label index="name">Nimi:</label>
 			<label index="tel">Puhelin:</label>
 			<label index="fax">Fax:</label>
@@ -362,6 +380,12 @@
 			<label index="msg_not_allowed">Cette procédure n'est pas autorisée!</label>
 			<label index="msg_already_sent">Vous avez déjà envoyé %d messages. Veuillez à présent patienter pendant %d minute(s).</label>
 			<label index="msg_captcha">Veuillez saisir la séquence de caractères affichée sur l'image.</label>
+
+			<label index="msg_picture_file_invalid"></label>
+			<label index="msg_picture_file_big"></label>
+			<label index="msg_picture_file_small"></label>
+			<label index="msg_picture_file_allowed"></label>
+			<label index="msg_picture_file_disallowed"></label>
 
 			<label index="name">Nom:</label>
 			<label index="tel">Téléphone:</label>

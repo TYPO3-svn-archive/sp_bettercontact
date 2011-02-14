@@ -721,16 +721,26 @@
 							</config>
 						</TCEforms>
 					</database.table>
-					<database.useDefaultValues>
+					<database.autoFillDefault>
 						<TCEforms>
 							<exclude>1</exclude>
-							<label>LLL:EXT:sp_bettercontact/locallang.php:tt_content.flexform_pi1.database.useDefaultValues</label>
+							<label>LLL:EXT:sp_bettercontact/locallang.php:tt_content.flexform_pi1.database.autoFillDefault</label>
 							<config>
 								<type>check</type>
 								<default>0</default>
 							</config>
 						</TCEforms>
-					</database.useDefaultValues>
+					</database.autoFillDefault>
+					<database.autoFillExisting>
+						<TCEforms>
+							<exclude>1</exclude>
+							<label>LLL:EXT:sp_bettercontact/locallang.php:tt_content.flexform_pi1.database.autoFillExisting</label>
+							<config>
+								<type>check</type>
+								<default>0</default>
+							</config>
+						</TCEforms>
+					</database.autoFillExisting>
 					<database.fieldconf>
 						<TCEforms>
 							<exclude>1</exclude>

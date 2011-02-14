@@ -33,8 +33,9 @@
 	class tx_spbettercontact_pi1_db {
 		protected $oCS        = NULL;
 		protected $aConfig    = array();
-		protected $aGP        = array();
 		protected $aLL        = array();
+		protected $aGP        = array();
+		protected $aFields    = array();
 		protected $sLastError = '';
 		protected $sLogTable  = 'tx_spbettercontact_log';
 		protected $sFormChar  = '';
@@ -47,6 +48,7 @@
 		 */
 		public function __construct ($poParent) {
 			$this->aConfig   = $poParent->aConfig;
+			$this->aFields   = $poParent->aFields;
 			$this->aGP       = $poParent->aGP;
 			$this->aLL       = $poParent->aLL;
 			$this->oCS       = $poParent->oCS;
@@ -127,9 +129,9 @@
 				return $this->iSaveExternal($aDBConf, $aFields, $sIDField);
 			}
 
-			// Create default fieldconf if configured
-			if (!empty($aDBConf['useDefaultValues'])) {
-				$aFields = $this->aAddDefaultFields($aFields, $aDBConf['table']);
+			// Automatically fill fields if configured (useDefaultValues is deprecated since 2.5.0)
+			if (!empty($aDBConf['autoFillDefault']) || !empty($aDBConf['useDefaultValues']) || !empty($aDBConf['autoFillExisting'])) {
+				$aFields = $this->aAddAutoFields($aFields, $aDBConf);
 			}
 
 			// Update
@@ -249,13 +251,14 @@
 
 
 		/**
-		 * Add default table field values (BETA)
+		 * Automatically fill table fields
 		 *
-		 * @param  array $paFields Array with field configuration
+		 * @param array $paFields Array with field configuration
+		 * @param array $paDBConf Array with database configuration
 		 * @return Array with new field configuration
 		 */
-		protected function aAddDefaultFields (array $paFields, $psTable) {
-			if (!count($paFields) || !strlen($psTable)) {
+		protected function aAddAutoFields (array $paFields, array $paDBConf) {
+			if (empty($paFields) || empty($paDBConf['table'])) {
 				return $paFields;
 			}
 
@@ -263,7 +266,7 @@
 			$aNewFields = array();
 
 			// Get table columns
-			if ($oResult  = $GLOBALS['TYPO3_DB']->sql_query('SHOW COLUMNS FROM ' . $psTable)) {
+			if ($oResult  = $GLOBALS['TYPO3_DB']->sql_query('SHOW COLUMNS FROM ' . $paDBConf['table'])) {
 				while ($aRow = $GLOBALS['TYPO3_DB']->sql_fetch_row($oResult)) {
 					$aColumns[$aRow[0]] = TRUE;
 				}
@@ -273,27 +276,37 @@
 				return $paFields;
 			}
 
-			// PID
-			if (isset($aColumns['pid'])) {
-				$aNewFields['pid'] = (int) $GLOBALS['TSFE']->id;
+			// Add default fields (useDefaultValues is deprecated since 2.5.0)
+			if (!empty($paDBConf['autoFillDefault']) || !empty($paDBConf['useDefaultValues'])) {
+				// PID
+				if (isset($aColumns['pid'])) {
+					$aNewFields['pid'] = (int) $GLOBALS['TSFE']->id;
+				}
+				// TSTAMP
+				if (isset($aColumns['tstamp'])) {
+					$aNewFields['tstamp'] = (int) $GLOBALS['SIM_EXEC_TIME'];
+				}
+				// CRDATE
+				if (isset($aColumns['crdate'])) {
+					$aNewFields['crdate'] = (int) $GLOBALS['SIM_EXEC_TIME'];
+				}
+				// CRUSER_ID
+				if ((isset($aColumns['cruser_id'])) && !empty($GLOBALS['TSFE']->fe_user->user['uid'])) {
+					$aNewFields['cruser_id'] = (int) $GLOBALS['TSFE']->fe_user->user['uid'];
+				}
 			}
 
-			// TSTAMP
-			if (isset($aColumns['tstamp'])) {
-				$aNewFields['tstamp'] = (int) $GLOBALS['SIM_EXEC_TIME'];
+			// Add existing form fields
+			if (!empty($paDBConf['autoFillExisting'])) {
+				foreach ($this->aFields as $sKey => $aField) {
+					$sDBField = (!empty($aField['dbField']) ? $aField['dbField'] : $sKey);
+					if (!empty($this->aGP[$sKey]) && isset($aColumns[$sDBField])) {
+						$aNewFields[$sDBField] = $this->aGP[$sKey];
+					}
+				}
 			}
 
-			// CRDATE
-			if (isset($aColumns['crdate'])) {
-				$aNewFields['crdate'] = (int) $GLOBALS['SIM_EXEC_TIME'];
-			}
-
-			// CRUSER_ID
-			if ((isset($aColumns['cruser_id'])) && !empty($GLOBALS['TSFE']->fe_user->user['uid'])) {
-				$aNewFields['cruser_id'] = (int) $GLOBALS['TSFE']->fe_user->user['uid'];
-			}
-
-			return $paFields + $aNewFields; // Do not overwrite existing fields
+			return $paFields + $aNewFields; // Do not overwrite manually configured fields
 		}
 
 
@@ -338,6 +351,7 @@
 
 			return '';
 		}
+
 	}
 
 

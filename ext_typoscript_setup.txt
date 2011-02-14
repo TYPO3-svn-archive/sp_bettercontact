@@ -65,101 +65,106 @@ plugin.tx_spbettercontact_pi1 {
 	# ====================================================================
 	fields {
 		name {
-			required     = 1
-			minLength    = 3
-			maxLength    = 70
-			regex        =
-			disallowed   = 0123456789<>(){}!?%&§$/*+-\
-			allowed      =
-			default      =
+			required       = 1
+			minLength      = 3
+			maxLength      = 70
+			regex          =
+			disallowed     = 0123456789<>(){}!?%&§$/*+-\
+			allowed        =
+			default        =
+			dbField        =
 		}
 
 		tel {
-			required     = 0
-			minLength    = 3
-			maxLength    = 30
-			regex        =
-			disallowed   =
-			allowed      = 0123456789()/+-
-			default      =
+			required       = 0
+			minLength      = 3
+			maxLength      = 30
+			regex          =
+			disallowed     =
+			allowed        = 0123456789()/+-
+			default        =
+			dbField        =
 		}
 
 		fax {
-			required     = 0
-			minLength    = 3
-			maxLength    = 30
-			regex        =
-			disallowed   =
-			allowed      = 0123456789()/+-
-			default      =
+			required       = 0
+			minLength      = 3
+			maxLength      = 30
+			regex          =
+			disallowed     =
+			allowed        = 0123456789()/+-
+			default        =
+			dbField        =
 		}
 
 		street {
-			required     = 0
-			minLength    = 3
-			maxLength    = 70
-			regex        =
-			disallowed   = <>&
-			allowed      =
-			default      =
+			required       = 0
+			minLength      = 3
+			maxLength      = 70
+			regex          =
+			disallowed     = <>&
+			allowed        =
+			default        =
+			dbField        =
 		}
 
 		city {
-			required     = 0
-			minLength    = 3
-			maxLength    = 70
-			regex        =
-			disallowed   = <>&
-			allowed      =
-			default      =
+			required       = 0
+			minLength      = 3
+			maxLength      = 70
+			regex          =
+			disallowed     = <>&
+			allowed        =
+			default        =
+			dbField        =
 		}
 
 		## Required email field (!)
 		email {
-			required     = 1
-			minLength    = 5
-			maxLength    = 70
-			regex        = /^[\w-]+(?:\.[\w-]+)*@(?:[\w-]+\.)+[a-zA-Z]{2,7}/
-			disallowed   =
-			allowed      =
-			default      =
+			required       = 1
+			minLength      = 5
+			maxLength      = 70
+			regex          = /^[\w-]+(?:\.[\w-]+)*@(?:[\w-]+\.)+[a-zA-Z]{2,7}/
+			disallowed     =
+			allowed        =
+			default        =
+			dbField        =
 		}
 
 		message {
-			required     = 1
-			minLength    = 10
-			maxLength    = 2000
-			regex        =
-			disallowed   = <>&
-			allowed      =
-			default      =
+			required       = 1
+			minLength      = 10
+			maxLength      = 2000
+			regex          =
+			disallowed     = <>&
+			allowed        =
+			default        =
+			dbField        =
 		}
 
 		picture {
-			required     = 0
-			file {
-				maxSize    = 1024
-				minSize    = 0
-				allowed    = gif,jpg,jpeg,tif,tiff,bmp,pcx,tga,png
-				disallowed = 
-			}
-			image {
-				maxSize    = 1024x768
-				minSize    = 10x10
-				convertTo  = jpg
-				quality    = 80
-			}
+			required       = 0
+			fileMaxSize    = 1024
+			fileMinSize    =
+			fileAllowed    = gif,jpg,jpeg,tif,tiff,bmp,pcx,tga,png
+			fileDisallowed = 
+			imageMaxWidth  = 1024m
+			imageMaxHeight = 768m
+			imageMinWidth  =
+			imageMinHeight =
+			imageConvertTo = jpg
 		}
 
 		## Required dummy configuration if captcha is activated (!)
 		captcha {
-			required     =
-			minLength    =
-			maxLength    =
-			regex        =
-			disallowed   =
-			allowed      =
-			default      =
+			required       =
+			minLength      =
+			maxLength      =
+			regex          =
+			disallowed     =
+			allowed        =
+			default        =
+			dbField        =
 		}
 	}
 
@@ -190,7 +195,8 @@ plugin.tx_spbettercontact_pi1 {
 		# force_charset    = (?) Use only for external database
 		# table            = (?) Internal or external table (e.g. tt_news, tt_address, ...)
 		# idField          = (?) Field name to identify and update a row (default "uid")
-		# useDefaultValues = (?) Automatically fill default fields pid, tstamp, crdate and cruser_id
+		# autoFillDefault  = (?) Automatically fill default fields pid, tstamp, crdate and cruser_id
+		# autoFillExisting = (?) Automatically fill all existing table fields with corresponding values of form fields
 		# uniqueFields     = (?) Values in this fields will be checked to be unique in table
 
 		## Demo field configuration (see manual for details)

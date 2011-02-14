@@ -539,6 +539,7 @@
 		public function bHasError() {
 			return $this->bHasError;
 		}
+
 	}
 
 

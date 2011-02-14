@@ -105,7 +105,8 @@
 			// Add elements to tab "db"
 			if ($pbShowDBTab) {
 				$this->vAddInput($aTabs['sDB'], 'database.table', 40);
-				$this->vAddCheckBox($aTabs['sDB'], 'database.useDefaultValues', FALSE);
+				$this->vAddCheckBox($aTabs['sDB'], 'database.autoFillDefault', FALSE);
+				$this->vAddCheckBox($aTabs['sDB'], 'database.autoFillExisting', FALSE);
 				$this->vAddText($aTabs['sDB'], 'database.fieldconf', 40, 20, $this->sGetDefaultTS(), 'off');
 				$this->vAddInput($aTabs['sDB'], 'database.uniqueFields', 40);
 			}
