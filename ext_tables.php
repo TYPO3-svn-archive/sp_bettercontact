@@ -2,7 +2,7 @@
 	/***************************************************************
 	*  Copyright notice
 	*
-	*  (c) 2010 Kai Vogel <kai.vogel ( at ) speedprogs.de>
+	*  (c) 2011 Kai Vogel <kai.vogel ( at ) speedprogs.de>
 	*  All rights reserved
 	*
 	*  This script is part of the TYPO3 project. The TYPO3 project is
@@ -104,5 +104,7 @@
 			'LLL:EXT:sp_bettercontact/locallang.xml:moduleFunction.tx_spbettercontact_modfunc1'
 		);
 
+		// Add plugin configuration
+		t3lib_extMgm::addStaticFile($_EXTKEY, 'res/setup/', 'Better Contact: Default Configuration');
 	}
 ?>

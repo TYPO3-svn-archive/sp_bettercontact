@@ -37,6 +37,14 @@
     ###VALUE_<FIELDNAME>###
 
 
+    // Show the path to an uploaded file
+    ###FILE_<FIELDNAME>###
+
+
+    // Show the full tag of an uploaded image
+    ###IMAGE_<FIELDNAME>###
+
+
     // Set state of a checkbox
     ###CHECKED_<FIELDNAME>###
 
@@ -147,6 +155,14 @@
 		###MSG_MESSAGE###
 		<label for="###MESSAGE###" class="tx_spbettercontact_label">###LABEL_MESSAGE### ###REQUIRED_MESSAGE###</label>
 		<textarea name="###MESSAGE###" rows="10" cols="30" class="###ERR_MESSAGE###">###VALUE_MESSAGE###</textarea>
+		<br />
+		<!--
+			Field for picture
+		-->
+		###MSG_PICTURE###
+		###IMAGE_PICTURE###
+		<label for="###PICTURE###" class="tx_spbettercontact_label">###LABEL_PICTURE### ###REQUIRED_PICTURE###</label>
+		<input type="file" name="###PICTURE###" class="###ERR_PICTURE###" />
 		<br />
 		<!--
 			Add captcha from sub-templates below if configured

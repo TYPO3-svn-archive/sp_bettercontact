@@ -303,11 +303,11 @@
 
 		/**
 		 * Add markers for uploaded files
-		 * 
-		 * @param array $psFiles Uploaded files
+		 *
+		 * @param array $paFiles Uploaded files
 		 */
-		protected function vAddFileMarkers (array $psFiles) {
-			
+		public function vAddFileMarkers (array $paFiles) {
+
 		}
 
 

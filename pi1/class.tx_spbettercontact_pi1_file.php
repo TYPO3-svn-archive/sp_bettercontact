@@ -60,11 +60,11 @@
 
 		/**
 		 * Get uploaded files from $_FILES
-		 * 
+		 *
 		 * @return array All valid uploaded files
 		 */
 		public function aGetUploadedFiles () {
-			if (empty($_FILES) || !is_array($_FILES)) {
+			if (empty($GLOBALS['_FILES']) || !is_array($GLOBALS['_FILES'])) {
 				return array();
 			}
 
@@ -78,34 +78,59 @@
 			$oFileFunc = t3lib_div::makeInstance('t3lib_basicFileFunctions');
 
 			// Get files
-			$aFiles = array();
-			foreach ($_FILES as $sKey => $aFile) {
-				// Check if uploaded file is valid
-				if (!is_uploaded_file($aFile['tmp_name']) || $aFile['error'] != 'UPLOAD_ERR_OK' || $aFile['size'] <= 0) {
-					continue;
-				}
+			$aResult = array();
+			foreach ($GLOBALS['_FILES'] as $aData) {
+				$aFiles = $this->aPrepareFiles($aData);
+				foreach ($aFiles as $sKey => $aFile) {
+					// Check if uploaded file is valid
+					if (!is_uploaded_file($aFile['tmp_name']) || $aFile['error'] != 'UPLOAD_ERR_OK' || $aFile['size'] <= 0) {
+						continue;
+					}
 
-				// Get file info
-				$aFileInfo = t3lib_div::split_fileref($aFile['tmp_name']);
-				$sFileName = $oFileFunc->getUniqueName($aFile['name'], $sPath);
+					// Get unique file name
+					$sFileName = $oFileFunc->getUniqueName($aFile['name'], $sPath);
 
-				// Move to upload dir
-				if (!file_exists($aFile['tmp_name']) || !move_uploaded_file($aFile['tmp_name'], $sFileName)) {
-					continue;
-				}
+					// Move to upload dir
+					@move_uploaded_file($aFile['tmp_name'], $sFileName);
 
-				// Check file again
-				if (is_readable($sFileName)) {
-					$aFiles[$sKey] = array(
-						'name' => $sFileName,
-						'type' => $aFileInfo['fileext'],
-						'real' => $aFileInfo['filebody'],
-						'size' => ((int) @filesize($sFileName) * 1024), // KB
-					);
+					// Check file again
+					if (is_readable($sFileName)) {
+						$aFileInfo = t3lib_div::split_fileref($sFileName);
+						$sLink     = t3lib_div::locationHeaderUrl(str_replace(PATH_site, '', $sFileName));
+						$aResult[$sKey] = array(
+							'path' => $sFileName,
+							'link' => $sLink,
+							'type' => $aFileInfo['fileext'],
+							'name' => $aFileInfo['filebody'],
+							'size' => round((int) @filesize($sFileName) / 1024), // KB
+						);
+					}
 				}
 			}
 
 			unset($oFileFunc);
+
+			return $aResult;
+		}
+
+
+		/**
+		 * Prepare file array
+		 *
+		 * @param array $paData Unformated data from $_FILES array
+		 * @return array Clean file array
+		 */
+		protected function aPrepareFiles (array $paData) {
+			if (empty($paData)) {
+				return array();
+			}
+
+			$aFiles = array();
+			foreach ($paData as $sInfoKey => $aInfoData) {
+				foreach ($aInfoData as $sFieldKey => $sFieldData) {
+					$aFiles[$sFieldKey][$sInfoKey] = $sFieldData;
+				}
+			}
 
 			return $aFiles;
 		}
@@ -113,12 +138,12 @@
 
 		/**
 		 * Convert all image files
-		 * 
+		 *
 		 * @param string $paFiles All uploaded files
-		 * @return string New file name
 		 */
 		public function vConvertImages (array &$paFiles) {
-			if (empty($paFiles)) {
+			if (empty($paFiles) || empty($GLOBALS['TYPO3_CONF_VARS']['GFX']['im'])
+			 || empty($GLOBALS['TYPO3_CONF_VARS']['GFX']['im_path'])) {
 				return;
 			}
 
@@ -129,34 +154,48 @@
 
 			// Convert images into new format
 			foreach ($paFiles as $sKey => $aFile) {
-				if (empty($this->aFields[$sKey]['image'])) {
+				$aField = $this->aFields[$sKey];
+				if (empty($aField['imageConvertTo']) && empty($aField['imageMaxWidth']) && empty($aField['imageMaxHeight'])
+				 && empty($aField['imageMinWidth']) && empty($aField['imageMinHeight'])) {
 					continue;
 				}
 
-				$aField     = $this->aFields[$sKey];
-				$sFileName  = $aFile['name'];
 				$sFileType  = (!empty($aField['imageConvertTo']) ? ltrim($aField['imageConvertTo'], '.') : '');
 				$aOptions   = array(
-					'maxW' => (!empty($aField['imageMaxWidth'])  ? $aField['imageMaxWidth'])  : ''),
-					'maxH' => (!empty($aField['imageMaxHeight']) ? $aField['imageMaxHeight']) : ''),
-					'minH' => (!empty($aField['imageMinWidth'])  ? $aField['imageMinWidth'])  : ''),
-					'minH' => (!empty($aField['imageMinHeight']) ? $aField['imageMinHeight']) : ''),
+					'maxW' => (!empty($aField['imageMaxWidth'])  ? $aField['imageMaxWidth']  : ''),
+					'maxH' => (!empty($aField['imageMaxHeight']) ? $aField['imageMaxHeight'] : ''),
+					'minW' => (!empty($aField['imageMinWidth'])  ? $aField['imageMinWidth']  : ''),
+					'minH' => (!empty($aField['imageMinHeight']) ? $aField['imageMinHeight'] : ''),
 				);
 
 				// Convert...
-				$aFileInfo = $oImageFunc->imageMagickConvert($aFile['name'], $sFileType, '', '', '', '', $aOptions, TRUE);
+				$aFileInfo = $oImageFunc->imageMagickConvert($aFile['path'], $sFileType, '', '', '', '', $aOptions, TRUE);
+				$sFileName = substr($aFile['path'], 0, strrpos($aFile['path'], '.')) . '.' . $aFileInfo[2];
 
 				// Overwrite current file with new one
-				if (!empty($aFileInfo[3]) && copy($aFileInfo[3], $sFileName)) {
+				if (empty($aFileInfo[3]) || !(@copy($aFileInfo[3], $sFileName))) {
 					continue;
 				}
 
 				// Remove temp file
 				unlink($aFileInfo[3]);
 
-				// Set new file type
+				// Remove old image if type has changed
+				if ($sFileName != $aFile['path']) {
+					unlink($aFile['path']);
+				}
+
+				// Set new file type / path / link
 				if (!empty($aFileInfo[2])) {
 					$paFiles[$sKey]['type'] = $aFileInfo[2];
+					$paFiles[$sKey]['path'] = $sFileName;
+					$paFiles[$sKey]['link'] = substr($aFile['link'], 0, strrpos($aFile['link'], '.')) . '.' . $aFileInfo[2];
+				}
+
+				// Add image info
+				if (isset($aFileInfo[0], $aFileInfo[1])) {
+					$paFiles[$sKey]['width']  = (int) $aFileInfo[0];
+					$paFiles[$sKey]['height'] = (int) $aFileInfo[1];
 				}
 			}
 

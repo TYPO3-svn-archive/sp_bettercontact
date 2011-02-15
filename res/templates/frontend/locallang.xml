@@ -64,8 +64,8 @@
 			<label index="msg_captcha">Please enter the sequence of characters shown in the captcha image.</label>
 
 			<label index="msg_picture_file_invalid">Please select a valid file.</label>
-			<label index="msg_picture_file_big">Please select a file with at least %d KB.</label>
-			<label index="msg_picture_file_small">Please select a file with at most %d KB.</label>
+			<label index="msg_picture_file_big">Please select a file with at most %d KB.</label>
+			<label index="msg_picture_file_small">Please select a file with at least %d KB.</label>
 			<label index="msg_picture_file_allowed">Please select a file with one of this types: %s.</label>
 			<label index="msg_picture_file_disallowed">Please select a file with a type other than: %s.</label>
 
@@ -76,6 +76,7 @@
 			<label index="city">City:</label>
 			<label index="email">Email:</label>
 			<label index="message">Message:</label>
+			<label index="picture">Picture:</label>
 			<label index="submit">Submit</label>
 			<label index="date">Date:</label>
 			<label index="time">Time:</label>
@@ -182,6 +183,7 @@
 			<label index="city">Stadt:</label>
 			<label index="email">E-Mail:</label>
 			<label index="message">Nachricht:</label>
+			<label index="picture">Bild:</label>
 			<label index="submit">Absenden</label>
 			<label index="date">Datum:</label>
 			<label index="time">Uhrzeit:</label>
@@ -288,6 +290,7 @@
 			<label index="city">Kaupunki:</label>
 			<label index="email">Sähköposti:</label>
 			<label index="message">Viesti:</label>
+			<label index="picture">Kuva:</label>
 			<label index="submit">Lähetä</label>
 			<label index="date">Päivämäärä:</label>
 			<label index="time">Kellonaika:</label>
@@ -394,6 +397,7 @@
 			<label index="city">Ville:</label>
 			<label index="email">Mail:</label>
 			<label index="message">Message:</label>
+			<label index="picture">Image:</label>
 			<label index="submit">Envoyer</label>
 			<label index="date">Date:</label>
 			<label index="time">Temps:</label>

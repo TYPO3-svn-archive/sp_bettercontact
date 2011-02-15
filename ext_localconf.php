@@ -2,7 +2,7 @@
 	/***************************************************************
 	*  Copyright notice
 	*
-	*  (c) 2010 Kai Vogel <kai.vogel ( at ) speedprogs.de>
+	*  (c) 2011 Kai Vogel <kai.vogel ( at ) speedprogs.de>
 	*  All rights reserved
 	*
 	*  This script is part of the TYPO3 project. The TYPO3 project is
@@ -35,7 +35,7 @@
 	if (TYPO3_MODE == 'BE') {
 
 		// Add module TSConfig
-		t3lib_extMgm::addPageTSConfig('<INCLUDE_TYPOSCRIPT: source="FILE:EXT:sp_bettercontact/ext_ts_config.txt">');
+		t3lib_extMgm::addPageTSConfig('<INCLUDE_TYPOSCRIPT: source="FILE:EXT:sp_bettercontact/res/setup/ts_config.txt">');
 
 		// Templavoila
 		if (t3lib_extMgm::isLoaded('templavoila')) {

@@ -196,11 +196,34 @@
 
 		/**
 		 * Add markers for uploaded files
-		 * 
-		 * @param array $psFiles Uploaded files
+		 *
+		 * @param array $paFiles Uploaded files
 		 */
-		protected function vAddFileMarkers (array $psFiles) {
-			
+		public function vAddFileMarkers (array $paFiles) {
+			$sImageTypes = (!empty($GLOBALS['GFX']['imagefile_ext']) ? $GLOBALS['GFX']['imagefile_ext'] : 'gif,jpg,png');
+			$aImageTypes = t3lib_div::trimExplode(',', $sImageTypes, TRUE);
+			$sImageWrap  = (!empty($this->aConfig['imageWrap']) ? $this->aConfig['imageWrap'] : '<img src="###SRC###" />');
+
+			foreach ($paFiles as $sKey => $aFile) {
+				$aField = $this->aFields[$sKey];
+
+				// Add file marker
+				$this->aMarkers[$aField['fileName']] = $aFile['link'];
+
+				// Add image marker
+				if (in_array($aFile['type'], $aImageTypes)) {
+					$sWidth    = (!empty($aFile['width'])  ? $aFile['width']  : '');
+					$sHeight   = (!empty($aFile['height']) ? $aFile['height'] : '');
+					$sTitle    = $aField['imageTitle'];
+					$sAlt      = (empty($aField['imageAlt']) ? $aField['imageTitle'] : $aField['imageAlt']);
+					$sImageTag = str_replace(
+						array('###SRC###', '###HEIGHT###', '###WIDTH###', '###TITLE###', '###ALT###'),
+						array($aFile['link'], $sHeight, $sWidth, $sTitle, $sAlt),
+						$sImageWrap
+					);
+					$this->aMarkers[$aField['imageName']] = $sImageTag;
+				}
+			}
 		}
 
 

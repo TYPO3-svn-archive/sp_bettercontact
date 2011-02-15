@@ -100,6 +100,24 @@
 				return $this->pi_wrapInBaseClass($this->aLL['msg_not_allowed']);
 			}
 
+
+
+
+			// Check uploaded files, convert images and set markers / session value
+			if ($this->aFiles = $this->oFile->aGetUploadedFiles()) {
+				if (!$this->oCheck->bCheckFiles($this->aFiles)) {
+					$this->oTemplate->vAddMarkers($this->oCheck->aGetMessages());
+					return $this->sGetContent();
+				}
+				$this->oFile->vConvertImages($this->aFiles);
+				$this->oTemplate->vAddFileMarkers($this->aFiles);
+				$this->oEmail->vAddFileMarkers($this->aFiles);
+				$this->oSession->vAddValue('uploadedFiles', $this->aFiles);
+			}
+
+
+
+
 			// Check form data
 			if (!$this->oCheck->bCheckFields()) {
 				if (!$this->bIsFormEmpty($this->aGP)) {
@@ -117,17 +135,9 @@
 				return $this->sGetContent();
 			}
 
-			// Check uploaded files, convert images and set markers / session value
-			if ($this->aFiles = $this->oFile->aGetUploadedFiles()) {
-				if (!$this->oCheck->bCheckFiles($this->aFiles)) {
-					$this->oTemplate->vAddMarkers($this->oCheck->aGetMessages());
-					return $this->sGetContent();
-				}
-				$this->oFile->vConvertImages($this->aFiles);
-				$this->oTemplate->vAddFileMarkers($this->aFiles);
-				$this->oEmail->vAddFileMarkers($this->aFiles);
-				$this->oSession->vAddValue('uploadedFiles', $this->aFiles);
-			}
+
+			// Correct position for file upload block
+
 
 			// Add new entry in log table and save values into specified table
 			$this->oSession->vAddValue('lastLogRowID', $this->oDB->iLog());
@@ -407,6 +417,8 @@
 					'errClassName'   => 'ERR_'      . $sUpperName,
 					'valueName'      => 'VALUE_'    . $sUpperName,
 					'labelName'      => 'LABEL_'    . $sUpperName,
+					'fileName'       => 'FILE_'     . $sUpperName,
+					'imageName'      => 'IMAGE_'    . $sUpperName,
 					'checkedName'    => 'CHECKED_'  . $sUpperName,
 					'requiredName'   => 'REQUIRED_' . $sUpperName,
 					'multiChkName'   => 'CHECKED_'  . $sMultiName,
@@ -426,6 +438,8 @@
 					'imageMinWidth'  => (isset($aField['imageMinWidth']))  ? $aField['imageMinWidth']  : 0,
 					'imageMinHeight' => (isset($aField['imageMinHeight'])) ? $aField['imageMinHeight'] : 0,
 					'imageConvertTo' => (isset($aField['imageConvertTo'])) ? $aField['imageConvertTo'] : '',
+					'imageTitle'     => (isset($aField['imageTitle']))     ? $aField['imageTitle']     : '',
+					'imageAlt'       => (isset($aField['imageAlt']))       ? $aField['imageAlt']       : '',
 					'label'          => (isset($this->aLL[$sName]))        ? $this->aLL[$sName]        : ucfirst($sName),
 					'value'          => $sValue,
 				);

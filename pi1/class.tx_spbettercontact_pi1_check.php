@@ -195,7 +195,7 @@
 		 * @param array $paFiles Uploaded files
 		 * @return FALSE if the file check fails
 		 */
-		protected function bCheckFiles (array $paFiles) {
+		public function bCheckFiles (array $paFiles) {
 			if (empty($this->aFields) || empty($paFiles)) {
 				return TRUE;
 			}
@@ -206,29 +206,29 @@
 				$aField = (!empty($this->aFields[$sKey]) ? $this->aFields[$sKey] : array());
 
 				// Required
-				if ((bool) $aField['required'] && empty($aFile['name'])) {
+				if (!empty($aField['value']) && empty($aFile['path'])) {
 					$this->aMarkers[$aField['messageName']] = $this->sGetMessage($sKey, 'file_invalid', 'required');
 					$bResult = FALSE;
 					continue;
 				}
 
 				// Check max file size
-				if (strlen($aField['file']['maxSize']) && $aFile['size'] > (int) $aField['file']['maxSize']) {
+				if (!empty($aField['fileMaxSize']) && $aFile['size'] > (int) $aField['fileMaxSize']) {
 					$this->aMarkers[$aField['messageName']] = $this->sGetMessage($sKey, 'file_big', 'fileMaxSize');
 					$bResult = FALSE;
 					continue;
 				}
 
 				// Check min file size
-				if (strlen($aField['file']['minSize']) && $aFile['size'] < (int) $aField['file']['minSize']) {
+				if (!empty($aField['fileMinSize']) && $aFile['size'] < (int) $aField['fileMinSize']) {
 					$this->aMarkers[$aField['messageName']] = $this->sGetMessage($sKey, 'file_small', 'fileMinSize');
 					$bResult = FALSE;
 					continue;
 				}
 
 				// Check allowed file types
-				if (strlen($aField['file']['allowed'])) {
-					$aAllowedTypes = t3lib_div::trimExplode(',', $aField['file']['allowed'], TRUE);
+				if (!empty($aField['fileAllowed'])) {
+					$aAllowedTypes = t3lib_div::trimExplode(',', $aField['fileAllowed'], TRUE);
 					if (!in_array($aFile['type'], $aAllowedTypes)) {
 						$this->aMarkers[$aField['messageName']] = $this->sGetMessage($sKey, 'file_allowed', 'fileAllowed');
 						$bResult = FALSE;
@@ -237,8 +237,8 @@
 				}
 
 				// Check disallowed file types
-				if (strlen($aField['file']['disallowed'])) {
-					$aDisallowedTypes = t3lib_div::trimExplode(',', $aField['file']['disallowed'], TRUE);
+				if (!empty($aField['fileDisallowed'])) {
+					$aDisallowedTypes = t3lib_div::trimExplode(',', $aField['fileDisallowed'], TRUE);
 					if (in_array($aFile['type'], $aDisallowedTypes)) {
 						$this->aMarkers[$aField['messageName']] = $this->sGetMessage($sKey, 'file_disallowed', 'fileDisallowed');
 						$bResult = FALSE;
