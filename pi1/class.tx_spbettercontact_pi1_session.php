@@ -40,6 +40,7 @@
 		protected $sSessionName    = '';
 		protected $iCount          = 0;
 		protected $iWaitingTime    = 0;
+		protected $iPluginID       = 0;
 
 		/**
 		 * Set configuration for session object

@@ -58,9 +58,10 @@
 			$this->iPluginId    = $poParent->iPluginId;
 			$this->sFormChar    = $poParent->sFormCharset;
 			$this->sFieldPrefix = $poParent->sFieldPrefix;
+			$this->aMarkers     = $poParent->aMarkers;
 
 			// Set default markers
-			$this->aMarkers = $this->aGetDefaultMarkers();
+			$this->vAddMarkers($this->aGetDefaultMarkers());
 
 			// Add captcha fields
 			$this->vAddCaptcha();
@@ -117,42 +118,6 @@
 				}
 			}
 
-			// Page info
-			if (!empty($GLOBALS['TSFE']->page) && is_array($GLOBALS['TSFE']->page)) {
-				foreach ($GLOBALS['TSFE']->page as $sKey => $sValue) {
-					$aMarkers['PAGE:' . $sKey] = $sValue;
-				}
-			}
-
-			// Plugin info
-			if (!empty($this->oCObj->data) && is_array($this->oCObj->data)) {
-				foreach ($this->oCObj->data as $sKey => $sValue) {
-					$aMarkers['PLUGIN:' . $sKey] = $sValue;
-				}
-			}
-
-			// FE-User info
-			if (!empty($GLOBALS['TSFE']->fe_user->user) && is_array($GLOBALS['TSFE']->fe_user->user)) {
-				$aUserData = $GLOBALS['TSFE']->fe_user->user;
-				foreach ($aUserData as $sKey => $sValue) {
-					$aMarkers['USER:' . $sKey] = $sValue;
-				}
-			}
-
-			// Locallang labels
-			if (is_array($this->aLL)) {
-				foreach ($this->aLL as $sKey => $sValue) {
-					$aMarkers['LLL:' . $sKey] = $sValue;
-				}
-			}
-
-			// User defined markers
-			if (!empty($this->aConfig['markers.']) && is_array($this->aConfig['markers.'])) {
-				foreach ($this->aConfig['markers.'] as $sKey => $sValue) {
-					$aMarkers[strtoupper($sKey)] = $sValue;
-				}
-			}
-
 			return $aMarkers;
 		}
 
@@ -191,39 +156,6 @@
 		 */
 		public function vAddMarkers (array $paMarkers) {
 			$this->aMarkers = $paMarkers + $this->aMarkers;
-		}
-
-
-		/**
-		 * Add markers for uploaded files
-		 *
-		 * @param array $paFiles Uploaded files
-		 */
-		public function vAddFileMarkers (array $paFiles) {
-			$sImageTypes = (!empty($GLOBALS['GFX']['imagefile_ext']) ? $GLOBALS['GFX']['imagefile_ext'] : 'gif,jpg,png');
-			$aImageTypes = t3lib_div::trimExplode(',', $sImageTypes, TRUE);
-			$sImageWrap  = (!empty($this->aConfig['imageWrap']) ? $this->aConfig['imageWrap'] : '<img src="###SRC###" />');
-
-			foreach ($paFiles as $sKey => $aFile) {
-				$aField = $this->aFields[$sKey];
-
-				// Add file marker
-				$this->aMarkers[$aField['fileName']] = $aFile['link'];
-
-				// Add image marker
-				if (in_array($aFile['type'], $aImageTypes)) {
-					$sWidth    = (!empty($aFile['width'])  ? $aFile['width']  : '');
-					$sHeight   = (!empty($aFile['height']) ? $aFile['height'] : '');
-					$sTitle    = $aField['imageTitle'];
-					$sAlt      = (empty($aField['imageAlt']) ? $aField['imageTitle'] : $aField['imageAlt']);
-					$sImageTag = str_replace(
-						array('###SRC###', '###HEIGHT###', '###WIDTH###', '###TITLE###', '###ALT###'),
-						array($aFile['link'], $sHeight, $sWidth, $sTitle, $sAlt),
-						$sImageWrap
-					);
-					$this->aMarkers[$aField['imageName']] = $sImageTag;
-				}
-			}
 		}
 
 

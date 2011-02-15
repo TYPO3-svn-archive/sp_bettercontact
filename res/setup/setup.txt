@@ -14,7 +14,7 @@ plugin.tx_spbettercontact_pi1 {
 	formTemplate           =
 	stylesheetFile         =
 	locallangFile          =
-	# formCharset          = (?) If not set -> auto detection (default "iso-8859-1")
+	# formCharset          = (?) If not set -> auto detection
 	# disableAutoTemplates = (?) If "1" default templates will not be used for missing ones
 	# fieldPrefix          = (?) Define your own field name prefix (default "tx_spbettercontact_pi1-<plugin_uid>")
 	# clearOnSuccess       = (?) Activate with "1" to clear all input fields if request was successfully sent
@@ -151,8 +151,8 @@ plugin.tx_spbettercontact_pi1 {
 			fileDisallowed =
 			imageMaxWidth  = 120m
 			imageMaxHeight = 80m
-			imageMinWidth  = 64
-			imageMinHeight = 64
+			imageMinWidth  =
+			imageMinHeight =
 			imageConvertTo = png
 			imageTitle     =
 			imageAlt       =
@@ -214,7 +214,7 @@ plugin.tx_spbettercontact_pi1 {
 			# deleted = 0
 
 			# name = TEXT
-			# name.data = GPvar : tx_spbettercontact_pi1-9|name
+			# name.data = GPvar : tx_spbettercontact_pi1-123|name
 		}
 	}
 

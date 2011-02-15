@@ -44,6 +44,7 @@
 		public $aGP           = array();
 		public $aConfig       = array();
 		public $aFields       = array();
+		public $aMarkers      = array();
 		public $aFiles        = array();
 		public $oTemplate     = NULL;
 		public $oSession      = NULL;
@@ -62,30 +63,24 @@
 		 * @return The content that is displayed on the website
 		 */
 		public function main ($psContent, array $paConf) {
-			$this->pi_USER_INT_obj = 1;
-
-			// Get merged config from TS and Flexform
-			$oTS = $this->oMakeInstance('ts');
-			$this->aConfig = $oTS->aGetConfig($paConf);
+			// Init required attributes and objects
+			$this->vInit($paConf);
 
 			// Call preUserFunc to do something before checks and rendering
 			$this->vCheckUserFunc('preUserFunc');
-
-			// Set default templates if not configured
-			$this->vSetDefaultTemplates();
 
 			// Check configuration
 			if ($sMessage = $this->sCheckConfiguration()) {
 				return $this->pi_wrapInBaseClass($sMessage);
 			}
 
-			// Init required attributes and objects
-			$this->vInit();
-
 			// Stop here if form was not submitted
 			if ((!empty($this->aConfig['postOnly']) && empty($_POST)) || !isset($this->aGP['submit'])) {
 				// Add timestamp to session for elapsed time check
 				$this->oSession->vAddValue('start', $GLOBALS['SIM_EXEC_TIME']);
+				// Clear uploaded files
+				$this->oSession->vAddValue('uploadedFiles', array());
+				$this->aFiles = array();
 				$this->oSession->vSave();
 				return $this->sGetContent();
 			}
@@ -100,23 +95,32 @@
 				return $this->pi_wrapInBaseClass($this->aLL['msg_not_allowed']);
 			}
 
+			// Check if the user has already sent multiple emails
+			if ($this->oSession->bHasAlreadySent()) {
+				$this->vCheckRedirect('exhausted');
+				$this->oTemplate->vAddMarkers($this->oSession->aGetMessages());
+				return $this->sGetContent();
+			}
 
-
-
-			// Check uploaded files, convert images and set markers / session value
-			if ($this->aFiles = $this->oFile->aGetUploadedFiles()) {
-				if (!$this->oCheck->bCheckFiles($this->aFiles)) {
+			// Check uploaded files
+			if ($aFiles = $this->oFile->aGetFiles($_FILES)) {
+				if (!$this->oCheck->bCheckFiles($aFiles)) {
 					$this->oTemplate->vAddMarkers($this->oCheck->aGetMessages());
 					return $this->sGetContent();
 				}
-				$this->oFile->vConvertImages($this->aFiles);
-				$this->oTemplate->vAddFileMarkers($this->aFiles);
-				$this->oEmail->vAddFileMarkers($this->aFiles);
+				// Convert images and add files to global array
+				$this->oFile->vConvertImages($aFiles);
+				$this->aFiles = t3lib_div::array_merge_recursive_overrule($this->aFiles, $aFiles);
 				$this->oSession->vAddValue('uploadedFiles', $this->aFiles);
+				$this->oSession->vSave();
 			}
 
-
-
+			// Add file markers to templates
+			if (!empty($this->aFiles)) {
+				$aMarkers = $this->oFile->aGetMarkers($this->aFiles);
+				$this->oTemplate->vAddMarkers($aMarkers);
+				$this->oEmail->vAddMarkers($aMarkers);
+			}
 
 			// Check form data
 			if (!$this->oCheck->bCheckFields()) {
@@ -128,18 +132,8 @@
 				return $this->sGetContent();
 			}
 
-			// Check if the user has already sent multiple emails
-			if ($this->oSession->bHasAlreadySent()) {
-				$this->vCheckRedirect('exhausted');
-				$this->oTemplate->vAddMarkers($this->oSession->aGetMessages());
-				return $this->sGetContent();
-			}
-
-
-			// Correct position for file upload block
-
-
 			// Add new entry in log table and save values into specified table
+			// TODO: Add files to log entries
 			$this->oSession->vAddValue('lastLogRowID', $this->oDB->iLog());
 			$this->oSession->vAddValue('lastRowID', $this->oDB->iSave());
 			if ($sMessage = $this->oDB->sGetError()) {
@@ -169,6 +163,44 @@
 			// Redirect if configured or return content
 			$this->vCheckRedirect('success');
 			return $this->sGetContent();
+		}
+
+
+		/**
+		 * Init required attributes and objects
+		 *
+		 */
+		protected function vInit (array $paConf) {
+			$this->pi_USER_INT_obj = 1;
+
+			// Get merged config from TS and Flexform
+			$oTS = $this->oMakeInstance('ts');
+			$this->aConfig = $oTS->aGetConfig($paConf);
+			
+			// Set default templates if not configured
+			$this->vSetDefaultTemplates();
+
+			// Set default attributes
+			$this->sFieldPrefix  = $this->sGetPrefix();
+			$this->oCS           = $this->oGetCSObject();
+			$this->aGP           = $this->aGetGP();
+			$this->aLL           = $this->aGetLL();
+			$this->aFields       = $this->aGetFields();
+			$this->aMarkers      = $this->aGetMarkers();
+			$this->sEmailCharset = $this->sGetCharset('email');
+			$this->sFormCharset  = $this->sGetCharset('form');
+			$this->sBECharset    = $this->sGetBECharset();
+
+			// Load required objects
+			$this->oTemplate = $this->oMakeInstance('template');
+			$this->oSession  = $this->oMakeInstance('session');
+			$this->oCheck    = $this->oMakeInstance('check');
+			$this->oEmail    = $this->oMakeInstance('email');
+			$this->oDB       = $this->oMakeInstance('db');
+			$this->oFile     = $this->oMakeInstance('file');
+
+			// Load stored files from session
+			$this->aFiles = $this->oSession->mGetValue('uploadedFiles');
 		}
 
 
@@ -260,27 +292,6 @@
 			}
 
 			return '';
-		}
-
-
-		/**
-		 * Init required attributes and objects
-		 *
-		 */
-		protected function vInit () {
-			$this->sFieldPrefix  = $this->sGetPrefix();
-			$this->oCS           = $this->oGetCSObject();
-			$this->aGP           = $this->aGetGP();
-			$this->aLL           = $this->aGetLL();
-			$this->aFields       = $this->aGetFields();
-			$this->sEmailCharset = $this->sGetCharset('email');
-			$this->sFormCharset  = $this->sGetCharset('form');
-			$this->oTemplate     = $this->oMakeInstance('template');
-			$this->oSession      = $this->oMakeInstance('session');
-			$this->oCheck        = $this->oMakeInstance('check');
-			$this->oEmail        = $this->oMakeInstance('email');
-			$this->oDB           = $this->oMakeInstance('db');
-			$this->oFile         = $this->oMakeInstance('file');
 		}
 
 
@@ -450,6 +461,52 @@
 
 
 		/**
+		 * Get basic markers for templates
+		 *
+		 * @return Array with markers
+		 */
+		protected function aGetMarkers () {
+			$aMarkers = array();
+
+			// Page info
+			if (!empty($GLOBALS['TSFE']->page) && is_array($GLOBALS['TSFE']->page)) {
+				foreach ($GLOBALS['TSFE']->page as $sKey => $sValue) {
+					$aMarkers['PAGE:' . $sKey] = $sValue;
+				}
+			}
+
+			// Plugin info
+			if (!empty($this->cObj->data) && is_array($this->cObj->data)) {
+				foreach ($this->cObj->data as $sKey => $sValue) {
+					$aMarkers['PLUGIN:' . $sKey] = $sValue;
+				}
+			}
+
+			// FE-User info
+			if (!empty($GLOBALS['TSFE']->fe_user->user) && is_array($GLOBALS['TSFE']->fe_user->user)) {
+				$aUserData = $GLOBALS['TSFE']->fe_user->user;
+				foreach ($aUserData as $sKey => $sValue) {
+					$aMarkers['USER:' . $sKey] = $sValue;
+				}
+			}
+
+			// Locallang labels
+			foreach ($this->aLL as $sKey => $sValue) {
+				$aMarkers['LLL:' . $sKey] = $sValue;
+			}
+
+			// User defined markers
+			if (!empty($this->aConfig['markers.']) && is_array($this->aConfig['markers.'])) {
+				foreach ($this->aConfig['markers.'] as $sKey => $sValue) {
+					$aMarkers[strtoupper($sKey)] = $sValue;
+				}
+			}
+
+			return $aMarkers;
+		}
+
+
+		/**
 		 * Get the charset for the form and emails
 		 *
 		 * @param  string $psType Type of media which needs the charset
@@ -469,6 +526,24 @@
 
 			if (!empty($this->aConfig[$sType])) {
 				$sCharset = $this->aConfig[$sType];
+			}
+
+			return strtolower($sCharset);
+		}
+
+
+		/**
+		 * Get backend charset
+		 *
+		 * @return Charset of the ts configuration
+		 */
+		protected function sGetBECharset () {
+			$sCharset = (t3lib_div::compat_version('4.5') ? 'utf-8' : 'iso-8859-1');
+
+			if (!empty($GLOBALS['TYPO3_CONF_VARS']['BE']['forceCharset'])) {
+				$sCharset = $GLOBALS['TYPO3_CONF_VARS']['BE']['forceCharset'];
+			} else if (isset($GLOBALS['LANG'])) {
+				$sCharset = $GLOBALS['LANG']->charSet;
 			}
 
 			return strtolower($sCharset);

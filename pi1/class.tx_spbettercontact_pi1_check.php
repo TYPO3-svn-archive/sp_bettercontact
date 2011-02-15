@@ -46,32 +46,12 @@
 		 * @param object $poParent Instance of the parent object
 		 */
 		public function __construct ($poParent) {
-			$this->aConfig = $poParent->aConfig;
-			$this->aFields = $poParent->aFields;
-			$this->aLL     = $poParent->aLL;
-			$this->aGP     = $poParent->aGP;
-			$this->oCS     = $poParent->oCS;
-
-			// Get backend charset
-			$this->sBECharset = $this->sGetBECharset();
-		}
-
-
-		/**
-		 * Get backend charset
-		 *
-		 * @return Charset of the ts configuration
-		 */
-		protected function sGetBECharset () {
-			$sCharset = (t3lib_div::compat_version('4.5') ? 'utf-8' : 'iso-8859-1');
-
-			if (!empty($GLOBALS['TYPO3_CONF_VARS']['BE']['forceCharset'])) {
-				$sCharset = $GLOBALS['TYPO3_CONF_VARS']['BE']['forceCharset'];
-			} else if (isset($GLOBALS['LANG'])) {
-				$sCharset = $GLOBALS['LANG']->charSet;
-			}
-
-			return strtolower($sCharset);
+			$this->aConfig    = $poParent->aConfig;
+			$this->aFields    = $poParent->aFields;
+			$this->aLL        = $poParent->aLL;
+			$this->aGP        = $poParent->aGP;
+			$this->oCS        = $poParent->oCS;
+			$this->sBECharset = $poParent->sBECharset;
 		}
 
 

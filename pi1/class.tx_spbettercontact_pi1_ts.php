@@ -31,8 +31,7 @@
 	 * @subpackage tx_spbettercontact
 	 */
 	class tx_spbettercontact_pi1_ts {
-		protected $oCObj   = NULL;
-		protected $aConfig = array();
+		protected $oCObj = NULL;
 
 
 		/**
@@ -41,8 +40,7 @@
 		 * @param object $poParent Instance of the parent object
 		 */
 		public function __construct ($poParent) {
-			$this->oCObj   = $poParent->cObj;
-			$this->aConfig = $poParent->aConfig;
+			$this->oCObj = $poParent->cObj;
 		}
 
 

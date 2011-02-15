@@ -59,12 +59,13 @@
 
 
 		/**
-		 * Get uploaded files from $_FILES
+		 * Get valid files from given array
 		 *
+		 * @param array $paFiles Files to parse
 		 * @return array All valid uploaded files
 		 */
-		public function aGetUploadedFiles () {
-			if (empty($GLOBALS['_FILES']) || !is_array($GLOBALS['_FILES'])) {
+		public function aGetFiles (array $paFiles) {
+			if (empty($paFiles)) {
 				return array();
 			}
 
@@ -79,7 +80,7 @@
 
 			// Get files
 			$aResult = array();
-			foreach ($GLOBALS['_FILES'] as $aData) {
+			foreach ($paFiles as $aData) {
 				$aFiles = $this->aPrepareFiles($aData);
 				foreach ($aFiles as $sKey => $aFile) {
 					// Check if uploaded file is valid
@@ -200,6 +201,43 @@
 			}
 
 			unset($oImageFunc);
+		}
+
+
+		/**
+		 * Get file markers
+		 *
+		 * @param array $paFiles Uploaded files
+		 * @return Array with markers
+		 */
+		public function aGetMarkers (array $paFiles) {
+			$sImageTypes = (!empty($GLOBALS['GFX']['imagefile_ext']) ? $GLOBALS['GFX']['imagefile_ext'] : 'gif,jpg,png');
+			$aImageTypes = t3lib_div::trimExplode(',', $sImageTypes, TRUE);
+			$sImageWrap  = (!empty($this->aConfig['imageWrap']) ? $this->aConfig['imageWrap'] : '<img src="###SRC###" />');
+			$aMarkers    = array();
+
+			foreach ($paFiles as $sKey => $aFile) {
+				$aField = $this->aFields[$sKey];
+
+				// Add file marker
+				$aMarkers[$aField['fileName']] = $aFile['link'];
+
+				// Add image marker
+				if (in_array($aFile['type'], $aImageTypes)) {
+					$sWidth    = (!empty($aFile['width'])  ? $aFile['width']  : '');
+					$sHeight   = (!empty($aFile['height']) ? $aFile['height'] : '');
+					$sTitle    = $aField['imageTitle'];
+					$sAlt      = (empty($aField['imageAlt']) ? $aField['imageTitle'] : $aField['imageAlt']);
+					$sImageTag = str_replace(
+						array('###SRC###', '###HEIGHT###', '###WIDTH###', '###TITLE###', '###ALT###'),
+						array($aFile['link'], $sHeight, $sWidth, $sTitle, $sAlt),
+						$sImageWrap
+					);
+					$aMarkers[$aField['imageName']] = $sImageTag;
+				}
+			}
+
+			return $aMarkers;
 		}
 
 	}

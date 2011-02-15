@@ -66,6 +66,7 @@
 			$this->aUserMarkers = $poParent->aUserMarkers;
 			$this->sEmailChar   = $poParent->sEmailCharset;
 			$this->sFormChar    = $poParent->sFormCharset;
+			$this->aMarkers     = $poParent->aMarkers;
 
 			// Set email type
 			if (!empty($this->aConfig['emailFormat']) && $this->aConfig['emailFormat'] == 'html') {
@@ -76,11 +77,10 @@
 			$this->aAddresses = $this->aGetMailAddresses();
 
 			// Set default markers
-			$this->aMarkers = $this->aGetDefaultMarkers();
+			$this->vAddMarkers($this->aGetDefaultMarkers());
 
 			// Add additional remote user information for spam notifications
-			$aSpamMarkers   = $this->aGetSpamMarkers();
-			$this->aMarkers = $aSpamMarkers + $this->aMarkers;
+			$this->vAddMarkers($this->aGetSpamMarkers());
 
 			// Encode marker array
 			$this->oCS->convArray($this->aMarkers, $this->sFormChar, $this->sEmailChar);
@@ -158,8 +158,6 @@
 		 */
 		protected function aGetDefaultMarkers () {
 			$aMarkers = array();
-			$sName    = '';
-			$sType    = '';
 
 			// Get fields
 			foreach ($this->aFields as $sKey => $aField) {
@@ -171,43 +169,16 @@
 				$aMarkers[$aField['requiredName']] = (!empty($aField['required'])) ? $this->aLL['required'] : '';
 			}
 
-			// Page info
-			if (!empty($GLOBALS['TSFE']->page) && is_array($GLOBALS['TSFE']->page)) {
-				foreach ($GLOBALS['TSFE']->page as $sKey => $sValue) {
-					$aMarkers['PAGE:' . $sKey] = $sValue;
-				}
-			}
-
-			// Plugin info
-			if (!empty($this->oCObj->data) && is_array($this->oCObj->data)) {
-				foreach ($this->oCObj->data as $sKey => $sValue) {
-					$aMarkers['PLUGIN:' . $sKey] = $sValue;
-				}
-			}
-
-			// FE-User info
-			if (!empty($GLOBALS['TSFE']->fe_user->user) && is_array($GLOBALS['TSFE']->fe_user->user)) {
-				$aUserData = $GLOBALS['TSFE']->fe_user->user;
-				foreach ($aUserData as $sKey => $sValue) {
-					$aMarkers['USER:' . $sKey] = $sValue;
-				}
-			}
-
-			// Locallang labels
-			if (is_array($this->aLL)) {
-				foreach ($this->aLL as $sKey => $sValue) {
-					$aMarkers['LLL:' . $sKey] = $sValue;
-				}
-			}
-
-			// User defined markers
-			if (!empty($this->aConfig['markers.']) && is_array($this->aConfig['markers.'])) {
-				foreach ($this->aConfig['markers.'] as $sKey => $sValue) {
-					$aMarkers[strtoupper($sKey)] = $sValue;
-				}
-			}
-
 			return $aMarkers;
+		}
+
+
+		/**
+		 * Merge given markers with global marker array
+		 *
+		 */
+		public function vAddMarkers (array $paMarkers) {
+			$this->aMarkers = $paMarkers + $this->aMarkers;
 		}
 
 
@@ -298,16 +269,6 @@
 			}
 
 			return $aMarkers;
-		}
-
-
-		/**
-		 * Add markers for uploaded files
-		 *
-		 * @param array $paFiles Uploaded files
-		 */
-		public function vAddFileMarkers (array $paFiles) {
-
 		}
 
 

@@ -38,7 +38,7 @@
 		public $modName     = 'tx_spbettercontact_modfunc1';
 		public $extKey      = 'sp_bettercontact';
 		public $LLkey       = 'default';
-		public $sCharset    = 'iso-8859-1';
+		public $sCharset    = '';
 		public $sDateFormat = '';
 		public $thisPath    = '';
 		public $aLL         = array();
