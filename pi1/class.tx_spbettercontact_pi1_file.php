@@ -70,8 +70,7 @@
 			}
 
 			// Get upload dir
-			$sPath = PATH_site . 'uploads/tx_spbettercontact/';
-			if (!file_exists($sPath)) {
+			if (!$sPath = $this->sGetUploadPath('file')) {
 				return array();
 			}
 
@@ -92,18 +91,18 @@
 					$sFileName = $oFileFunc->getUniqueName($aFile['name'], $sPath);
 
 					// Move to upload dir
-					@move_uploaded_file($aFile['tmp_name'], $sFileName);
+					move_uploaded_file($aFile['tmp_name'], $sFileName);
 
 					// Check file again
 					if (is_readable($sFileName)) {
 						$aFileInfo = t3lib_div::split_fileref($sFileName);
-						$sLink     = t3lib_div::locationHeaderUrl(str_replace(PATH_site, '', $sFileName));
+						$sLink     = $this->sGetRelativePath($sFileName);
 						$aResult[$sKey] = array(
 							'path' => $sFileName,
 							'link' => $sLink,
 							'type' => $aFileInfo['fileext'],
 							'name' => $aFileInfo['filebody'],
-							'size' => round((int) @filesize($sFileName) / 1024), // KB
+							'size' => round((int) filesize($sFileName) / 1024), // KB
 						);
 					}
 				}
@@ -112,6 +111,44 @@
 			unset($oFileFunc);
 
 			return $aResult;
+		}
+
+
+		/**
+		 * Find or create upload path for given type
+		 * 
+		 * @param string $psType Type of the folder
+		 * @return string Path to upload folder
+		 */
+		protected function sGetUploadPath ($psType) {
+			$sPath = PATH_site . 'uploads/tx_spbettercontact/';
+
+			// Check configuration
+			$psType = strtolower($psType);
+			if (!empty($psType) && !empty($this->aConfig[$psType . 'Path'])) {
+				$sPath = t3lib_div::getFileAbsFileName($this->aConfig[$psType . 'Path']);
+			}
+
+			// Try to create if not exists
+			if (!file_exists($sPath)) {
+				if (!mkdir($sPath, 0644, TRUE)) {
+					return '';
+				}
+			}
+
+			return rtrim($sPath, '/') . '/';
+		}
+
+
+		/**
+		 * Returns relative path of an absolute one
+		 * 
+		 * @param string $psPath Absolute path
+		 * @return string Relative path
+		 */
+		protected function sGetRelativePath ($psPath) {
+			$psPath = str_replace(PATH_site, '', $psPath);
+			return t3lib_div::locationHeaderUrl($psPath);
 		}
 
 
@@ -148,6 +185,11 @@
 				return;
 			}
 
+			// Get image upload dir
+			if (!$sImagePath = $this->sGetUploadPath('image')) {
+				return;
+			}
+
 			// Get basic image functions
 			$oImageFunc = t3lib_div::makeInstance('t3lib_stdGraphic');
 			$oImageFunc->init();
@@ -169,19 +211,19 @@
 					'minH' => (!empty($aField['imageMinHeight']) ? $aField['imageMinHeight'] : ''),
 				);
 
-				// Convert...
+				// Convert image ...
 				$aFileInfo = $oImageFunc->imageMagickConvert($aFile['path'], $sFileType, '', '', '', '', $aOptions, TRUE);
-				$sFileName = substr($aFile['path'], 0, strrpos($aFile['path'], '.')) . '.' . $aFileInfo[2];
+				$sFileName = $sImagePath . $aFile['name'] . '.' . $aFileInfo[2];
 
 				// Overwrite current file with new one
-				if (empty($aFileInfo[3]) || !(@copy($aFileInfo[3], $sFileName))) {
+				if (empty($aFileInfo[3]) || !copy($aFileInfo[3], $sFileName)) {
 					continue;
 				}
 
 				// Remove temp file
 				unlink($aFileInfo[3]);
 
-				// Remove old image if type has changed
+				// Remove old image if type or folder has changed
 				if ($sFileName != $aFile['path']) {
 					unlink($aFile['path']);
 				}
@@ -190,7 +232,7 @@
 				if (!empty($aFileInfo[2])) {
 					$paFiles[$sKey]['type'] = $aFileInfo[2];
 					$paFiles[$sKey]['path'] = $sFileName;
-					$paFiles[$sKey]['link'] = substr($aFile['link'], 0, strrpos($aFile['link'], '.')) . '.' . $aFileInfo[2];
+					$paFiles[$sKey]['link'] = $this->sGetRelativePath($sFileName);
 				}
 
 				// Add image info

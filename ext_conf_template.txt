@@ -1,2 +1,5 @@
-# cat=basic/enable; type=boolean; label=Enable DB Tab: Enable additional Tab for database configuration in Plugin Flexform.
+# cat=basic/enable/100; type=boolean; label=Enable DB Features: Enable additional Tab and functionallity for database storing of form data.
 enableDBTab = 0
+
+# cat=basic/enable/200; type=boolean; label=Enable File Upload (BETA): Enable additional Tab and functionallity for file uploads.
+enableFileTab = 0

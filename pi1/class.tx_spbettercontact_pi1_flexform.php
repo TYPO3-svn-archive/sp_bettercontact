@@ -38,10 +38,11 @@
 		/**
 		 * Get flexform appropriate server configuration
 		 *
-		 * @param  boolean $pbShowDBTab Enable additional DB tab in Flexform
+		 * @param boolean $pbShowDBTab   Enable additional DB tab in Flexform
+		 * @param boolean $pbShowFileTab Enable additional file upload tab in Flexform
 		 * @return String with flexform content
 		 */
-		public function sGetFlexForm ($pbShowDBTab = FALSE) {
+		public function sGetFlexForm ($pbShowDBTab = FALSE, $pbShowFileTab = FALSE) {
 			// Begin document
 			$oXML = new SimpleXMLElement('<T3DataStructure></T3DataStructure>');
 
@@ -55,6 +56,9 @@
 			$aTabs = array('sDEF','sTEMPLATE','sEMAIL','sSPAM');
 			if ($pbShowDBTab) {
 				$aTabs[] = 'sDB';
+			}
+			if ($pbShowFileTab) {
+				$aTabs[] = 'sFILE';
 			}
 			$aTabs = array_flip($aTabs);
 			foreach($aTabs as $sKey => $sValue) {
@@ -109,6 +113,15 @@
 				$this->vAddCheckBox($aTabs['sDB'], 'database.autoFillExisting', FALSE);
 				$this->vAddText($aTabs['sDB'], 'database.fieldconf', 40, 20, $this->sGetDefaultTS(), 'off');
 				$this->vAddInput($aTabs['sDB'], 'database.uniqueFields', 40);
+			}
+
+			// Add elements to tab "file"
+			if ($pbShowFileTab) {
+				$this->vAddInput($aTabs['sFILE'], 'filePath', 40, '', TRUE, 'folder');
+				$this->vAddInput($aTabs['sFILE'], 'imagePath', 40, '', TRUE, 'folder');
+				$this->vAddInput($aTabs['sFILE'], 'thumbPath', 40, '', TRUE, 'folder');
+				$this->vAddCheckBox($aTabs['sFILE'], 'enableImages', FALSE);
+				$this->vAddCheckBox($aTabs['sFILE'], 'enableThumbnails', FALSE);
 			}
 
 			return $oXML->asXML();

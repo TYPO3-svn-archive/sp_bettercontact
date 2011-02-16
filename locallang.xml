@@ -95,6 +95,12 @@
 			<label index="tt_content.flexform_pi1.database.autoFillExisting">Fill configured fields automatically:</label>
 			<label index="tt_content.flexform_pi1.database.fieldconf">TypoScript field configuration:</label>
 			<label index="tt_content.flexform_pi1.database.uniqueFields">Check content of this fields to be unique in table (separate with ","):</label>
+			<label index="tt_content.flexform_pi1.sFILE">Files</label>
+			<label index="tt_content.flexform_pi1.filePath">File upload path:</label>
+			<label index="tt_content.flexform_pi1.imagePath">Image path:</label>
+			<label index="tt_content.flexform_pi1.thumbPath">Thumbnail path:</label>
+			<label index="tt_content.flexform_pi1.enableImages">Enable image creation:</label>
+			<label index="tt_content.flexform_pi1.enableThumbnails">Enable thumbnail creation:</label>
 		</languageKey>
 		<languageKey index="de" type="array">
 			<label index="pi1_title">Kontaktformular</label>
@@ -186,6 +192,12 @@
 			<label index="tt_content.flexform_pi1.database.autoFillExisting">Konfigurierte Felder automatisch befüllen:</label>
 			<label index="tt_content.flexform_pi1.database.fieldconf">TypoScript Feld-Konfiguration:</label>
 			<label index="tt_content.flexform_pi1.database.uniqueFields">Inhalt dieser Felder auf Einmaligkeit (unique) prüfen (durch "," trennen):</label>
+			<label index="tt_content.flexform_pi1.sFILE">Dateien</label>
+			<label index="tt_content.flexform_pi1.filePath">Dateiupload-Pfad:</label>
+			<label index="tt_content.flexform_pi1.imagePath">Bildpfad:</label>
+			<label index="tt_content.flexform_pi1.thumbPath">Thumbnail-Pfad:</label>
+			<label index="tt_content.flexform_pi1.enableImages">Bilder erzeugen:</label>
+			<label index="tt_content.flexform_pi1.enableThumbnails">Thumbnails erzeugen:</label>
 		</languageKey>
 		<languageKey index="fr" type="array">
 			<label index="pi1_title">Formulaire de Contact</label>
@@ -277,6 +289,12 @@
 			<label index="tt_content.flexform_pi1.database.autoFillExisting">Remplir les champs par configuré automatiquement:</label>
 			<label index="tt_content.flexform_pi1.database.fieldconf">Configuration du champ TypoScript:</label>
 			<label index="tt_content.flexform_pi1.database.uniqueFields">Le contenu de ce test sur le terrain pour l'unicité (séparer par ","):</label>
+			<label index="tt_content.flexform_pi1.sFILE">Fichiers</label>
+			<label index="tt_content.flexform_pi1.filePath">Envoyer le chemin du fichier:</label>
+			<label index="tt_content.flexform_pi1.imagePath">Path Image:</label>
+			<label index="tt_content.flexform_pi1.thumbPath">Chemin Vignette:</label>
+			<label index="tt_content.flexform_pi1.enableImages">Créez des images:</label>
+			<label index="tt_content.flexform_pi1.enableThumbnails">Générer des vignettes:</label>
 		</languageKey>
 	</data>
 </T3locallang>

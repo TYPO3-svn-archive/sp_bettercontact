@@ -300,8 +300,9 @@
 			if (!empty($paDBConf['autoFillExisting'])) {
 				foreach ($this->aFields as $sKey => $aField) {
 					$sDBField = (!empty($aField['dbField']) ? $aField['dbField'] : $sKey);
-					if (!empty($this->aGP[$sKey]) && isset($aColumns[$sDBField])) {
+					if (!empty($this->aGP[$sKey]) && isset($aColumns[$sDBField]) && empty($aField['dbNoAutoAdd'])) {
 						$aNewFields[$sDBField] = $this->aGP[$sKey];
+						// TODO: Files as comma separated list, maybe add files as list to $this->aGP ?
 					}
 				}
 			}
@@ -340,16 +341,28 @@
 
 
 		/**
-		 * Get last error
+		 * Get an array with last error message from db
 		 *
-		 * @return String with last database error
+		 * @return Array with last database error
 		 */
-		public function sGetError () {
-			if ($this->sLastError) {
-				return sprintf($this->aLL['msg_db_failed'], $this->sLastError);
+		public function aGetMessages () {
+			if (empty($this->sLastError)) {
+				return array();
 			}
 
-			return '';
+			return array(
+				'INFO' => sprintf($this->aLL['msg_db_failed'], $this->sLastError),
+			);
+		}
+
+
+		/**
+		 * Get error state
+		 *
+		 * @return TRUE if a db operation results in an error
+		 */
+		public function bHasError() {
+			return !empty($this->sLastError);
 		}
 
 	}

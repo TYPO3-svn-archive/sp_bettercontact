@@ -53,6 +53,12 @@
 			// Parse TypoScript configuration
 			$aResult = $this->aParseTS($paConfig);
 
+			// Merge extension configuration into config array
+			if (isset($GLOBALS['TYPO3_CONF_VARS']['EXT']['extConf']['sp_bettercontact'])) {
+				$aExtConf = unserialize($GLOBALS['TYPO3_CONF_VARS']['EXT']['extConf']['sp_bettercontact']);
+				$aResult  = array_merge($aResult, $aExtConf);
+			}
+
 			// Stop here if no Flexform found
 			if (empty($this->oCObj->data['pi_flexform'])) {
 				return $aResult;
@@ -64,13 +70,6 @@
 				return $aResult;
 			}
 
-			// Check if DB tab is visible in Flexform
-			$bShowDBTab = FALSE;
-			if (isset($GLOBALS['TYPO3_CONF_VARS']['EXT']['extConf']['sp_bettercontact'])) {
-				$aConfig    = unserialize($GLOBALS['TYPO3_CONF_VARS']['EXT']['extConf']['sp_bettercontact']);
-				$bShowDBTab = !empty($aConfig['enableDBTab']);
-			}
-
 			// Override TS with FlexForm values
 			foreach ($mFlex['data'] as $sTab => $aData) {
 				if (empty($aData['lDEF']) && !is_array($aData['lDEF'])) {
@@ -78,7 +77,12 @@
 				}
 
 				// Exclude DB tab if disabled
-				if (!$bShowDBTab && $sTab == 'sDB') {
+				if (empty($aResult['enableDBTab']) && $sTab == 'sDB') {
+					continue;
+				}
+
+				// Exclude file tab if disabled
+				if (empty($aResult['enableFileTab']) && $sTab == 'sFile') {
 					continue;
 				}
 

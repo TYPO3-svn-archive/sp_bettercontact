@@ -66,94 +66,59 @@
 			// Init required attributes and objects
 			$this->vInit($paConf);
 
-			// Call preUserFunc to do something before checks and rendering
-			$this->vCheckUserFunc('preUserFunc');
+			// Call preUserFunc to do something after initialization
+			if ($sContent = $this->sProcessUserFunc('pre')) {
+				return $this->sWrapContent($sContent);
+			}
 
 			// Check configuration
-			if ($sMessage = $this->sCheckConfiguration()) {
-				return $this->pi_wrapInBaseClass($sMessage);
+			if ($sContent = $this->sCheckConfiguration()) {
+				return $this->sWrapContent($sContent);
 			}
 
 			// Stop here if form was not submitted
-			if ((!empty($this->aConfig['postOnly']) && empty($_POST)) || !isset($this->aGP['submit'])) {
-				// Add timestamp to session for elapsed time check
-				$this->oSession->vAddValue('start', $GLOBALS['SIM_EXEC_TIME']);
-				// Clear uploaded files
-				$this->oSession->vAddValue('uploadedFiles', array());
-				$this->aFiles = array();
-				$this->oSession->vSave();
-				return $this->sGetContent();
+			if ($sContent = $this->sProcessSubmit()) {
+				return $this->sWrapContent($sContent);
 			}
 
-			// Call submitUserFunc to do something if form was submitted
-			$this->vCheckUserFunc('submitUserFunc');
-
 			// Check if a bot tries to send spam
-			if ($this->oCheck->bIsSpam($this->oSession->mGetValue('start'))) {
-				$this->vSendWarning('bot');
-				$this->vCheckRedirect('spam');
-				return $this->pi_wrapInBaseClass($this->aLL['msg_not_allowed']);
+			if ($sContent = $this->sProcessSpamCheck()) {
+				return $this->sWrapContent($sContent);
 			}
 
 			// Check if the user has already sent multiple emails
-			if ($this->oSession->bHasAlreadySent()) {
-				$this->vCheckRedirect('exhausted');
-				$this->oTemplate->vAddMarkers($this->oSession->aGetMessages());
-				return $this->sGetContent();
+			if ($sContent = $this->sProcessSendingsCheck()) {
+				return $this->sWrapContent($sContent);
 			}
 
-			// Check uploaded files
-			if ($aFiles = $this->oFile->aGetFiles($_FILES)) {
-				if (!$this->oCheck->bCheckFiles($aFiles)) {
-					$this->oTemplate->vAddMarkers($this->oCheck->aGetMessages());
-					return $this->sGetContent();
-				}
-				// Convert images and add files to global array
-				$this->oFile->vConvertImages($aFiles);
-				$this->aFiles = t3lib_div::array_merge_recursive_overrule($this->aFiles, $aFiles);
-				$this->oSession->vAddValue('uploadedFiles', $this->aFiles);
-				$this->oSession->vSave();
-			}
-
-			// Add file markers to templates
-			if (!empty($this->aFiles)) {
-				$aMarkers = $this->oFile->aGetMarkers($this->aFiles);
-				$this->oTemplate->vAddMarkers($aMarkers);
-				$this->oEmail->vAddMarkers($aMarkers);
+			// Handle file uploads and image creation
+			if ($sContent = $this->sProcessFiles()) {
+				return $this->sWrapContent($sContent);
 			}
 
 			// Check form data
-			if (!$this->oCheck->bCheckFields()) {
-				if (!$this->bIsFormEmpty($this->aGP)) {
-					$this->vSendWarning('user');
-				}
-				$this->oTemplate->vAddMarkers($this->oCheck->aGetMessages());
-				$this->oTemplate->vClearFields($this->oCheck->aGetMaliciousFields());
-				return $this->sGetContent();
+			if ($sContent = $this->sProcessValueCheck()) {
+				return $this->sWrapContent($sContent);
 			}
 
-			// Add new entry in log table and save values into specified table
-			// TODO: Add files to log entries
-			$this->oSession->vAddValue('lastLogRowID', $this->oDB->iLog());
-			$this->oSession->vAddValue('lastRowID', $this->oDB->iSave());
-			if ($sMessage = $this->oDB->sGetError()) {
-				return $this->pi_wrapInBaseClass($sMessage);
+			// Handle DB storing and logging
+			if ($sContent = $this->sProcessDB()) {
+				return $this->sWrapContent($sContent);
 			}
 
 			// Send emails
-			$this->oEmail->vSendMails();
-			$this->oTemplate->vAddMarkers($this->oEmail->aGetMessages());
-			if ($this->oEmail->bHasError()) {
-				$this->vCheckRedirect('error');
-				return $this->sGetContent();
+			if ($sContent = $this->sProcessEmails()) {
+				return $this->sWrapContent($sContent);
 			}
 
 			// Save timestamp into session for multiple mails check
 			$this->oSession->vAddSubmitData();
 			$this->oSession->vSave();
 
-			// Call saveUserFunc to do something before redirect or output
-			$this->vCheckUserFunc('postUserFunc');
+			// Call postUserFunc to do something before redirect or output
+			if ($sContent = $this->sProcessUserFunc('post')) {
+				return $this->sWrapContent($sContent);
+			}
 
 			// Clear all input fields if configured
 			if (!empty($this->aConfig['clearOnSuccess'])) {
@@ -162,7 +127,7 @@
 
 			// Redirect if configured or return content
 			$this->vCheckRedirect('success');
-			return $this->sGetContent();
+			return $this->sWrapContent($this->oTemplate->sGetContent());
 		}
 
 
@@ -176,7 +141,7 @@
 			// Get merged config from TS and Flexform
 			$oTS = $this->oMakeInstance('ts');
 			$this->aConfig = $oTS->aGetConfig($paConf);
-			
+
 			// Set default templates if not configured
 			$this->vSetDefaultTemplates();
 
@@ -201,6 +166,160 @@
 
 			// Load stored files from session
 			$this->aFiles = $this->oSession->mGetValue('uploadedFiles');
+		}
+
+
+		/**
+		 * Handle submit and return empty form if not submitted
+		 *
+		 * @return string Any content to show
+		 */
+		protected function sProcessSubmit () {
+			if ((!empty($this->aConfig['postOnly']) && empty($_POST)) || !isset($this->aGP['submit'])) {
+				// Add timestamp to session for elapsed time check
+				$this->oSession->vAddValue('start', $GLOBALS['SIM_EXEC_TIME']);
+
+				// Clear uploaded files
+				$this->oSession->vAddValue('uploadedFiles', array());
+				$this->aFiles = array();
+				$this->oSession->vSave();
+
+				return $this->oTemplate->sGetContent();
+			}
+
+			return $this->sProcessUserFunc('submit');
+		}
+
+
+		/**
+		 * Check if a bot tries to send spam
+		 *
+		 * @return string Any content to show
+		 */
+		protected function sProcessSpamCheck () {
+			if ($this->oCheck->bIsSpam($this->oSession->mGetValue('start'))) {
+				$this->vSendWarning('bot');
+				$this->vCheckRedirect('spam');
+
+				return $this->aLL['msg_not_allowed'];
+			}
+
+			return $this->sProcessUserFunc('spamCheck');
+		}
+
+
+		/**
+		 * Check if the user has already sent multiple emails
+		 *
+		 * @return string Any content to show
+		 */
+		protected function sProcessSendingsCheck () {
+			if ($this->oSession->bHasAlreadySent()) {
+				$this->vCheckRedirect('exhausted');
+				$this->oTemplate->vAddMarkers($this->oSession->aGetMessages());
+
+				return $this->oTemplate->sGetContent();
+			}
+
+			return $this->sProcessUserFunc('sendingsCheck');
+		}
+
+
+		/**
+		 * Handle file uploads and image creation
+		 *
+		 * @return string Any content to show
+		 */
+		protected function sProcessFiles () {
+			if (!empty($this->aConfig['enableFileTab'])) {
+				// Check uploaded files
+				if ($aFiles = $this->oFile->aGetFiles($_FILES)) {
+					if (!$this->oCheck->bCheckFiles($aFiles)) {
+						$this->oTemplate->vAddMarkers($this->oCheck->aGetMessages());
+
+						return $this->oTemplate->sGetContent();
+					}
+
+					// Convert images and add files to global array
+					$this->oFile->vConvertImages($aFiles);
+					$this->aFiles = t3lib_div::array_merge_recursive_overrule($this->aFiles, $aFiles);
+					$this->oSession->vAddValue('uploadedFiles', $this->aFiles);
+					$this->oSession->vSave();
+				}
+
+				// Add file markers to templates
+				if (!empty($this->aFiles)) {
+					$aMarkers = $this->oFile->aGetMarkers($this->aFiles);
+					$this->oTemplate->vAddMarkers($aMarkers);
+					$this->oEmail->vAddMarkers($aMarkers);
+				}
+			}
+
+			return $this->sProcessUserFunc('fileHandling');
+		}
+
+
+		/**
+		 * Check form values
+		 *
+		 * @return string Any content to show
+		 */
+		protected function sProcessValueCheck () {
+			if (!$this->oCheck->bCheckFields()) {
+				if (!$this->bIsFormEmpty($this->aGP)) {
+					$this->vSendWarning('user');
+				}
+
+				$this->oTemplate->vAddMarkers($this->oCheck->aGetMessages());
+				$this->oTemplate->vClearFields($this->oCheck->aGetMaliciousFields());
+
+				return $this->oTemplate->sGetContent();
+			}
+
+			return $this->sProcessUserFunc('valueCheck');
+		}
+
+
+		/**
+		 * Add new entry in log table and save values into specified table
+		 *
+		 * @return string Any content to show
+		 */
+		protected function sProcessDB () {
+			// Add log entry
+			// TODO: Add files to log entries
+			$this->oSession->vAddValue('lastLogRowID', $this->oDB->iLog());
+
+			// Store form data into user defined table
+			if (!empty($this->aConfig['enableDBTab'])) {
+				$this->oSession->vAddValue('lastRowID', $this->oDB->iSave());
+			}
+
+			if ($this->oDB->bHasError()) {
+				$this->oTemplate->vAddMarkers($this->oCheck->aGetMessages());
+				return $this->oTemplate->sGetContent();
+			}
+
+			return $this->sProcessUserFunc('dbHandling');
+		}
+
+
+		/**
+		 * Handle emailing
+		 *
+		 * @return string Any content to show
+		 */
+		protected function sProcessEmails () {
+			$this->oEmail->vSendMails();
+			$this->oTemplate->vAddMarkers($this->oEmail->aGetMessages());
+
+			if ($this->oEmail->bHasError()) {
+				$this->vCheckRedirect('error');
+
+				return $this->oTemplate->sGetContent();
+			}
+
+			return $this->sProcessUserFunc('emailHandling');
 		}
 
 
@@ -620,16 +739,28 @@
 		/**
 		 * Execute a given userFunc if configured
 		 *
-		 * @param string $psName Name of the userFunc option
+		 * @param string $psName    Name of the userFunc option
+		 * @return string Any result of the userFunc
 		 */
-		protected function vCheckUserFunc ($psName) {
-			if (!is_string($psName) || !strlen($psName) || empty($this->aConfig[$psName])) {
-				return;
+		protected function sProcessUserFunc ($psName) {
+			if (empty($psName)) {
+				return '';
+			}
+
+			$psName .= 'UserFunc';
+			if (empty($this->aConfig[$psName])) {
+				return '';
 			}
 
 			$aConfig = (!empty($this->aConfig[$psName . '.'])) ? $this->aConfig[$psName . '.'] : array();
+			$aConfig['parentObj'] = &$this;
 
-			t3lib_div::callUserFunction($this->aConfig[$psName], $aConfig, $this, '');
+			$mContent = $this->cObj->callUserFunction($this->aConfig[$psName], $aConfig, '');
+			if (!empty($mContent) && is_string($mContent)) {
+				return $mContent;
+			}
+
+			return '';
 		}
 
 
@@ -654,12 +785,11 @@
 		/**
 		 * Get content
 		 *
-		 * @return Whole content
+		 * @param string $psContent Content to wrap
+		 * @return Wrapped content
 		 */
-		protected function sGetContent () {
-			$sContent = $this->oTemplate->sGetContent();
-
-			return $this->pi_wrapInBaseClass($sContent);
+		protected function sWrapContent ($psContent) {
+			return $this->pi_wrapInBaseClass($psContent);
 		}
 
 	}

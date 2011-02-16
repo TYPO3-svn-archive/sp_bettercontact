@@ -30,22 +30,28 @@
 	if (TYPO3_MODE == 'BE') {
 
 		// Check if DB tab is visible in Flexform
-		$bShowDBTab = FALSE;
+		$bShowDBTab   = FALSE;
+		$bShowFileTab = FALSE;
 		if (isset($GLOBALS['TYPO3_CONF_VARS']['EXT']['extConf']['sp_bettercontact'])) {
-			$aConfig    = unserialize($GLOBALS['TYPO3_CONF_VARS']['EXT']['extConf']['sp_bettercontact']);
-			$bShowDBTab = !empty($aConfig['enableDBTab']);
+			$aExtConf     = unserialize($GLOBALS['TYPO3_CONF_VARS']['EXT']['extConf']['sp_bettercontact']);
+			$bShowDBTab   = !empty($aExtConf['enableDBTab']);
+			$bShowFileTab = !empty($aExtConf['enableFileTab']);
 		}
 
 		// Check for required SimpleXML and get flexform
 		if (class_exists('SimpleXMLElement')) {
 			t3lib_div::requireOnce(t3lib_extMgm::extPath('sp_bettercontact') . 'pi1/class.tx_spbettercontact_pi1_flexform.php');
 			$oFlexForm = t3lib_div::makeInstance('tx_spbettercontact_pi1_flexform');
-			$sFlexData = $oFlexForm->sGetFlexForm($bShowDBTab);
+			$sFlexData = $oFlexForm->sGetFlexForm($bShowDBTab, $bShowFileTab);
 			unset($oFlexForm);
-		} else if ($bShowDBTab) {
+		} else if ($bShowDBTab && $bShowFileTab) {
 			$sFlexData = 'FILE:EXT:sp_bettercontact/res/fallback/flexform.xml';
-		} else {
+		} else if ($bShowDBTab) {
+			$sFlexData = 'FILE:EXT:sp_bettercontact/res/fallback/flexform_no_file.xml';
+		} else if ($bShowFileTab) {
 			$sFlexData = 'FILE:EXT:sp_bettercontact/res/fallback/flexform_no_db.xml';
+		} else {
+			$sFlexData = 'FILE:EXT:sp_bettercontact/res/fallback/flexform_no_additional.xml';
 		}
 
 		// Get plugin data
