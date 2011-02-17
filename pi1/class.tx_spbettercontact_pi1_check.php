@@ -46,12 +46,12 @@
 		 * @param object $poParent Instance of the parent object
 		 */
 		public function __construct ($poParent) {
-			$this->aConfig    = $poParent->aConfig;
-			$this->aFields    = $poParent->aFields;
-			$this->aLL        = $poParent->aLL;
-			$this->aGP        = $poParent->aGP;
-			$this->oCS        = $poParent->oCS;
-			$this->sBECharset = $poParent->sBECharset;
+			$this->aConfig    = &$poParent->aConfig;
+			$this->aFields    = &$poParent->aFields;
+			$this->aLL        = &$poParent->aLL;
+			$this->aGP        = &$poParent->aGP;
+			$this->oCS        = &$poParent->oCS;
+			$this->sBECharset = &$poParent->sBECharset;
 		}
 
 
@@ -96,7 +96,7 @@
 		 */
 		public function bCheckFields () {
 			// Return if no data was sent
-			if (empty($this->aGP) || empty($this->aFields) || !is_array($this->aGP)|| !is_array($this->aFields)) {
+			if (empty($this->aFields) || !is_array($this->aFields)) {
 				return TRUE;
 			}
 

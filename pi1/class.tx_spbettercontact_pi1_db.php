@@ -47,12 +47,12 @@
 		 * @param object $poParent Instance of the parent object
 		 */
 		public function __construct ($poParent) {
-			$this->aConfig   = $poParent->aConfig;
-			$this->aFields   = $poParent->aFields;
-			$this->aGP       = $poParent->aGP;
-			$this->aLL       = $poParent->aLL;
-			$this->oCS       = $poParent->oCS;
-			$this->sFormChar = $poParent->sFormCharset;
+			$this->aConfig   = &$poParent->aConfig;
+			$this->aFields   = &$poParent->aFields;
+			$this->aGP       = &$poParent->aGP;
+			$this->aLL       = &$poParent->aLL;
+			$this->oCS       = &$poParent->oCS;
+			$this->sFormChar = &$poParent->sFormCharset;
 		}
 
 
@@ -99,7 +99,7 @@
 				return $GLOBALS['TYPO3_DB']->sql_insert_id();
 			}
 
-			$this->sLastError = $GLOBALS['TYPO3_DB']->sql_error();
+			$this->sLastError = sprintf($this->aLL['msg_db_failed'], $GLOBALS['TYPO3_DB']->sql_error());
 			return 0;
 		}
 
@@ -110,16 +110,13 @@
 		 * @return Integer with ID of last inserted row
 		 */
 		public function iSave () {
-			if (empty($this->aConfig['database.']['table'])
-			 || empty($this->aConfig['database.']['fieldconf.'])
-			 || !is_array($this->aConfig['database.']['fieldconf.'])
-			) {
+			if (empty($this->aConfig['database.']['table'])) {
 				return 0;
 			}
 
 			$aDBConf    = $this->aConfig['database.'];
-			$aFields    = $this->aConfig['database.']['fieldconf.'];
-			$sIDField   = (!empty($aDBConf['idField']) ? $aDBConf['idField'] : 'uid');
+			$aFields    = (!empty($aDBConf['fieldconf.']) ? $aDBConf['fieldconf.'] : array());
+			$sIDField   = (!empty($aDBConf['idField'])    ? $aDBConf['idField']    : 'uid');
 			$aTableConf = array();
 
 			// Check for external database first
@@ -149,8 +146,8 @@
 			// Check for unique fields
 			$sUniqueWhere = $this->sGetUniqueWhere();
 			if (!empty($sUniqueWhere)) {
-				if ($GLOBALS['TYPO3_DB']->exec_SELECTcountRows($sIDField, $aDBConf['table'], $sUniqueWhere)) {
-					$this->sLastError = 'Duplicate entry found in table!';
+				if ($GLOBALS['TYPO3_DB']->exec_SELECTcountRows('1', $aDBConf['table'], $sUniqueWhere)) {
+					$this->sLastError = $this->aLL['msg_db_not_unique'];
 					return 0;
 				}
 			}
@@ -160,7 +157,7 @@
 				return (int) $GLOBALS['TYPO3_DB']->sql_insert_id();
 			}
 
-			$this->sLastError = $GLOBALS['TYPO3_DB']->sql_error();
+			$this->sLastError = sprintf($this->aLL['msg_db_failed'], $GLOBALS['TYPO3_DB']->sql_error());
 			return 0;
 		}
 
@@ -227,7 +224,7 @@
 				$sSelect = 'SELECT COUNT(' . $psIDField . ') FROM ' . $paDBConf['table'] . ' WHERE ' . $sUniqueWhere . ' LIMIT 1';
 				$oResult = $oDB->Execute($sSelect);
 				if ($oResult->RowCount()) {
-					$this->sLastError = 'Duplicate entry found in table!';
+					$this->sLastError = $this->aLL['msg_db_not_unique'];
 					$iReturn = 0;
 				}
 			}
@@ -239,7 +236,7 @@
 
 			// Check result
 			if (!$iReturn) {
-				$this->sLastError = $oDB->ErrorMsg();
+				$this->sLastError = sprintf($this->aLL['msg_db_failed'], $oDB->ErrorMsg());
 			}
 
 			// Close db connection and revert global quoting variable
@@ -258,7 +255,7 @@
 		 * @return Array with new field configuration
 		 */
 		protected function aAddAutoFields (array $paFields, array $paDBConf) {
-			if (empty($paFields) || empty($paDBConf['table'])) {
+			if (empty($paDBConf['table'])) {
 				return $paFields;
 			}
 
@@ -300,14 +297,14 @@
 			if (!empty($paDBConf['autoFillExisting'])) {
 				foreach ($this->aFields as $sKey => $aField) {
 					$sDBField = (!empty($aField['dbField']) ? $aField['dbField'] : $sKey);
-					if (!empty($this->aGP[$sKey]) && isset($aColumns[$sDBField]) && empty($aField['dbNoAutoAdd'])) {
-						$aNewFields[$sDBField] = $this->aGP[$sKey];
-						// TODO: Files as comma separated list, maybe add files as list to $this->aGP ?
+					if (!empty($aField['value']) && isset($aColumns[$sDBField]) && empty($aField['dbNoAutofill'])) {
+						$aNewFields[$sDBField] = $aField['value'];
 					}
 				}
 			}
 
-			return $paFields + $aNewFields; // Do not overwrite manually configured fields
+			// Do not overwrite manually configured fields
+			return $paFields + $aNewFields;
 		}
 
 
@@ -326,13 +323,14 @@
 			$aFields = t3lib_div::trimExplode(',', $this->aConfig['database.']['uniqueFields'], TRUE);
 
 			foreach ($aFields as $sFieldName) {
-				if (!empty($aFields[$sFieldName])) {
+				if (!empty($this->aFields[$sFieldName]['value'])) {
+					$sValue = $this->aFields[$sFieldName]['value'];
 					if (empty($poDB)) {
-						$sValue = $GLOBALS['TYPO3_DB']->fullQuoteStr($aFields[$sFieldName], $this->aConfig['database.']['table']);
+						$sValue = $GLOBALS['TYPO3_DB']->fullQuoteStr($sValue, $this->aConfig['database.']['table']);
 					} else {
-						$sValue = $poDB->qstr($aFields[$sFieldName]);
+						$sValue = $poDB->qstr($sValue);
 					}
-					$aWhere[] = $sFieldName . ' = "' . $sValue . '"';
+					$aWhere[] = $sFieldName . ' = ' . $sValue;
 				}
 			}
 
@@ -350,8 +348,13 @@
 				return array();
 			}
 
+			// TODO: Allow mutliple messages if more then one field is not unique
+			// TODO: Show error message beside field in frontend if value is not unique
+
+			$sWrapNegative = (!empty($this->aConfig['infoWrapNegative']) ? $this->aConfig['infoWrapNegative'] : '|');
+
 			return array(
-				'INFO' => sprintf($this->aLL['msg_db_failed'], $this->sLastError),
+				'INFO' => str_replace('|', $this->sLastError, $sWrapNegative),
 			);
 		}
 

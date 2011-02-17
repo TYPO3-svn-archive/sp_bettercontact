@@ -59,6 +59,7 @@
 			<label index="msg_check_passed"></label>
 			<label index="msg_check_failed">A problem has occurred, your input contains errors.</label>
 			<label index="msg_db_failed">A database problem has occurred: "%s"</label>
+			<label index="msg_db_not_unique">Duplicate entry found in table!</label>
 			<label index="msg_not_allowed">This process is not allowed!</label>
 			<label index="msg_already_sent">You have already sent %d messages. Please wait %d minute(s).</label>
 			<label index="msg_captcha">Please enter the sequence of characters shown in the captcha image.</label>
@@ -166,6 +167,7 @@
 			<label index="msg_check_passed"></label>
 			<label index="msg_check_failed">Bei den Formulareingaben ist ein Problem aufgetreten.</label>
 			<label index="msg_db_failed">Es ist ein Datenbank-Problem aufgetreten: "%s"</label>
+			<label index="msg_db_not_unique">Doppelter Eintrag in Tabelle gefunden!</label>
 			<label index="msg_not_allowed">Dieser Prozess ist nicht erlaubt!</label>
 			<label index="msg_already_sent">Sie haben bereits %d Nachrichten versandt. Bitte warten Sie %d Minute(n).</label>
 			<label index="msg_captcha">Bitte übertragen Sie die Zeichen des Captcha-Bildes in das Textfeld.</label>
@@ -273,6 +275,7 @@
 			<label index="msg_check_passed"></label>
 			<label index="msg_check_failed">Lomaketta täytettäessä tuli ongelmia.</label>
 			<label index="msg_db_failed">Tietokantaongelma: "%s"</label>
+			<label index="msg_db_not_unique">Translate: Duplicate entry found in table!</label>
 			<label index="msg_not_allowed">Tämä prosessi ei ole sallittu!</label>
 			<label index="msg_already_sent">Lähetit jo %d viestin/viestiä. Ole hyvä ja odota %d minuutti(a).</label>
 			<label index="msg_captcha">Ole hyvä ja kirjoita kuvavarmennuksessa olevat merkit tekstikenttään.</label>
@@ -380,6 +383,7 @@
 			<label index="msg_check_passed"></label>
 			<label index="msg_check_failed">Une erreur est survenue, les données que vous avez saisies comportent des erreurs.</label>
 			<label index="msg_db_failed">L'erreur suivante est survenue en base de données: "%s"</label>
+			<label index="msg_db_not_unique">Translate: Duplicate entry found in table!</label>
 			<label index="msg_not_allowed">Cette procédure n'est pas autorisée!</label>
 			<label index="msg_already_sent">Vous avez déjà envoyé %d messages. Veuillez à présent patienter pendant %d minute(s).</label>
 			<label index="msg_captcha">Veuillez saisir la séquence de caractères affichée sur l'image.</label>

@@ -49,16 +49,16 @@
 		 * @param object $poParent Instance of the parent object
 		 */
 		public function __construct ($poParent) {
-			$this->oCObj        = $poParent->cObj;
-			$this->aLL          = $poParent->aLL;
-			$this->aConfig      = $poParent->aConfig;
-			$this->aFields      = $poParent->aFields;
-			$this->aGP          = $poParent->aGP;
-			$this->sExtKey      = $poParent->extKey;
-			$this->iPluginId    = $poParent->iPluginId;
-			$this->sFormChar    = $poParent->sFormCharset;
-			$this->sFieldPrefix = $poParent->sFieldPrefix;
-			$this->aMarkers     = $poParent->aMarkers;
+			$this->oCObj        = &$poParent->cObj;
+			$this->aLL          = &$poParent->aLL;
+			$this->aConfig      = &$poParent->aConfig;
+			$this->aFields      = &$poParent->aFields;
+			$this->aGP          = &$poParent->aGP;
+			$this->sExtKey      = &$poParent->extKey;
+			$this->iPluginId    = &$poParent->iPluginId;
+			$this->sFormChar    = &$poParent->sFormCharset;
+			$this->sFieldPrefix = &$poParent->sFieldPrefix;
+			$this->aMarkers     = &$poParent->aMarkers;
 
 			// Set default markers
 			$this->vAddMarkers($this->aGetDefaultMarkers());

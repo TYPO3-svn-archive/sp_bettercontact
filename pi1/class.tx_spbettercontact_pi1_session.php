@@ -48,12 +48,12 @@
 		 * @param object $poParent Instance of the parent object
 		 */
 		public function __construct ($poParent) {
-			$this->aConfig   = $poParent->aConfig;
-			$this->aFields   = $poParent->aFields;
-			$this->aGP       = $poParent->aGP;
-			$this->aLL       = $poParent->aLL;
-			$this->sExtKey   = $poParent->extKey;
-			$this->iPluginID = $poParent->cObj->data['uid'];
+			$this->aConfig   = &$poParent->aConfig;
+			$this->aFields   = &$poParent->aFields;
+			$this->aGP       = &$poParent->aGP;
+			$this->aLL       = &$poParent->aLL;
+			$this->sExtKey   = &$poParent->extKey;
+			$this->iPluginID = &$poParent->cObj->data['uid'];
 
 			// Load session content
 			$this->aSessionContent = $this->aLoad();

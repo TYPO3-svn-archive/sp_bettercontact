@@ -40,7 +40,7 @@
 		 * @param object $poParent Instance of the parent object
 		 */
 		public function __construct ($poParent) {
-			$this->oCObj = $poParent->cObj;
+			$this->oCObj = &$poParent->cObj;
 		}
 
 
@@ -138,7 +138,7 @@
 
 		/**
 		 * Parse TypoScript configuration from a FlexForm field
-		 * 
+		 *
 		 * This method finds include lines at any level of the
 		 * configuration and merges them with the other setup.
 		 *

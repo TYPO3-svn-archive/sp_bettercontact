@@ -111,7 +111,7 @@
 				$this->vAddInput($aTabs['sDB'], 'database.table', 40);
 				$this->vAddCheckBox($aTabs['sDB'], 'database.autoFillDefault', FALSE);
 				$this->vAddCheckBox($aTabs['sDB'], 'database.autoFillExisting', FALSE);
-				$this->vAddText($aTabs['sDB'], 'database.fieldconf', 40, 20, $this->sGetDefaultTS(), 'off');
+				$this->vAddText($aTabs['sDB'], 'database.fieldconf', 40, 20, '', 'off');
 				$this->vAddInput($aTabs['sDB'], 'database.uniqueFields', 40);
 			}
 
@@ -119,7 +119,6 @@
 			if ($pbShowFileTab) {
 				$this->vAddInput($aTabs['sFILE'], 'filePath', 40, '', TRUE, 'folder');
 				$this->vAddInput($aTabs['sFILE'], 'imagePath', 40, '', TRUE, 'folder');
-				$this->vAddInput($aTabs['sFILE'], 'thumbPath', 40, '', TRUE, 'folder');
 				$this->vAddCheckBox($aTabs['sFILE'], 'enableImages', FALSE);
 				$this->vAddCheckBox($aTabs['sFILE'], 'enableThumbnails', FALSE);
 			}
@@ -261,40 +260,6 @@
 			$oConfig->addChild('rows', $piHeight);
 			$oConfig->addChild('default', $psDefault);
 			$oConfig->addChild('wrap', $psWrap);
-		}
-
-
-		/**
-		 * Get default TypoScript configuration for fieldconf
-		 *
-		 * @return String with configuration
-		 */
-		protected function sGetDefaultTS () {
-			$sDefaultTS = <<< END
-### Demo configuration (see manual for details) ###
-
-# Add current page id as pid of the new dataset
-# pid = TEXT
-# pid.data = TSFE : id
-
-# Add creation date automatically
-# crdate = TEXT
-# crdate.data = date : U
-
-# Set default values for some fields
-# hidden  = 0
-# deleted = 0
-
-# Save submitted name in field "name"
-# name = TEXT
-# name.data = GPvar : tx_spbettercontact_pi1-123|name
-
-# Include external TypoScript configuration
-# <INCLUDE_TYPOSCRIPT: source="FILE:fileadmin/my_setup.txt">
-
-END;
-
-			return $sDefaultTS;
 		}
 
 	}

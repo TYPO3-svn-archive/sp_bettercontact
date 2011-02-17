@@ -58,16 +58,13 @@
 		/**
 		 * The main method of the PlugIn
 		 *
-		 * @param  string $content The PlugIn content
-		 * @param  array  $conf    The PlugIn configuration
+		 * @param  string $psContent The PlugIn content
+		 * @param  array  $paConf    The PlugIn configuration
 		 * @return The content that is displayed on the website
 		 */
 		public function main ($psContent, array $paConf) {
 			// Init required attributes and objects
-			$this->vInit($paConf);
-
-			// Call preUserFunc to do something after initialization
-			if ($sContent = $this->sProcessUserFunc('pre')) {
+			if ($sContent = $this->sInit($paConf)) {
 				return $this->sWrapContent($sContent);
 			}
 
@@ -111,31 +108,21 @@
 				return $this->sWrapContent($sContent);
 			}
 
-			// Save timestamp into session for multiple mails check
-			$this->oSession->vAddSubmitData();
-			$this->oSession->vSave();
-
-			// Call postUserFunc to do something before redirect or output
-			if ($sContent = $this->sProcessUserFunc('post')) {
+			// Finalize request and return main content
+			if ($sContent = $this->sFinalize()) {
 				return $this->sWrapContent($sContent);
 			}
 
-			// Clear all input fields if configured
-			if (!empty($this->aConfig['clearOnSuccess'])) {
-				$this->oTemplate->vClearFields($this->aFields);
-			}
-
-			// Redirect if configured or return content
-			$this->vCheckRedirect('success');
-			return $this->sWrapContent($this->oTemplate->sGetContent());
+			return $psContent;
 		}
 
 
 		/**
 		 * Init required attributes and objects
 		 *
+		 * @return string Any content to show
 		 */
-		protected function vInit (array $paConf) {
+		protected function sInit (array $paConf) {
 			$this->pi_USER_INT_obj = 1;
 
 			// Get merged config from TS and Flexform
@@ -166,6 +153,8 @@
 
 			// Load stored files from session
 			$this->aFiles = $this->oSession->mGetValue('uploadedFiles');
+
+			return $this->sProcessUserFunc('init');
 		}
 
 
@@ -231,27 +220,36 @@
 		 * @return string Any content to show
 		 */
 		protected function sProcessFiles () {
-			if (!empty($this->aConfig['enableFileTab'])) {
-				// Check uploaded files
-				if ($aFiles = $this->oFile->aGetFiles($_FILES)) {
-					if (!$this->oCheck->bCheckFiles($aFiles)) {
-						$this->oTemplate->vAddMarkers($this->oCheck->aGetMessages());
+			if (empty($this->aConfig['enableFileTab'])) {
+				return '';
+			}
 
-						return $this->oTemplate->sGetContent();
-					}
+			// Check uploaded files
+			if ($aFiles = $this->oFile->aGetFiles($_FILES)) {
+				if (!$this->oCheck->bCheckFiles($aFiles)) {
+					$this->oTemplate->vAddMarkers($this->oCheck->aGetMessages());
 
-					// Convert images and add files to global array
-					$this->oFile->vConvertImages($aFiles);
-					$this->aFiles = t3lib_div::array_merge_recursive_overrule($this->aFiles, $aFiles);
-					$this->oSession->vAddValue('uploadedFiles', $this->aFiles);
-					$this->oSession->vSave();
+					return $this->oTemplate->sGetContent();
 				}
 
-				// Add file markers to templates
-				if (!empty($this->aFiles)) {
-					$aMarkers = $this->oFile->aGetMarkers($this->aFiles);
-					$this->oTemplate->vAddMarkers($aMarkers);
-					$this->oEmail->vAddMarkers($aMarkers);
+				// Convert images and add files to global array
+				$this->oFile->vConvertImages($aFiles);
+				$this->aFiles = t3lib_div::array_merge_recursive_overrule($this->aFiles, $aFiles);
+				$this->oSession->vAddValue('uploadedFiles', $this->aFiles);
+				$this->oSession->vSave();
+			}
+
+			// Add file markers to templates
+			if (!empty($this->aFiles)) {
+				$aMarkers = $this->oFile->aGetMarkers($this->aFiles);
+				$this->oTemplate->vAddMarkers($aMarkers);
+				$this->oEmail->vAddMarkers($aMarkers);
+
+				// Set file as field value
+				foreach ($this->aFiles as $sKey => $aFile) {
+					if (!empty($this->aFields[$sKey])) {
+						$this->aFields[$sKey]['value'] = $aFile['path'];
+					}
 				}
 			}
 
@@ -296,7 +294,7 @@
 			}
 
 			if ($this->oDB->bHasError()) {
-				$this->oTemplate->vAddMarkers($this->oCheck->aGetMessages());
+				$this->oTemplate->vAddMarkers($this->oDB->aGetMessages());
 				return $this->oTemplate->sGetContent();
 			}
 
@@ -320,6 +318,33 @@
 			}
 
 			return $this->sProcessUserFunc('emailHandling');
+		}
+
+
+		/**
+		 * Save values, clear fields, check redirect
+		 *
+		 * @return string Any content to show
+		 */
+		protected function sFinalize () {
+			// Save timestamp into session for multiple mails check
+			$this->oSession->vAddSubmitData();
+			$this->oSession->vSave();
+
+			// Clear all input fields if configured
+			if (!empty($this->aConfig['clearOnSuccess'])) {
+				$this->oTemplate->vClearFields($this->aFields);
+			}
+
+			// Call finalizeUserFunc to do something before redirect or final output
+			if ($sContent = $this->sProcessUserFunc('finalize')) {
+				return $sContent;
+			}
+
+			// Redirect if configured
+			$this->vCheckRedirect('success');
+
+			return $this->oTemplate->sGetContent();
 		}
 
 
@@ -570,6 +595,8 @@
 					'imageConvertTo' => (isset($aField['imageConvertTo'])) ? $aField['imageConvertTo'] : '',
 					'imageTitle'     => (isset($aField['imageTitle']))     ? $aField['imageTitle']     : '',
 					'imageAlt'       => (isset($aField['imageAlt']))       ? $aField['imageAlt']       : '',
+					'dbField'        => (isset($aField['dbField']))        ? $aField['dbField']        : '',
+					'dbNoAutofill'   => (isset($aField['dbNoAutofill']))   ? $aField['dbNoAutofill']   : 0,
 					'label'          => (isset($this->aLL[$sName]))        ? $this->aLL[$sName]        : ucfirst($sName),
 					'value'          => $sValue,
 				);
@@ -747,15 +774,14 @@
 				return '';
 			}
 
-			$psName .= 'UserFunc';
-			if (empty($this->aConfig[$psName])) {
+			if (empty($this->aConfig['userFunc.'][$psName])) {
 				return '';
 			}
 
-			$aConfig = (!empty($this->aConfig[$psName . '.'])) ? $this->aConfig[$psName . '.'] : array();
+			$aConfig = (!empty($this->aConfig['userFunc.'][$psName . '.'])) ? $this->aConfig['userFunc.'][$psName . '.'] : array();
 			$aConfig['parentObj'] = &$this;
 
-			$mContent = $this->cObj->callUserFunction($this->aConfig[$psName], $aConfig, '');
+			$mContent = $this->cObj->callUserFunction($this->aConfig['userFunc.'][$psName], $aConfig, '');
 			if (!empty($mContent) && is_string($mContent)) {
 				return $mContent;
 			}

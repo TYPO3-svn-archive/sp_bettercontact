@@ -62,15 +62,22 @@ plugin.tx_spbettercontact_pi1 {
 	imageWrap              = <img src="###SRC###" height="###HEIGHT###" width="###WIDTH###" title="###TITLE###" alt="###ALT###" />
 	thumbWrap              = <img src="###SRC###" height="###HEIGHT###" width="###WIDTH###" title="###TITLE###" alt="###ALT###" />
 
-	# preUserFunc          = (?) Define a userFunc which will be called before checks and rendering
-	# submitUserFunc       = (?) Define a userFunc which will be called if form was submitted
-	# spamCheck            = (?) Define a userFunc which will be called after bot spam check
-	# sendingsCheck        = (?) Define a userFunc which will be called after multiple sendings check
-	# fileHandling         = (?) Define a userFunc which will be called after saving files and image creation
-	# valueCheck           = (?) Define a userFunc which will be called after form values check
-	# dbHandling           = (?) Define a userFunc which will be called after storing form values into DB and logging
-	# emailHandling        = (?) Define a userFunc which will be called after sending emails
-	# postUserFunc         = (?) Define a userFunc which will be called before redirect and output
+
+
+	# ====================================================================
+	# Hooks to extend default functionallity
+	# ====================================================================
+	userFunc {
+		# init               = (?) Will be called before checks and rendering
+		# submit             = (?) Will be called if form was submitted
+		# spamCheck          = (?) Will be called after bot spam check
+		# sendingsCheck      = (?) Will be called after multiple sendings check
+		# fileHandling       = (?) Will be called after saving files and image creation
+		# valueCheck         = (?) Will be called after form values check
+		# dbHandling         = (?) Will be called after storing form values into DB and logging
+		# emailHandling      = (?) Will be called after sending emails
+		# finalize           = (?) Will be called before redirect and output
+	}
 
 
 
@@ -87,7 +94,7 @@ plugin.tx_spbettercontact_pi1 {
 			allowed        =
 			default        =
 			dbField        =
-			dbNoAutoAdd    =
+			dbNoAutofill   =
 		}
 
 		tel {
@@ -99,7 +106,7 @@ plugin.tx_spbettercontact_pi1 {
 			allowed        = 0123456789()/+-
 			default        =
 			dbField        =
-			dbNoAutoAdd    =
+			dbNoAutofill   =
 		}
 
 		fax {
@@ -111,7 +118,7 @@ plugin.tx_spbettercontact_pi1 {
 			allowed        = 0123456789()/+-
 			default        =
 			dbField        =
-			dbNoAutoAdd    =
+			dbNoAutofill   =
 		}
 
 		street {
@@ -123,7 +130,7 @@ plugin.tx_spbettercontact_pi1 {
 			allowed        =
 			default        =
 			dbField        =
-			dbNoAutoAdd    =
+			dbNoAutofill   =
 		}
 
 		city {
@@ -135,7 +142,7 @@ plugin.tx_spbettercontact_pi1 {
 			allowed        =
 			default        =
 			dbField        =
-			dbNoAutoAdd    =
+			dbNoAutofill   =
 		}
 
 		## Required email field (!)
@@ -148,7 +155,7 @@ plugin.tx_spbettercontact_pi1 {
 			allowed        =
 			default        =
 			dbField        =
-			dbNoAutoAdd    =
+			dbNoAutofill   =
 		}
 
 		message {
@@ -160,24 +167,24 @@ plugin.tx_spbettercontact_pi1 {
 			allowed        =
 			default        =
 			dbField        =
-			dbNoAutoAdd    =
+			dbNoAutofill   =
 		}
 
 		picture {
 			required       = 0
-			dbField        =
-			dbNoAutoAdd    =
+			dbField        = image
+			dbNoAutofill   =
 
 			fileMaxSize    = 1024
 			fileMinSize    =
 			fileAllowed    = gif,jpg,jpeg,tif,tiff,bmp,pcx,tga,png
 			fileDisallowed =
 
-			imageMaxWidth  = 120m
+			imageMaxWidth  =
 			imageMaxHeight =
 			imageMinWidth  =
 			imageMinHeight =
-			imageConvertTo = png
+			imageConvertTo =
 			imageTitle     =
 			imageAlt       =
 
@@ -198,7 +205,7 @@ plugin.tx_spbettercontact_pi1 {
 			allowed        =
 			default        =
 			dbField        =
-			dbNoAutoAdd    =
+			dbNoAutofill   =
 		}
 	}
 

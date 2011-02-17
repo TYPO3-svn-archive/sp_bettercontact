@@ -748,26 +748,7 @@
 							<config>
 								<type>text</type>
 								<wrap>off</wrap>
-								<default><![CDATA[### Demo configuration (see manual for details) ###
-
-# Add current page id as pid of the new dataset
-# pid = TEXT
-# pid.data = TSFE : id
-
-# Add creation date automatically
-# crdate = TEXT
-# crdate.data = date : U
-
-# Set default values for some fields
-# hidden  = 0
-# deleted = 0
-
-# Save submitted name in field "name"
-# name = TEXT
-# name.data = GPvar : tx_spbettercontact_pi1-9|name
-
-# Include external TypoScript configuration
-# <INCLUDE_TYPOSCRIPT: source="FILE:fileadmin/my_setup.txt">]]></default>
+								<default></default>
 								<cols>40</cols>
 								<rows>10</rows>
 							</config>
@@ -847,32 +828,6 @@
 							</config>
 						</TCEforms>
 					</imagePath>
-					<thumbPath>
-						<TCEforms>
-							<exclude>1</exclude>
-							<label>LLL:EXT:sp_bettercontact/locallang.php:tt_content.flexform_pi1.thumbPath</label>
-							<config>
-								<type>input</type>
-								<size>40</size>
-								<eval>trim</eval>
-								<default></default>
-								<wizards type="array">
-									<_PADDING>2</_PADDING>
-									<link type="array">
-										<type>popup</type>
-										<title>Link</title>
-										<icon>link_popup.gif</icon>
-										<script>browse_links.php?mode=wizard&amp;act=folder</script>
-										<params type="array">
-											<blindLinkOptions>mail,page,spec,url,file</blindLinkOptions>
-											<allowedExtensions></allowedExtensions>
-										</params>
-										<JSopenParams>height=300,width=500,status=0,menubar=0,scrollbars=1</JSopenParams>
-									</link>
-								</wizards>
-							</config>
-						</TCEforms>
-					</thumbPath>
 					<enableImages>
 						<TCEforms>
 							<exclude>1</exclude>

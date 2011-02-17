@@ -57,16 +57,15 @@
 		 * @param object $poParent Instance of the parent object
 		 */
 		public function __construct ($poParent) {
-			$this->oCObj        = $poParent->cObj;
-			$this->oCS          = $poParent->oCS;
-			$this->aConfig      = $poParent->aConfig;
-			$this->aFields      = $poParent->aFields;
-			$this->aLL          = $poParent->aLL;
-			$this->aGP          = $poParent->aGP;
-			$this->aUserMarkers = $poParent->aUserMarkers;
-			$this->sEmailChar   = $poParent->sEmailCharset;
-			$this->sFormChar    = $poParent->sFormCharset;
-			$this->aMarkers     = $poParent->aMarkers;
+			$this->oCObj        = &$poParent->cObj;
+			$this->oCS          = &$poParent->oCS;
+			$this->aConfig      = &$poParent->aConfig;
+			$this->aFields      = &$poParent->aFields;
+			$this->aLL          = &$poParent->aLL;
+			$this->aGP          = &$poParent->aGP;
+			$this->sEmailChar   = &$poParent->sEmailCharset;
+			$this->sFormChar    = &$poParent->sFormCharset;
+			$this->aMarkers     = &$poParent->aMarkers;
 
 			// Set email type
 			if (!empty($this->aConfig['emailFormat']) && $this->aConfig['emailFormat'] == 'html') {

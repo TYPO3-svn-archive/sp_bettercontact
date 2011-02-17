@@ -748,26 +748,7 @@
 							<config>
 								<type>text</type>
 								<wrap>off</wrap>
-								<default><![CDATA[### Demo configuration (see manual for details) ###
-
-# Add current page id as pid of the new dataset
-# pid = TEXT
-# pid.data = TSFE : id
-
-# Add creation date automatically
-# crdate = TEXT
-# crdate.data = date : U
-
-# Set default values for some fields
-# hidden  = 0
-# deleted = 0
-
-# Save submitted name in field "name"
-# name = TEXT
-# name.data = GPvar : tx_spbettercontact_pi1-9|name
-
-# Include external TypoScript configuration
-# <INCLUDE_TYPOSCRIPT: source="FILE:fileadmin/my_setup.txt">]]></default>
+								<default></default>
 								<cols>40</cols>
 								<rows>10</rows>
 							</config>

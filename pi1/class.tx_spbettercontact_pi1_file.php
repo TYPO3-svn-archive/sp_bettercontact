@@ -49,12 +49,12 @@
 		 * @param object $poParent Instance of the parent object
 		 */
 		public function __construct ($poParent) {
-			$this->oCObj        = $poParent->cObj;
-			$this->oCS          = $poParent->oCS;
-			$this->aConfig      = $poParent->aConfig;
-			$this->aFields      = $poParent->aFields;
-			$this->aLL          = $poParent->aLL;
-			$this->aGP          = $poParent->aGP;
+			$this->oCObj        = &$poParent->cObj;
+			$this->oCS          = &$poParent->oCS;
+			$this->aConfig      = &$poParent->aConfig;
+			$this->aFields      = &$poParent->aFields;
+			$this->aLL          = &$poParent->aLL;
+			$this->aGP          = &$poParent->aGP;
 		}
 
 
@@ -116,7 +116,7 @@
 
 		/**
 		 * Find or create upload path for given type
-		 * 
+		 *
 		 * @param string $psType Type of the folder
 		 * @return string Path to upload folder
 		 */
@@ -142,7 +142,7 @@
 
 		/**
 		 * Returns relative path of an absolute one
-		 * 
+		 *
 		 * @param string $psPath Absolute path
 		 * @return string Relative path
 		 */
@@ -202,6 +202,7 @@
 				 && empty($aField['imageMinWidth']) && empty($aField['imageMinHeight'])) {
 					continue;
 				}
+				// TODO: Check process if thumbnails will be generated
 
 				$sFileType  = (!empty($aField['imageConvertTo']) ? ltrim($aField['imageConvertTo'], '.') : '');
 				$aOptions   = array(
