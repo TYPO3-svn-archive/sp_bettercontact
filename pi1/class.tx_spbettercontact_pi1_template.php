@@ -160,6 +160,67 @@
 
 
 		/**
+		 * Add an info text
+		 * 
+		 * @param string  $psIdentifier Key of the info text in locallang array
+		 * @param string  $pmReplace    Text to add to message
+		 * @param boolean $pbIsPositive Defines the info type
+		 */
+		public function vAddInfo ($psIdentifier, $pmReplace = '', $pbIsPositive = FALSE) {
+			if (empty($psIdentifier)) {
+				return;
+			}
+
+			$sWrapKey = ($pbIsPositive ? 'infoWrapPositive' : 'infoWrapNegative');
+			$sWrap    = (!empty($this->aConfig[$sWrapKey]) ? $sWrapKey : '|');
+			$sMessage = (!empty($this->aLL[$psIdentifier]) ? $this->aLL[$psIdentifier] : '');
+
+			// Add replace text to message
+			if (!empty($pmReplace)) {
+				if (is_array($pmReplace)) {
+					$sMessage = vprintf($sMessage, $pmReplace);
+				} else if (is_string($pmReplace)) {
+					$sMessage = sprintf($sMessage, $pmReplace);
+				}
+			}
+
+			if (!empty($sMessage)) {
+				$this->aMarkers['INFO'] = str_replace('|', $sMessage, $sWrap);
+			}
+		}
+
+
+		/**
+		 * Add errors to template markers
+		 * 
+		 * @param array $paErrors Array of errors
+		 */
+		public function vAddErrors (array $paErrors) {
+			if (empty($paErrors)) {
+				return;
+			}
+
+			foreach ($paErrors as $sFieldName => $sErrorConf) {
+				$sMessage = (!empty($this->aLL[$sErrorConf['key']]) ? $this->aLL[$sErrorConf['key']] : '');
+				$sRuleKey = (!empty($sErrorConf['rule']) ? $sErrorConf['rule'] : '');
+
+				// Add rule value to message
+				if (!empty($sRuleKey) && !empty($this->aFields[$sFieldName][$sRuleKey])) {
+					$sReplace = $this->aFields[$sFieldName][$sRuleKey];
+					if ($this->sBECharset != 'utf-8') {
+						$sReplace = $this->oCS->utf8_decode($sReplace, $this->sBECharset);
+					}
+					$sMessage = sprintf($sMessage, htmlspecialchars($sReplace));
+				}
+
+				if (!empty($sMessage)) {
+					$this->aMarkers[$this->aFields[$sFieldName]['messageName']] = $sMessage;
+				}
+			}
+		}
+
+
+		/**
 		 * Add captcha markers
 		 *
 		 */
@@ -328,6 +389,64 @@
 
 			return $aMarkers;
 		}
+
+
+		/**
+		 * Get template markers with errors and info text
+		 *
+		 * @return array All messages as markers
+		 */
+		/*public function aGetMarkers () {
+			if (empty($this->aFields) || empty($this->aGP)) {
+				return array();
+			}
+
+			$aMessages        = array();
+			$aMarkers         = array();
+			$sErrorClass      = (!empty($this->aConfig['classError'])       ? $this->aConfig['classError']       : 'error');
+			$sWrapMessage     = (!empty($this->aConfig['messageWrap'])      ? $this->aConfig['messageWrap']      : '|');
+			$sWrapMessageList = (!empty($this->aConfig['messageListWrap'])  ? $this->aConfig['messageListWrap']  : '|');
+
+			// Get field order from GPvars
+			$aFields = $this->aGP;
+			unset($aFields['submit']);
+
+			foreach($aFields as $sFieldName => $aField) {
+				if (empty($this->aErrors[$sFieldName]) || !isset($this->aFields[$sFieldName])) {
+					continue;
+				}
+
+				// Add message to list
+				$aFieldConf  = $this->aFields[$sFieldName];
+				$aMessages[] = $this->aErrors[$sFieldName];
+
+				// Add error class
+				if ($this->aConfig['highlightFields']) {
+					$aMarkers[$aFieldConf['errClassName']] = $sErrorClass;
+				}
+
+				// Wrap message if configured
+				$aMarkers[$aFieldConf['messageName']] = $this->aErrors[$sFieldName];
+				if (!empty($sWrapMessage)) {
+					$aMarkers[$aFieldConf['messageName']] = str_replace('|', $this->aErrors[$sFieldName], $sWrapMessage);
+				}
+			}
+
+			// Add message list
+			if (count($aMessages)) {
+				$aMarkers['MESSAGES'] = '<ul><li>' . implode('</li><li>', $aMessages) . '</li></ul>';
+				if (!empty($sWrapMessageList)) {
+					$aMarkers['MESSAGES'] = str_replace('|', $aMarkers['MESSAGES'], $sWrapMessageList);
+				}
+			}
+
+			// Add info text
+			if (!empty($this->sInfo)) {
+				$aMarkers['INFO'] = $this->sInfo;
+			}
+
+			return $aMarkers;
+		}*/
 
 	}
 

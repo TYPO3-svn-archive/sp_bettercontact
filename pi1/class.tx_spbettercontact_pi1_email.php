@@ -320,11 +320,11 @@
 		 * @param string $psMessageHTML  HTML message
 		 * @param string $psReturnPath   Return-Path
 		 * @param mixed  $pmAttachements List or array of attachements
+		 * @return boolean TRUE if all mails were sent
 		 */
-		protected function vMail ($pmRecipients, $psSender, $psReplyTo = '', $psSubject = '', $psMessagePlain = '', $psMessageHTML = '', $psReturnPath = '', $pmAttachements = '') {
+		protected function bMail ($pmRecipients, $psSender, $psReplyTo = '', $psSubject = '', $psMessagePlain = '', $psMessageHTML = '', $psReturnPath = '', $pmAttachements = '') {
 			if (empty($pmRecipients) || !strlen($psSender) || (!strlen($psMessagePlain) && !strlen($psMessageHTML))) {
-				$this->bHasError = TRUE;
-				return;
+				return FALSE;
 			}
 
 			// Start email
@@ -384,10 +384,13 @@
 			if (is_array($pmRecipients)) {
 				foreach ($pmRecipients as $sRecipient) {
 					if (!$oMail->send($sRecipient)) {
-						$this->bHasError = TRUE;
+						return FALSE;
 					}
 				}
 			}
+
+			// All done
+			return TRUE;
 		}
 
 
@@ -413,14 +416,15 @@
 		/**
 		 * Send bot warning mail
 		 *
+		 * @return boolean TRUE if spam warning was sent
 		 */
-		public function vSendSpamWarning () {
+		public function bSendSpamWarning () {
 			if (!$this->bCheckMailAddresses('admin', 'sender')) {
-				return;
+				return FALSE;
 			}
 
 			// Send mail to admin
-			$this->vMail(
+			return $this->bMail(
 				$this->aAddresses['admin'],
 				$this->aAddresses['sender'],
 				$this->aAddresses['sender'],
@@ -435,8 +439,9 @@
 		/**
 		 * Send notification mails
 		 *
+		 * @return boolean TRUE if all mails were sent
 		 */
-		public function vSendMails () {
+		public function bSendMails () {
 			// Get configuration
 			$sSendTo   = (!empty($this->aConfig['sendTo']))   ? strtolower($this->aConfig['sendTo'])   : 'both';
 			$sSendFrom = (!empty($this->aConfig['sendFrom'])) ? strtolower($this->aConfig['sendFrom']) : 'sender';
@@ -445,7 +450,7 @@
 
 			// Send emails to all recipients
 			if (($sSendTo == 'both' || $sSendTo == 'recipients') && $this->bCheckMailAddresses('recipients', 'sender', $sReplyTo)) {
-				$this->vMail(
+				$bRecipientResult = $this->bMail(
 					$this->aAddresses['recipients'],
 					$this->aAddresses[$sSendFrom],
 					$this->aAddresses[$sReplyTo],
@@ -458,7 +463,7 @@
 
 			// Send email to user
 			if (($sSendTo == 'both' || $sSendTo == 'user') && $this->bCheckMailAddresses('user', 'sender')) {
-				$this->vMail(
+				$bUserResult = $this->bMail(
 					$this->aAddresses['user'],
 					$this->aAddresses['sender'],
 					$this->aAddresses['sender'],
@@ -468,36 +473,8 @@
 					$this->aAddresses['return']
 				);
 			}
-		}
 
-
-		/**
-		 * Get messages
-		 *
-		 * @return Array with info message
-		 */
-		public function aGetMessages () {
-			$sWrapNegative  = (!empty($this->aConfig['infoWrapNegative'])) ? $this->aConfig['infoWrapNegative'] : '|';
-			$sWrapPositive  = (!empty($this->aConfig['infoWrapPositive'])) ? $this->aConfig['infoWrapPositive'] : '|';
-			$aMarkers       = array();
-
-			if ($this->bHasError) {
-				$aMarkers['INFO'] = str_replace('|', $this->aLL['msg_email_failed'], $sWrapNegative);
-			} else {
-				$aMarkers['INFO'] = str_replace('|', $this->aLL['msg_email_passed'], $sWrapPositive);
-			}
-
-			return $aMarkers;
-		}
-
-
-		/**
-		 * Get error state
-		 *
-		 * @return TRUE if emailing results in an error
-		 */
-		public function bHasError() {
-			return $this->bHasError;
+			return ($bRecipientResult && $bUserResult);
 		}
 
 	}

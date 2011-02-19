@@ -42,6 +42,7 @@
 		protected $iWaitingTime    = 0;
 		protected $iPluginID       = 0;
 
+
 		/**
 		 * Set configuration for session object
 		 *
@@ -79,9 +80,10 @@
 		/**
 		 * Check session if form was already sent
 		 *
+		 * @param array $paErrorData Will be filled with error details in case of error
 		 * @return TRUE if current fe user has already sent a lot of emails
 		 */
-		public function bHasAlreadySent () {
+		public function bHasAlreadySent (array &$paErrorData) {
 			if (empty($this->aSessionContent) || !is_array($this->aSessionContent)) {
 				return FALSE;
 			}
@@ -100,9 +102,13 @@
 			// Check waiting time
 			$iLockEnd = $this->aSessionContent['tstmp'] + ($this->aConfig['waitingTime'] * 60); // minutes
 
+			// User is locked
 			if ($GLOBALS['SIM_EXEC_TIME'] < $iLockEnd) {
 				$this->iWaitingTime = ($iLockEnd - $GLOBALS['SIM_EXEC_TIME']);
-    			return TRUE;
+				$iTime  = ($this->iWaitingTime > 60 ? ($this->iWaitingTime / 60) : 1);
+				$iCount = ($this->iCount <= $this->aConfig['messageCount'] ? $this->iCount : $this->aConfig['messageCount']);
+				$paErrorData = array($iCount, $iTime);
+				return TRUE;
 			}
 
 			// Reset counter
@@ -165,22 +171,6 @@
 			// Update session content
 			$GLOBALS['TSFE']->fe_user->setKey('ses', $this->sExtKey, $aContent);
 			$GLOBALS['TSFE']->storeSessionData();
-		}
-
-
-		/**
-		 * Get messages
-		 *
-		 * @return Array of messages form session check
-		 */
-		public function aGetMessages () {
-			$sWrapNegative = ($this->aConfig['infoWrapNegative'] ? $this->aConfig['infoWrapNegative'] : '|');
-			$iTime         = ($this->iWaitingTime > 60 ? ($this->iWaitingTime / 60) : 1);
-			$iCount        = ($this->iCount <= $this->aConfig['messageCount'] ? $this->iCount : $this->aConfig['messageCount']); // bugfix
-			$sMessage      = sprintf($this->aLL['msg_already_sent'], $iCount, $iTime);
-			$sMessage      = str_replace('|', $sMessage, $sWrapNegative);
-
-			return array('INFO' => $sMessage);
 		}
 
 	}

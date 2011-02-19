@@ -36,8 +36,6 @@
 		protected $aGP        = array();
 		protected $aFields    = array();
 		protected $aMarkers   = array();
-		protected $oCS        = NULL;
-		protected $sBECharset = '';
 
 
 		/**
@@ -46,12 +44,10 @@
 		 * @param object $poParent Instance of the parent object
 		 */
 		public function __construct ($poParent) {
-			$this->aConfig    = &$poParent->aConfig;
-			$this->aFields    = &$poParent->aFields;
-			$this->aLL        = &$poParent->aLL;
-			$this->aGP        = &$poParent->aGP;
-			$this->oCS        = &$poParent->oCS;
-			$this->sBECharset = &$poParent->sBECharset;
+			$this->aConfig   = &$poParent->aConfig;
+			$this->aFields   = &$poParent->aFields;
+			$this->aLL       = &$poParent->aLL;
+			$this->aGP       = &$poParent->aGP;
 		}
 
 
@@ -102,18 +98,18 @@
 
 			$bResult = TRUE;
 
-			foreach ($this->aFields as $sKey => $aField) {
+			foreach ($this->aFields as $sFieldName => $aField) {
 
 				// Bypass captcha input, it has its own check routine
 				if (strtolower($sKey) == 'captcha' && !$this->bCheckCaptcha()) {
-					$this->aMarkers[$aField['messageName']] = $this->aLL['msg_captcha'];
+					$this->oMessages->vAddError($sFieldName, 'msg_captcha');
 					$bResult = FALSE;
 					continue;
 				}
 
 				// Required
 				if (!strlen($aField['value']) && (bool) $aField['required']) {
-					$this->aMarkers[$aField['messageName']] = $this->sGetMessage($sKey, 'empty', 'required');
+					$this->oMessages->vAddError($sFieldName, 'msg_' . $sFieldName . '_empty', 'required');
 					$bResult = FALSE;
 					continue;
 				}
@@ -125,14 +121,14 @@
 
 				// Too short
 				if (strlen($aField['minLength']) && (int) $aField['minLength'] && strlen($aField['value']) < $aField['minLength']) {
-					$this->aMarkers[$aField['messageName']] = $this->sGetMessage($sKey, 'short', 'minLength');
+					$this->oMessages->vAddError($sFieldName, 'msg_' . $sFieldName . '_short', 'minLength');
 					$bResult = FALSE;
 					continue;
 				}
 
 				// Too long
 				if (strlen($aField['maxLength']) && (int) $aField['maxLength'] && strlen($aField['value']) > $aField['maxLength']) {
-					$this->aMarkers[$aField['messageName']] = $this->sGetMessage($sKey, 'long', 'maxLength');
+					$this->oMessages->vAddError($sFieldName, 'msg_' . $sFieldName . '_long', 'maxLength');
 					$bResult = FALSE;
 					continue;
 				}
@@ -140,7 +136,7 @@
 				// Disallowed signs
 				if (strlen($aField['disallowed'])) {
 					if ($aField['value'] !== str_replace(str_split($aField['disallowed']), '', $aField['value'])) {
-						$this->aMarkers[$aField['messageName']] = $this->sGetMessage($sKey, 'disallowed', 'disallowed');
+						$this->oMessages->vAddError($sFieldName, 'msg_' . $sFieldName . '_disallowed', 'disallowed');
 						$bResult = FALSE;
 						continue;
 					}
@@ -149,7 +145,7 @@
 				// Allowed signs
 				if (strlen($aField['allowed'])) {
 					if (strlen(str_replace(str_split($aField['allowed']), '', $aField['value']))) {
-						$this->aMarkers[$aField['messageName']] = $this->sGetMessage($sKey, 'allowed', 'allowed');
+						$this->oMessages->vAddError($sFieldName, 'msg_' . $sFieldName . '_allowed', 'allowed');
 						$bResult = FALSE;
 						continue;
 					}
@@ -158,7 +154,7 @@
 				// Regex
 				if (strlen($aField['regex'])) {
 					if (!preg_match($aField['regex'], $aField['value'])) {
-						$this->aMarkers[$aField['messageName']] = $this->sGetMessage($sKey, 'regex', 'regex');
+						$this->oMessages->vAddError($sFieldName, 'msg_' . $sFieldName . '_regex', 'regex');
 						$bResult = FALSE;
 						continue;
 					}
@@ -182,45 +178,45 @@
 
 			$bResult = TRUE;
 
-			foreach($paFiles as $sKey => $aFile) {
-				$aField = (!empty($this->aFields[$sKey]) ? $this->aFields[$sKey] : array());
+			foreach($paFiles as $sFieldName => $aFile) {
+				$aField = (!empty($this->aFields[$sFieldName]) ? $this->aFields[$sFieldName] : array());
 
 				// Required
 				if (!empty($aField['value']) && empty($aFile['path'])) {
-					$this->aMarkers[$aField['messageName']] = $this->sGetMessage($sKey, 'file_invalid', 'required');
+					$this->oMessages->vAddError($sFieldName, 'msg_' . $sFieldName . '_file_invalid', 'required');
 					$bResult = FALSE;
 					continue;
 				}
 
 				// Check max file size
-				if (!empty($aField['fileMaxSize']) && $aFile['size'] > (int) $aField['fileMaxSize']) {
-					$this->aMarkers[$aField['messageName']] = $this->sGetMessage($sKey, 'file_big', 'fileMaxSize');
+				if (strlen($aField['fileMaxSize']) && $aFile['size'] > (int) $aField['fileMaxSize']) {
+					$this->oMessages->vAddError($sFieldName, 'msg_' . $sFieldName . '_file_big', 'fileMaxSize');
 					$bResult = FALSE;
 					continue;
 				}
 
 				// Check min file size
-				if (!empty($aField['fileMinSize']) && $aFile['size'] < (int) $aField['fileMinSize']) {
-					$this->aMarkers[$aField['messageName']] = $this->sGetMessage($sKey, 'file_small', 'fileMinSize');
+				if (strlen($aField['fileMinSize']) && $aFile['size'] < (int) $aField['fileMinSize']) {
+					$this->oMessages->vAddError($sFieldName, 'msg_' . $sFieldName . '_file_small', 'fileMinSize');
 					$bResult = FALSE;
 					continue;
 				}
 
 				// Check allowed file types
-				if (!empty($aField['fileAllowed'])) {
+				if (strlen($aField['fileAllowed'])) {
 					$aAllowedTypes = t3lib_div::trimExplode(',', $aField['fileAllowed'], TRUE);
 					if (!in_array($aFile['type'], $aAllowedTypes)) {
-						$this->aMarkers[$aField['messageName']] = $this->sGetMessage($sKey, 'file_allowed', 'fileAllowed');
+						$this->oMessages->vAddError($sFieldName, 'msg_' . $sFieldName . '_file_allowed', 'fileAllowed');
 						$bResult = FALSE;
 						continue;
 					}
 				}
 
 				// Check disallowed file types
-				if (!empty($aField['fileDisallowed'])) {
+				if (strlen($aField['fileDisallowed'])) {
 					$aDisallowedTypes = t3lib_div::trimExplode(',', $aField['fileDisallowed'], TRUE);
 					if (in_array($aFile['type'], $aDisallowedTypes)) {
-						$this->aMarkers[$aField['messageName']] = $this->sGetMessage($sKey, 'file_disallowed', 'fileDisallowed');
+						$this->oMessages->vAddError($sFieldName, 'msg_' . $sFieldName . '_file_disallowed', 'fileDisallowed');
 						$bResult = FALSE;
 						continue;
 					}
@@ -228,41 +224,6 @@
 			}
 
 			return $bResult;
-		}
-
-
-		/**
-		 * Get formated error message
-		 *
-		 * @param  string $psName       Name of the field
-		 * @param  string $psIdentifier Key to identify a message label
-		 * @param  string $psType       Type of the message
-		 * @return String with final error message
-		 */
-		protected function sGetMessage ($psName, $psIdentifier, $psType) {
-			if (!strlen($psIdentifier) || !strlen($psName)) {
-				return '';
-			}
-
-			// Get configuration
-			$psName       = trim($psName);
-			$psIdentifier = trim($psIdentifier);
-			$psType       = trim($psType);
-
-			// Get replacement
-			$sReplace = (!empty($this->aFields[$psName][$psType]) ? $this->aFields[$psName][$psType] : '');
-
-			// Convert to utf-8 for internal use
-			if ($this->sBECharset != 'utf-8') {
-				$sReplace = $this->oCS->utf8_decode($sReplace, $this->sBECharset);
-			}
-
-			// Check for defined signes and replace them
-			if (strlen($sReplace)) {
-			  return sprintf($this->aLL['msg_' . $psName . '_' . $psIdentifier], htmlspecialchars($sReplace));
-			}
-
-			return $this->aLL['msg_' . $psName . '_' . $psIdentifier];
 		}
 
 
@@ -323,85 +284,26 @@
 		 *
 		 * @return Array of bad fields
 		 */
-		public function aGetMaliciousFields () {
-			$aResult    = array();
-			$sShow      = strtolower($this->aConfig['showMaliciousInput']);
+		/*public function aGetErrorFields () {
+			$aResult = array();
+			$sShow   = strtolower($this->aConfig['showMaliciousInput']);
 
+			// Show only valid input
 			if ($sShow == 'clean') {
 				foreach($this->aFields as $sKey => $aField) {
-					$sMessage = $this->aMarkers[$this->aFields[$sKey]['messageName']];
-					if (strlen($sMessage)) {
+					if (!empty($this->aErrors[$sKey])) {
 						$aResult[] = $aField;
 					}
 				}
-			} elseif ($sShow == 'none') {
+			}
+
+			// Show no input
+			if ($sShow == 'none') {
 				$aResult = $this->aFields;
 			}
 
 			return $aResult;
-		}
-
-
-		/**
-		 * Get an array of error messages from check
-		 *
-		 * @return Array of all messages
-		 */
-		public function aGetMessages () {
-			if (empty($this->aGP) || !is_array($this->aGP)) {
-				return array();
-			}
-
-			$aMessages        = array();
-			$sErrorClass      = (!empty($this->aConfig['classError'])       ? $this->aConfig['classError']       : 'error');
-			$sWrapMessage     = (!empty($this->aConfig['messageWrap'])      ? $this->aConfig['messageWrap']      : '|');
-			$sWrapMessageList = (!empty($this->aConfig['messageListWrap'])  ? $this->aConfig['messageListWrap']  : '|');
-			$sWrapNegative    = (!empty($this->aConfig['infoWrapNegative']) ? $this->aConfig['infoWrapNegative'] : '|');
-			$sWrapPositive    = (!empty($this->aConfig['infoWrapPositive']) ? $this->aConfig['infoWrapPositive'] : '|');
-
-			// Get field order from GPvars
-			$aFields = $this->aGP;
-			unset($aFields['submit']);
-
-			foreach($aFields as $sKey => $aField) {
-				if (empty($this->aFields[$sKey]['messageName'])) {
-					continue;
-				}
-
-				$sMessage = $this->aMarkers[$this->aFields[$sKey]['messageName']];
-				if (!empty($sMessage)) {
-					// Add message to list
-					$aMessages[] = '<li>' . $sMessage . '</li>';
-
-					// Add error class
-					if ($this->aConfig['highlightFields']) {
-						$this->aMarkers[$this->aFields[$sKey]['errClassName']] = $sErrorClass;
-					}
-
-					// Wrap message if configured
-					if (!empty($sWrapMessage)) {
-						$this->aMarkers[$this->aFields[$sKey]['messageName']] = str_replace('|', $sMessage, $sWrapMessage);
-					}
-				}
-			}
-
-			// Add message list
-			if (count($aMessages)) {
-				$this->aMarkers['MESSAGES'] = '<ul>' . implode(PHP_EOL, $aMessages) . '</ul>';
-				if (!empty($sWrapMessageList)) {
-					$this->aMarkers['MESSAGES'] = str_replace('|', $this->aMarkers['MESSAGES'], $sWrapMessageList);
-				}
-			}
-
-			// Add info text
-			if (count($this->aMarkers)) {
-				$this->aMarkers['INFO'] = str_replace('|', $this->aLL['msg_check_failed'], $sWrapNegative);
-			} else {
-				$this->aMarkers['INFO'] = str_replace('|', $this->aLL['msg_check_passed'], $sWrapPositive);
-			}
-
-			return $this->aMarkers;
-		}
+		}*/
 
 	}
 

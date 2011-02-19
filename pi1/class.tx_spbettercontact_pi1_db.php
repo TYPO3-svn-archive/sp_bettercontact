@@ -31,14 +31,14 @@
 	 * @subpackage tx_spbettercontact
 	 */
 	class tx_spbettercontact_pi1_db {
-		protected $oCS        = NULL;
-		protected $aConfig    = array();
-		protected $aLL        = array();
-		protected $aGP        = array();
-		protected $aFields    = array();
-		protected $sLastError = '';
-		protected $sLogTable  = 'tx_spbettercontact_log';
-		protected $sFormChar  = '';
+		protected $aConfig       = array();
+		protected $aLL           = array();
+		protected $aGP           = array();
+		protected $aFields       = array();
+		protected $aUniqueErrors = array();
+		protected $oCS           = NULL;
+		protected $sLogTable     = 'tx_spbettercontact_log';
+		protected $sFormChar     = '';
 
 
 		/**
@@ -59,9 +59,10 @@
 		/**
 		 * Log a valid request
 		 *
+		 * @param string $psError Will be set with an error if occurs
 		 * @return Integer with ID of last inserted table row
 		 */
-		public function iLog () {
+		public function iLog (&$psError) {
 			if (empty($this->aConfig['enableLog'])) {
 				return 0;
 			}
@@ -99,7 +100,7 @@
 				return $GLOBALS['TYPO3_DB']->sql_insert_id();
 			}
 
-			$this->sLastError = sprintf($this->aLL['msg_db_failed'], $GLOBALS['TYPO3_DB']->sql_error());
+			$psError = $GLOBALS['TYPO3_DB']->sql_error();
 			return 0;
 		}
 
@@ -107,9 +108,10 @@
 		/**
 		 * Save values into a user specified table
 		 *
+		 * @param string $psError Will be set with an error if occurs
 		 * @return Integer with ID of last inserted row
 		 */
-		public function iSave () {
+		public function iSave (&$psError) {
 			if (empty($this->aConfig['database.']['table'])) {
 				return 0;
 			}
@@ -118,13 +120,6 @@
 			$aFields    = (!empty($aDBConf['fieldconf.']) ? $aDBConf['fieldconf.'] : array());
 			$sIDField   = (!empty($aDBConf['idField'])    ? $aDBConf['idField']    : 'uid');
 			$aTableConf = array();
-
-			// Check for external database first
-			if (!empty($aDBConf['driver']) || !empty($aDBConf['host']) || !empty($aDBConf['port'])
-			 || !empty($aDBConf['database']) || !empty($aDBConf['username']) || !empty($aDBConf['password'])
-			) {
-				return $this->iSaveExternal($aDBConf, $aFields, $sIDField);
-			}
 
 			// Automatically fill fields if configured (useDefaultValues is deprecated since 2.5.0)
 			if (!empty($aDBConf['autoFillDefault']) || !empty($aDBConf['useDefaultValues']) || !empty($aDBConf['autoFillExisting'])) {
@@ -144,12 +139,9 @@
 			}
 
 			// Check for unique fields
-			$sUniqueWhere = $this->sGetUniqueWhere();
-			if (!empty($sUniqueWhere)) {
-				if ($GLOBALS['TYPO3_DB']->exec_SELECTcountRows('1', $aDBConf['table'], $sUniqueWhere)) {
-					$this->sLastError = $this->aLL['msg_db_not_unique'];
-					return 0;
-				}
+			if ($this->bHasDuplicates($aFields)) {
+				$psError = 'Duplicate entries found';
+				return 0;
 			}
 
 			// Insert
@@ -157,7 +149,7 @@
 				return (int) $GLOBALS['TYPO3_DB']->sql_insert_id();
 			}
 
-			$this->sLastError = sprintf($this->aLL['msg_db_failed'], $GLOBALS['TYPO3_DB']->sql_error());
+			$psError = $GLOBALS['TYPO3_DB']->sql_error();
 			return 0;
 		}
 
@@ -165,13 +157,11 @@
 		/**
 		 * Save values into an external database
 		 *
-		 * @param  array  $paDBConf  Database configuration
-		 * @param  array  $paFields  Field configuration
-		 * @param  string $psIDField Field name to identify a row in update mode
+		 * @param string $psError Will be set with an error if occurs
 		 * @return Integer with ID of the last inserted row
 		 */
-		protected function iSaveExternal (array $paDBConf, array $paFields, $psIDField = 'uid') {
-			if (!count($paDBConf) || !count($paFields) || !strlen($psIDField) || !t3lib_extMgm::isLoaded('adodb')) {
+		protected function iSaveExternal (&$psError) {
+			if (!t3lib_extMgm::isLoaded('adodb')) {
 				return 0;
 			}
 
@@ -183,60 +173,57 @@
 			$ADODB_QUOTE_FIELDNAMES = TRUE;
 
 			// Get configuration
-			$sDriver   = (!empty($paDBConf['driver']))        ? $paDBConf['driver']        : 'mysql';
-			$sHost     = (!empty($paDBConf['host']))          ? $paDBConf['host']          : 'localhost';
-			$sHost    .= (!empty($paDBConf['port']))          ? ':' . $paDBConf['port']    : '';
-			$sUsername = (!empty($paDBConf['username']))      ? $paDBConf['username']      : '';
-			$sPassword = (!empty($paDBConf['password']))      ? $paDBConf['password']      : '';
-			$sCharset  = (!empty($paDBConf['force_charset'])) ? $paDBConf['force_charset'] : '';
+			$aDBConf   = $this->aConfig['database.'];
+			$aFields   = (!empty($aDBConf['fieldconf.'])     ? $aDBConf['fieldconf.']    : array());
+			$sIDField  = (!empty($aDBConf['idField'])        ? $aDBConf['idField']       : 'uid');
+			$sDriver   = (!empty($aDBConf['driver']))        ? $aDBConf['driver']        : 'mysql';
+			$sHost     = (!empty($aDBConf['host']))          ? $aDBConf['host']          : 'localhost';
+			$sHost    .= (!empty($aDBConf['port']))          ? ':' . $aDBConf['port']    : '';
+			$sUsername = (!empty($aDBConf['username']))      ? $aDBConf['username']      : '';
+			$sPassword = (!empty($aDBConf['password']))      ? $aDBConf['password']      : '';
+			$sCharset  = (!empty($aDBConf['force_charset'])) ? $aDBConf['force_charset'] : '';
 			$iReturn   = 0;
 
 			// Force given charset for field values
 			if ($sCharset) {
-				$this->oCS->convArray($paFields, $this->sFormChar, $sCharset);
+				$this->oCS->convArray($aFields, $this->sFormChar, $sCharset);
 			}
 
 			// Connect
 			$oDB = &NewADOConnection($sDriver);
-			if (!empty($paDBConf['database'])) {
-				$oDB->Connect($sHost, $sUsername, $sPassword, $paDBConf['database']);
+			if (!empty($aDBConf['database'])) {
+				$oDB->Connect($sHost, $sUsername, $sPassword, $aDBConf['database']);
 			} else {
 				$oDB->Connect($sHost, $sUsername, $sPassword);
 			}
 
 			// Update
-			if (!empty($paFields[$psIDField])) {
-				$sWhere  = $psIDField . ' = ' . (int) $paFields[$psIDField];
-				$sSelect = 'SELECT COUNT(' . $psIDField . ') FROM ' . $paDBConf['table'] . ' WHERE ' . $sWhere . ' LIMIT 1';
+			if (!empty($aFields[$sIDField])) {
+				$sWhere  = $sIDField . ' = ' . (int) $aFields[$sIDField];
+				$sSelect = 'SELECT COUNT(' . $sIDField . ') FROM ' . $aDBConf['table'] . ' WHERE ' . $sWhere . ' LIMIT 1';
 				$oResult = $oDB->Execute($sSelect);
 
 				// Check if row exists and update (else insert new row - see below)
 				if ($oResult->RowCount()) {
-					if ($oDB->AutoExecute($paDBConf['table'], $paFields, 'UPDATE', $sWhere)) {
-						$iReturn = (int) $paFields[$psIDField];
+					if ($oDB->AutoExecute($aDBConf['table'], $aFields, 'UPDATE', $sWhere)) {
+						$iReturn = (int) $aFields[$sIDField];
 					}
 				}
 			}
 
 			// Check for unique fields
-			$sUniqueWhere = $this->sGetUniqueWhere($oDB);
-			if (!empty($sUniqueWhere)) {
-				$sSelect = 'SELECT COUNT(' . $psIDField . ') FROM ' . $paDBConf['table'] . ' WHERE ' . $sUniqueWhere . ' LIMIT 1';
-				$oResult = $oDB->Execute($sSelect);
-				if ($oResult->RowCount()) {
-					$this->sLastError = $this->aLL['msg_db_not_unique'];
-					$iReturn = 0;
-				}
+			if ($this->bHasDuplicates($aFields, $oDB)) {
+				$psError = 'Duplicate entries found';
 			}
 
 			// Insert
-			if (!$iReturn && $oDB->AutoExecute($paDBConf['table'], $paFields, 'INSERT')) {
-				$iReturn = (int) $oDB->Insert_ID($paDBConf['table']);
+			if (!$iReturn && !$psError && $oDB->AutoExecute($aDBConf['table'], $aFields, 'INSERT')) {
+				$iReturn = (int) $oDB->Insert_ID($aDBConf['table']);
 			}
 
 			// Check result
-			if (!$iReturn) {
-				$this->sLastError = sprintf($this->aLL['msg_db_failed'], $oDB->ErrorMsg());
+			if (!$iReturn && !$psError) {
+				$psError = $oDB->ErrorMsg();
 			}
 
 			// Close db connection and revert global quoting variable
@@ -309,63 +296,96 @@
 
 
 		/**
-		 * Get unique fields WHERE statement
+		 * Check for unique fields
 		 *
+		 * @param array $paFields Array with field configuration
 		 * @param object $poConnection External DB Connection
-		 * @return String with statement
+		 * @return boolean TRUE if any duplicated value was found
 		 */
-		protected function sGetUniqueWhere (&$poDB = NULL) {
-			if (empty($this->aConfig['database.']['uniqueFields'])) {
-				return '';
+		protected function bHasDuplicates (array $paFields, &$poDB = NULL) {
+			if (empty($paFields) || empty($this->aConfig['database.']['uniqueFields'])) {
+				return FALSE;
 			}
 
-			$aWhere  = array();
-			$aFields = t3lib_div::trimExplode(',', $this->aConfig['database.']['uniqueFields'], TRUE);
+			$aWhere        = array();
+			$aUniqueFields = t3lib_div::trimExplode(',', $this->aConfig['database.']['uniqueFields'], TRUE);
+			$sColumns      = implode(',', array_keys($paFields));
+			$sTable        = $this->aConfig['database.']['table'];
 
-			foreach ($aFields as $sFieldName) {
+			// Get WHERE statement
+			foreach ($aUniqueFields as $sFieldName) {
 				if (!empty($this->aFields[$sFieldName]['value'])) {
 					$sValue = $this->aFields[$sFieldName]['value'];
 					if (empty($poDB)) {
-						$sValue = $GLOBALS['TYPO3_DB']->fullQuoteStr($sValue, $this->aConfig['database.']['table']);
+						$sValue = $GLOBALS['TYPO3_DB']->fullQuoteStr($sValue, $sTable);
 					} else {
 						$sValue = $poDB->qstr($sValue);
 					}
 					$aWhere[] = $sFieldName . ' = ' . $sValue;
 				}
 			}
-
-			return implode(' OR ', $aWhere);
-		}
-
-
-		/**
-		 * Get an array with last error message from db
-		 *
-		 * @return Array with last database error
-		 */
-		public function aGetMessages () {
-			if (empty($this->sLastError)) {
-				return array();
+			if (empty($aWhere)) {
+				return FALSE;
 			}
 
-			// TODO: Allow mutliple messages if more then one field is not unique
-			// TODO: Show error message beside field in frontend if value is not unique
+			// Get existing rows
+			$sWhere = implode(' OR ', $aWhere);
+			$aRows  = array();
+			if (empty($poDB)) {
+				$aRows = $GLOBALS['TYPO3_DB']->exec_SELECTgetRows($sColumns, $sTable, $sWhere);
+			} else {
+				$sSelect = 'SELECT ' . $sColumns . ' FROM ' . $sTable . ' WHERE ' . $sWhere;
+				$oResult = $oDB->Execute($sSelect);
+				if (!empty($oResult)) {
+					$aRows = $oDB->GetArray();
+				}
+			}
+			if (empty($aRows)) {
+				return FALSE;
+			}
 
-			$sWrapNegative = (!empty($this->aConfig['infoWrapNegative']) ? $this->aConfig['infoWrapNegative'] : '|');
+			// Get not unique fields
+			foreach ($paFields as $sKey => $sValue) {
+				foreach ($aRows as $aRow) {
+					if (empty($aRow[$sKey]) || $aRow[$sKey] != $sValue) {
+						continue;
+					}
+					foreach ($this->aFields as $sFieldName => $aField) {
+						if ($sFieldName == $sKey || $aField['dbField'] == $sKey) {
+							$this->aUniqueErrors[$sFieldName] = array('key' => 'msg_' . $sFieldName . '_not_unique');
+						}
+					}
+				}
+			}
 
-			return array(
-				'INFO' => str_replace('|', $this->sLastError, $sWrapNegative),
-			);
+			return !empty($this->aUniqueErrors);
 		}
 
 
 		/**
-		 * Get error state
+		 * Get errors for duplicated fields
 		 *
-		 * @return TRUE if a db operation results in an error
+		 * @return array Duplicated field errors
 		 */
-		public function bHasError() {
-			return !empty($this->sLastError);
+		public function aGetUniqueErrors () {
+			return $this->aUniqueErrors;
+		}
+
+
+		/**
+		 * Check if an external database is configured
+		 *
+		 * @return boolean TRUE if external db config was found
+		 */
+		public function bIsExternalDB () {
+			$aKeys = array('driver', 'host', 'port', 'database', 'username', 'password');
+			foreach ($aKeys as $sKey) {
+				if (!empty($this->aConfig['database.'][$sKey])) {
+					return TRUE;
+				}
+			}
+
+			return FALSE;
 		}
 
 	}

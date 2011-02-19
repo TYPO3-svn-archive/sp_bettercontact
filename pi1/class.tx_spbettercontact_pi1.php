@@ -144,12 +144,12 @@
 			$this->sBECharset    = $this->sGetBECharset();
 
 			// Load required objects
-			$this->oTemplate = $this->oMakeInstance('template');
-			$this->oSession  = $this->oMakeInstance('session');
-			$this->oCheck    = $this->oMakeInstance('check');
-			$this->oEmail    = $this->oMakeInstance('email');
-			$this->oDB       = $this->oMakeInstance('db');
-			$this->oFile     = $this->oMakeInstance('file');
+			$this->oTemplate     = $this->oMakeInstance('template');
+			$this->oSession      = $this->oMakeInstance('session');
+			$this->oCheck        = $this->oMakeInstance('check');
+			$this->oEmail        = $this->oMakeInstance('email');
+			$this->oDB           = $this->oMakeInstance('db');
+			$this->oFile         = $this->oMakeInstance('file');
 
 			// Load stored files from session
 			$this->aFiles = $this->oSession->mGetValue('uploadedFiles');
@@ -203,10 +203,11 @@
 		 * @return string Any content to show
 		 */
 		protected function sProcessSendingsCheck () {
-			if ($this->oSession->bHasAlreadySent()) {
+			if ($this->oSession->bHasAlreadySent($aErrorData)) {
 				$this->vCheckRedirect('exhausted');
-				$this->oTemplate->vAddMarkers($this->oSession->aGetMessages());
-
+				if (!empty($aErrorData)) {
+					$this->oTemplate->vAddInfo('msg_already_sent', $aErrorData);
+				}
 				return $this->oTemplate->sGetContent();
 			}
 
@@ -227,7 +228,7 @@
 			// Check uploaded files
 			if ($aFiles = $this->oFile->aGetFiles($_FILES)) {
 				if (!$this->oCheck->bCheckFiles($aFiles)) {
-					$this->oTemplate->vAddMarkers($this->oCheck->aGetMessages());
+					$this->oTemplate->vAddMarkers($this->oMessages->aGetMarkers());
 
 					return $this->oTemplate->sGetContent();
 				}
@@ -268,8 +269,8 @@
 					$this->vSendWarning('user');
 				}
 
-				$this->oTemplate->vAddMarkers($this->oCheck->aGetMessages());
-				$this->oTemplate->vClearFields($this->oCheck->aGetMaliciousFields());
+				$this->oTemplate->vAddMarkers($this->oMessages->aGetMarkers());
+				$this->oTemplate->vClearFields($this->oMessages->aGetErrorFields());
 
 				return $this->oTemplate->sGetContent();
 			}
@@ -286,16 +287,30 @@
 		protected function sProcessDB () {
 			// Add log entry
 			// TODO: Add files to log entries
-			$this->oSession->vAddValue('lastLogRowID', $this->oDB->iLog());
+			$iLogRowID = $this->oDB->iLog($sError);
+			if (!empty($sError)) {
+				$this->oTemplate->vAddInfo('msg_db_failed', $sError);
+				return $this->oTemplate->sGetContent();
+			}
+			$this->oSession->vAddValue('lastLogRowID', $iLogRowID);
 
 			// Store form data into user defined table
 			if (!empty($this->aConfig['enableDBTab'])) {
-				$this->oSession->vAddValue('lastRowID', $this->oDB->iSave());
-			}
+				// Get last inserted / updated row ID
+				if (!$this->oDB->bIsExternalDB()) {
+					$iRowID = $this->oDB->iSave($sError);
+				} else {
+					$iRowID = $this->oDB->iSaveExternal($sError);
+				}
 
-			if ($this->oDB->bHasError()) {
-				$this->oTemplate->vAddMarkers($this->oDB->aGetMessages());
-				return $this->oTemplate->sGetContent();
+				// Check for errors
+				if (!empty($sError)) {
+					$this->oTemplate->vAddInfo('msg_db_failed', $sError);
+					$this->oTemplate->vAddErrors($this->oDB->aGetUniqueErrors());
+					return $this->oTemplate->sGetContent();
+				}
+
+				$this->oSession->vAddValue('lastRowID', $iRowID);
 			}
 
 			return $this->sProcessUserFunc('dbHandling');
@@ -308,14 +323,14 @@
 		 * @return string Any content to show
 		 */
 		protected function sProcessEmails () {
-			$this->oEmail->vSendMails();
-			$this->oTemplate->vAddMarkers($this->oEmail->aGetMessages());
-
-			if ($this->oEmail->bHasError()) {
+			if (!$this->oEmail->bSendMails()) {
+				$this->oTemplate->vAddInfo('msg_email_failed');
 				$this->vCheckRedirect('error');
 
 				return $this->oTemplate->sGetContent();
 			}
+
+			$this->oTemplate->vAddInfo('msg_email_passed', TRUE);
 
 			return $this->sProcessUserFunc('emailHandling');
 		}
@@ -384,6 +399,12 @@
 		 */
 		protected function sCheckConfiguration () {
 			$aMessages = array();
+			$sWrap     = '<strong>Configuration of "Better Contact" is incorrect:</strong><br /><ul><li>%s</li></ul>';
+
+			// Check if default setup is loaded
+			if (!isset($this->aConfig['systems.']) || !isset($this->aConfig['browsers.'])) {
+				return sprintf($sWrap, 'Please include the required static TypoScript setup on root page!');
+			}
 
 			// Check email field
 			if (empty($this->aConfig['fields.']['email.']) || !is_array($this->aConfig['fields.']['email.'])) {
@@ -432,7 +453,7 @@
 
 			// Return a list of error messages
 			if (count($aMessages)) {
-				return '<strong>Configuration of "Better Contact" is incorrect:</strong><br /><ul><li>' . implode('</li><li>', $aMessages) . '</li></ul>';
+				return sprintf($sWrap, implode('</li><li>', $aMessages));
 			}
 
 			return '';
@@ -759,14 +780,14 @@
 				return;
 			}
 
-			$this->oEmail->vSendSpamWarning();
+			$this->oEmail->bSendSpamWarning();
 		}
 
 
 		/**
 		 * Execute a given userFunc if configured
 		 *
-		 * @param string $psName    Name of the userFunc option
+		 * @param string $psName Name of the userFunc option
 		 * @return string Any result of the userFunc
 		 */
 		protected function sProcessUserFunc ($psName) {
@@ -774,14 +795,14 @@
 				return '';
 			}
 
-			if (empty($this->aConfig['userFunc.'][$psName])) {
+			if (empty($this->aConfig['hooks.'][$psName])) {
 				return '';
 			}
 
-			$aConfig = (!empty($this->aConfig['userFunc.'][$psName . '.'])) ? $this->aConfig['userFunc.'][$psName . '.'] : array();
+			$aConfig = (!empty($this->aConfig['hooks.'][$psName . '.'])) ? $this->aConfig['hooks.'][$psName . '.'] : array();
 			$aConfig['parentObj'] = &$this;
 
-			$mContent = $this->cObj->callUserFunction($this->aConfig['userFunc.'][$psName], $aConfig, '');
+			$mContent = $this->cObj->callUserFunction($this->aConfig['hooks.'][$psName], $aConfig, '');
 			if (!empty($mContent) && is_string($mContent)) {
 				return $mContent;
 			}

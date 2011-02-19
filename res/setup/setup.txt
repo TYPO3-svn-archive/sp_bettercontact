@@ -65,23 +65,6 @@ plugin.tx_spbettercontact_pi1 {
 
 
 	# ====================================================================
-	# Hooks to extend default functionallity
-	# ====================================================================
-	userFunc {
-		# init               = (?) Will be called before checks and rendering
-		# submit             = (?) Will be called if form was submitted
-		# spamCheck          = (?) Will be called after bot spam check
-		# sendingsCheck      = (?) Will be called after multiple sendings check
-		# fileHandling       = (?) Will be called after saving files and image creation
-		# valueCheck         = (?) Will be called after form values check
-		# dbHandling         = (?) Will be called after storing form values into DB and logging
-		# emailHandling      = (?) Will be called after sending emails
-		# finalize           = (?) Will be called before redirect and output
-	}
-
-
-
-	# ====================================================================
 	# Basic input fields
 	# ====================================================================
 	fields {
@@ -180,11 +163,11 @@ plugin.tx_spbettercontact_pi1 {
 			fileAllowed    = gif,jpg,jpeg,tif,tiff,bmp,pcx,tga,png
 			fileDisallowed =
 
-			imageMaxWidth  =
+			imageMaxWidth  = 120m
 			imageMaxHeight =
 			imageMinWidth  =
 			imageMinHeight =
-			imageConvertTo =
+			imageConvertTo = png
 			imageTitle     =
 			imageAlt       =
 
@@ -207,6 +190,23 @@ plugin.tx_spbettercontact_pi1 {
 			dbField        =
 			dbNoAutofill   =
 		}
+	}
+
+
+
+	# ====================================================================
+	# Hooks to extend default functionallity
+	# ====================================================================
+	hooks {
+		# init               = (?) Will be called before checks and rendering
+		# submit             = (?) Will be called if form was submitted
+		# spamCheck          = (?) Will be called after bot spam check
+		# sendingsCheck      = (?) Will be called after multiple sendings check
+		# fileHandling       = (?) Will be called after saving files and image creation
+		# valueCheck         = (?) Will be called after form values check
+		# dbHandling         = (?) Will be called after storing form values into DB and logging
+		# emailHandling      = (?) Will be called after sending emails
+		# finalize           = (?) Will be called before redirect and output
 	}
 
 
