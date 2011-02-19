@@ -32,6 +32,7 @@
 	 */
 	class tx_spbettercontact_pi1_template {
 		protected $oCObj        = NULL;
+		protected $oCS          = NULL;
 		protected $aLL          = array();
 		protected $aConfig      = array();
 		protected $aFields      = array();
@@ -40,6 +41,7 @@
 		protected $sExtKey      = '';
 		protected $sFormChar    = '';
 		protected $sFieldPrefix = '';
+		protected $sBECharset   = '';
 		protected $iPluginId    = 0;
 
 
@@ -50,6 +52,7 @@
 		 */
 		public function __construct ($poParent) {
 			$this->oCObj        = &$poParent->cObj;
+			$this->oCS          = &$poParent->oCS;
 			$this->aLL          = &$poParent->aLL;
 			$this->aConfig      = &$poParent->aConfig;
 			$this->aFields      = &$poParent->aFields;
@@ -59,6 +62,7 @@
 			$this->sFormChar    = &$poParent->sFormCharset;
 			$this->sFieldPrefix = &$poParent->sFieldPrefix;
 			$this->aMarkers     = &$poParent->aMarkers;
+			$this->sBECharset   = &$poParent->sBECharset;
 
 			// Set default markers
 			$this->vAddMarkers($this->aGetDefaultMarkers());
@@ -86,7 +90,7 @@
 			$aMarkers['SUBMIT']       = $this->sFieldPrefix . '[submit]';
 			$aMarkers['SUBMIT_VALUE'] = $this->aLL['submit'];
 			$aMarkers['CHARSET']      = $this->sFormChar;
-			$aMarkers['HIDDEN']       = PHP_EOL;
+			$aMarkers['HIDDEN']       = '';
 			$aMarkers['MESSAGES']     = '';
 			$aMarkers['INFO']         = '';
 			$aMarkers['ANCHOR']       = '';
@@ -96,11 +100,17 @@
 				$aMarkers['ANCHOR'] = '<a id="p' . $this->oCObj->data['uid'] . '" name="p' . $this->oCObj->data['uid'] . '"></a>';
 			}
 
+			// Get wrap for hidden fields
+			$sHiddenWrap = '<input type="text" name="|" value="" />';
+			if (!empty($this->aConfig['hiddenWrap']) && strpos($sHiddenWrap, '|') !== FALSE) {
+				$sHiddenWrap = $this->aConfig['hiddenWrap'];
+			}
+
 			// Fields
 			if (is_array($this->aFields)) {
-				foreach ($this->aFields as $sKey => $aField) {
-					$sName = strtolower(trim($sKey, ' .{}()='));
-					$aMarkers['HIDDEN']               .= '<input type="text" name="' . $sKey.'" value="" />' . PHP_EOL;
+				foreach ($this->aFields as $sFieldName => $aField) {
+					$sFieldName = strtolower(trim($sFieldName, ' .{}()='));
+					$aMarkers['HIDDEN']               .= str_replace('|', $sFieldName, $sHiddenWrap) . PHP_EOL;
 					$aMarkers[$aField['valueName']]    = htmlspecialchars($aField['value']);
 					$aMarkers[$aField['labelName']]    = $aField['label'];
 					$aMarkers[$aField['messageName']]  = '';
@@ -110,12 +120,17 @@
 					$aMarkers[$aField['multiSelName']] = '';
 					$aMarkers[$aField['requiredName']] = (!empty($aField['required'])) ? $this->aLL['required'] : '';
 
-					if (!empty($this->aGP[$sName]) || (bool) $aField['value']) {
+					if (!empty($this->aGP[$sFieldName]) || (bool) $aField['value']) {
 						$aMarkers[$aField['checkedName']]  = 'checked="checked"';
 						$aMarkers[$aField['multiChkName']] = 'checked="checked"';
 						$aMarkers[$aField['multiSelName']] = 'selected="selected"';
 					}
 				}
+			}
+
+			// Do not use hidden fields
+			if (empty($this->aConfig['useHiddenFieldsCheck'])) {
+				$aMarkers['HIDDEN'] = '';
 			}
 
 			return $aMarkers;
@@ -161,7 +176,7 @@
 
 		/**
 		 * Add an info text
-		 * 
+		 *
 		 * @param string  $psIdentifier Key of the info text in locallang array
 		 * @param string  $pmReplace    Text to add to message
 		 * @param boolean $pbIsPositive Defines the info type
@@ -172,7 +187,7 @@
 			}
 
 			$sWrapKey = ($pbIsPositive ? 'infoWrapPositive' : 'infoWrapNegative');
-			$sWrap    = (!empty($this->aConfig[$sWrapKey]) ? $sWrapKey : '|');
+			$sWrap    = (!empty($this->aConfig[$sWrapKey]) ? $this->aConfig[$sWrapKey] : '|');
 			$sMessage = (!empty($this->aLL[$psIdentifier]) ? $this->aLL[$psIdentifier] : '');
 
 			// Add replace text to message
@@ -192,7 +207,7 @@
 
 		/**
 		 * Add errors to template markers
-		 * 
+		 *
 		 * @param array $paErrors Array of errors
 		 */
 		public function vAddErrors (array $paErrors) {
@@ -200,9 +215,11 @@
 				return;
 			}
 
+			$sErrorClass  = (!empty($this->aConfig['classError'])  ? $this->aConfig['classError']  : 'error');
+
 			foreach ($paErrors as $sFieldName => $sErrorConf) {
-				$sMessage = (!empty($this->aLL[$sErrorConf['key']]) ? $this->aLL[$sErrorConf['key']] : '');
-				$sRuleKey = (!empty($sErrorConf['rule']) ? $sErrorConf['rule'] : '');
+				$sMessage = (!empty($this->aLL[$sErrorConf[0]]) ? $this->aLL[$sErrorConf[0]] : '');
+				$sRuleKey = (!empty($sErrorConf[1]) ? $sErrorConf[1] : '');
 
 				// Add rule value to message
 				if (!empty($sRuleKey) && !empty($this->aFields[$sFieldName][$sRuleKey])) {
@@ -214,6 +231,16 @@
 				}
 
 				if (!empty($sMessage)) {
+					// Add error class
+					if ($this->aConfig['highlightFields']) {
+						$this->aMarkers[$this->aFields[$sFieldName]['errClassName']] = $sErrorClass;
+					}
+
+					// Wrap error if configured
+					if (!empty($this->aConfig['messageWrap'])) {
+						$sMessage = str_replace('|', $sMessage, $this->aConfig['messageWrap']);
+					}
+
 					$this->aMarkers[$this->aFields[$sFieldName]['messageName']] = $sMessage;
 				}
 			}
@@ -311,10 +338,18 @@
 		/**
 		 * Clear given input fields in marker array
 		 *
+		 * @param array $paFields Field names of fields to clear
 		 */
 		public function vClearFields (array $paFields) {
-			foreach ($paFields as $aField) {
-				$this->aMarkers[$aField['valueName']] = '';
+			$sShow = (!empty($this->aConfig['showMaliciousInput']) ? $this->aConfig['showMaliciousInput'] : '');
+			if ($sShow == 'none') {
+				$paFields = array_keys($this->aFields);
+			}
+
+			if (!empty($paFields)) {
+				foreach($paFields as $sFieldName) {
+					$this->aMarkers[$this->aFields[$sFieldName]['valueName']] = '';
+				}
 			}
 		}
 
@@ -329,11 +364,23 @@
 				return;
 			}
 
-			// Add field names
-			if (is_array($this->aFields)) {
-				foreach ($this->aFields as $sKey => $aField) {
-					$this->aMarkers[$aField['markerName']] = $this->sFieldPrefix . '[' . $sKey . ']';
-					$aMultiNames['[' . $aField['labelName'] . ']'] = md5($this->aMarkers[$aField['labelName']]);
+			$aMessages = array();
+			foreach ($this->aFields as $sKey => $aField) {
+				// Add field names
+				$this->aMarkers[$aField['markerName']] = $this->sFieldPrefix . '[' . $sKey . ']';
+				$aMultiNames['[' . $aField['labelName'] . ']'] = md5($this->aMarkers[$aField['labelName']]);
+
+				// Get message
+				if (!empty($aField['messageName'])) {
+					$aMessages[] = $aField['messageName'];
+				}
+			}
+
+			// Add message list
+			if (!empty($aMessages)) {
+				$this->aMarkers['MESSAGES'] = '<ul><li>' . implode('</li><li>', $aMessages) . '</li></ul>';
+				if (!empty($this->aConfig['messageListWrap'])) {
+					$this->aMarkers['MESSAGES'] = str_replace('|', $aMarkers['MESSAGES'], $this->aConfig['messageListWrap']);
 				}
 			}
 
@@ -389,64 +436,6 @@
 
 			return $aMarkers;
 		}
-
-
-		/**
-		 * Get template markers with errors and info text
-		 *
-		 * @return array All messages as markers
-		 */
-		/*public function aGetMarkers () {
-			if (empty($this->aFields) || empty($this->aGP)) {
-				return array();
-			}
-
-			$aMessages        = array();
-			$aMarkers         = array();
-			$sErrorClass      = (!empty($this->aConfig['classError'])       ? $this->aConfig['classError']       : 'error');
-			$sWrapMessage     = (!empty($this->aConfig['messageWrap'])      ? $this->aConfig['messageWrap']      : '|');
-			$sWrapMessageList = (!empty($this->aConfig['messageListWrap'])  ? $this->aConfig['messageListWrap']  : '|');
-
-			// Get field order from GPvars
-			$aFields = $this->aGP;
-			unset($aFields['submit']);
-
-			foreach($aFields as $sFieldName => $aField) {
-				if (empty($this->aErrors[$sFieldName]) || !isset($this->aFields[$sFieldName])) {
-					continue;
-				}
-
-				// Add message to list
-				$aFieldConf  = $this->aFields[$sFieldName];
-				$aMessages[] = $this->aErrors[$sFieldName];
-
-				// Add error class
-				if ($this->aConfig['highlightFields']) {
-					$aMarkers[$aFieldConf['errClassName']] = $sErrorClass;
-				}
-
-				// Wrap message if configured
-				$aMarkers[$aFieldConf['messageName']] = $this->aErrors[$sFieldName];
-				if (!empty($sWrapMessage)) {
-					$aMarkers[$aFieldConf['messageName']] = str_replace('|', $this->aErrors[$sFieldName], $sWrapMessage);
-				}
-			}
-
-			// Add message list
-			if (count($aMessages)) {
-				$aMarkers['MESSAGES'] = '<ul><li>' . implode('</li><li>', $aMessages) . '</li></ul>';
-				if (!empty($sWrapMessageList)) {
-					$aMarkers['MESSAGES'] = str_replace('|', $aMarkers['MESSAGES'], $sWrapMessageList);
-				}
-			}
-
-			// Add info text
-			if (!empty($this->sInfo)) {
-				$aMarkers['INFO'] = $this->sInfo;
-			}
-
-			return $aMarkers;
-		}*/
 
 	}
 

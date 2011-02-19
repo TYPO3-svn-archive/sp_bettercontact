@@ -66,7 +66,7 @@
 			}
 
 			// Check hidden fields
-			if (is_array($this->aFields)) {
+			if (!empty($this->aConfig['useHiddenFieldsCheck']) && is_array($this->aFields)) {
 				foreach ($this->aFields as $sKey => $aField) {
 					if (!empty($_POST[$sKey]) || !empty($_GET[$sKey])) {
 						return TRUE;
@@ -88,9 +88,10 @@
 		/**
 		 * Execute checks and set errors
 		 *
+		 * @param array $paErrors Will be filled with field errors if an error occurs
 		 * @return FALSE if the form has errors
 		 */
-		public function bCheckFields () {
+		public function bCheckFields (array &$paErrors) {
 			// Return if no data was sent
 			if (empty($this->aFields) || !is_array($this->aFields)) {
 				return TRUE;
@@ -102,14 +103,14 @@
 
 				// Bypass captcha input, it has its own check routine
 				if (strtolower($sKey) == 'captcha' && !$this->bCheckCaptcha()) {
-					$this->oMessages->vAddError($sFieldName, 'msg_captcha');
+					$paErrors[$sFieldName] = array('msg_captcha');
 					$bResult = FALSE;
 					continue;
 				}
 
 				// Required
 				if (!strlen($aField['value']) && (bool) $aField['required']) {
-					$this->oMessages->vAddError($sFieldName, 'msg_' . $sFieldName . '_empty', 'required');
+					$paErrors[$sFieldName] = array('msg_' . $sFieldName . '_empty', 'required');
 					$bResult = FALSE;
 					continue;
 				}
@@ -121,14 +122,14 @@
 
 				// Too short
 				if (strlen($aField['minLength']) && (int) $aField['minLength'] && strlen($aField['value']) < $aField['minLength']) {
-					$this->oMessages->vAddError($sFieldName, 'msg_' . $sFieldName . '_short', 'minLength');
+					$paErrors[$sFieldName] = array('msg_' . $sFieldName . '_short', 'minLength');
 					$bResult = FALSE;
 					continue;
 				}
 
 				// Too long
 				if (strlen($aField['maxLength']) && (int) $aField['maxLength'] && strlen($aField['value']) > $aField['maxLength']) {
-					$this->oMessages->vAddError($sFieldName, 'msg_' . $sFieldName . '_long', 'maxLength');
+					$paErrors[$sFieldName] = array('msg_' . $sFieldName . '_long', 'maxLength');
 					$bResult = FALSE;
 					continue;
 				}
@@ -136,7 +137,7 @@
 				// Disallowed signs
 				if (strlen($aField['disallowed'])) {
 					if ($aField['value'] !== str_replace(str_split($aField['disallowed']), '', $aField['value'])) {
-						$this->oMessages->vAddError($sFieldName, 'msg_' . $sFieldName . '_disallowed', 'disallowed');
+						$paErrors[$sFieldName] = array('msg_' . $sFieldName . '_disallowed', 'disallowed');
 						$bResult = FALSE;
 						continue;
 					}
@@ -145,7 +146,7 @@
 				// Allowed signs
 				if (strlen($aField['allowed'])) {
 					if (strlen(str_replace(str_split($aField['allowed']), '', $aField['value']))) {
-						$this->oMessages->vAddError($sFieldName, 'msg_' . $sFieldName . '_allowed', 'allowed');
+						$paErrors[$sFieldName] = array('msg_' . $sFieldName . '_allowed', 'allowed');
 						$bResult = FALSE;
 						continue;
 					}
@@ -154,7 +155,7 @@
 				// Regex
 				if (strlen($aField['regex'])) {
 					if (!preg_match($aField['regex'], $aField['value'])) {
-						$this->oMessages->vAddError($sFieldName, 'msg_' . $sFieldName . '_regex', 'regex');
+						$paErrors[$sFieldName] = array('msg_' . $sFieldName . '_regex', 'regex');
 						$bResult = FALSE;
 						continue;
 					}
@@ -169,9 +170,10 @@
 		 * Check uploaded files
 		 *
 		 * @param array $paFiles Uploaded files
+		 * @param array $paErrors Will be filled with field errors if an error occurs
 		 * @return FALSE if the file check fails
 		 */
-		public function bCheckFiles (array $paFiles) {
+		public function bCheckFiles (array $paFiles, array &$paErrors) {
 			if (empty($this->aFields) || empty($paFiles)) {
 				return TRUE;
 			}
@@ -183,21 +185,21 @@
 
 				// Required
 				if (!empty($aField['value']) && empty($aFile['path'])) {
-					$this->oMessages->vAddError($sFieldName, 'msg_' . $sFieldName . '_file_invalid', 'required');
+					$paErrors[$sFieldName] = array('msg_' . $sFieldName . '_file_invalid');
 					$bResult = FALSE;
 					continue;
 				}
 
 				// Check max file size
 				if (strlen($aField['fileMaxSize']) && $aFile['size'] > (int) $aField['fileMaxSize']) {
-					$this->oMessages->vAddError($sFieldName, 'msg_' . $sFieldName . '_file_big', 'fileMaxSize');
+					$paErrors[$sFieldName] = array('msg_' . $sFieldName . '_file_big', 'fileMaxSize');
 					$bResult = FALSE;
 					continue;
 				}
 
 				// Check min file size
 				if (strlen($aField['fileMinSize']) && $aFile['size'] < (int) $aField['fileMinSize']) {
-					$this->oMessages->vAddError($sFieldName, 'msg_' . $sFieldName . '_file_small', 'fileMinSize');
+					$paErrors[$sFieldName] = array('msg_' . $sFieldName . '_file_small', 'fileMinSize');
 					$bResult = FALSE;
 					continue;
 				}
@@ -206,7 +208,7 @@
 				if (strlen($aField['fileAllowed'])) {
 					$aAllowedTypes = t3lib_div::trimExplode(',', $aField['fileAllowed'], TRUE);
 					if (!in_array($aFile['type'], $aAllowedTypes)) {
-						$this->oMessages->vAddError($sFieldName, 'msg_' . $sFieldName . '_file_allowed', 'fileAllowed');
+						$paErrors[$sFieldName] = array('msg_' . $sFieldName . '_file_allowed', 'fileAllowed');
 						$bResult = FALSE;
 						continue;
 					}
@@ -216,7 +218,7 @@
 				if (strlen($aField['fileDisallowed'])) {
 					$aDisallowedTypes = t3lib_div::trimExplode(',', $aField['fileDisallowed'], TRUE);
 					if (in_array($aFile['type'], $aDisallowedTypes)) {
-						$this->oMessages->vAddError($sFieldName, 'msg_' . $sFieldName . '_file_disallowed', 'fileDisallowed');
+						$paErrors[$sFieldName] = array('msg_' . $sFieldName . '_file_disallowed', 'fileDisallowed');
 						$bResult = FALSE;
 						continue;
 					}
@@ -277,33 +279,6 @@
 
 			return FALSE;
 		}
-
-
-		/**
-		 * Get an array of all fields with malicious content
-		 *
-		 * @return Array of bad fields
-		 */
-		/*public function aGetErrorFields () {
-			$aResult = array();
-			$sShow   = strtolower($this->aConfig['showMaliciousInput']);
-
-			// Show only valid input
-			if ($sShow == 'clean') {
-				foreach($this->aFields as $sKey => $aField) {
-					if (!empty($this->aErrors[$sKey])) {
-						$aResult[] = $aField;
-					}
-				}
-			}
-
-			// Show no input
-			if ($sShow == 'none') {
-				$aResult = $this->aFields;
-			}
-
-			return $aResult;
-		}*/
 
 	}
 

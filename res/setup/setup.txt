@@ -38,6 +38,7 @@ plugin.tx_spbettercontact_pi1 {
 	minElapsedTime         = 1
 	postOnly               = 1
 	useRefererCheck        =
+	useHiddenFieldsCheck   =
 	# captchaSupport       = (?) Supported are: sr_freecap, jm_recaptcha, captcha and mathguard
 	# spamDateFormat       = (?) Use a valid "strftime" format to display date in spam notification
 	# spamTimeFormat       = (?) Use a valid "strftime" format to display time in spam notification
@@ -57,8 +58,9 @@ plugin.tx_spbettercontact_pi1 {
 
 	infoWrapPositive       = <p class="tx_spbettercontact_info tx_spbettercontact_info_positive">|</p>
 	infoWrapNegative       = <p class="tx_spbettercontact_info tx_spbettercontact_info_negative">|</p>
+	hiddenWrap             = <input type="text" name="|" value="" />
 	messageWrap            = <p class="tx_spbettercontact_message">|</p>
-	# messageListWrap      = (?) Wrap around ###MESSAGES####
+	# messageListWrap      = (?) Wrap around ###MESSAGES#### if marker is not empty
 	imageWrap              = <img src="###SRC###" height="###HEIGHT###" width="###WIDTH###" title="###TITLE###" alt="###ALT###" />
 	thumbWrap              = <img src="###SRC###" height="###HEIGHT###" width="###WIDTH###" title="###TITLE###" alt="###ALT###" />
 

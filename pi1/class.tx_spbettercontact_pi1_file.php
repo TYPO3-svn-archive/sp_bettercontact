@@ -43,14 +43,6 @@
 		protected $oCS          = NULL;
 
 
-/**
- * t3lib_div::upload_copy_move($source, $destination)
- * t3lib_div::upload_to_tempfile($uploadedFileName)
- * t3lib_div::unlink_tempfile($uploadedTempFileName)
- * t3lib_div::tempnam($filePrefix)
- */
-
-
 		/**
 		 * Set configuration for file object
 		 *
@@ -99,7 +91,7 @@
 					$sFileName = $oFileFunc->getUniqueName($aFile['name'], $sPath);
 
 					// Move to upload dir
-					move_uploaded_file($aFile['tmp_name'], $sFileName);
+					@move_uploaded_file($aFile['tmp_name'], $sFileName);
 
 					// Check file again
 					if (is_readable($sFileName)) {
@@ -210,7 +202,10 @@
 				 && empty($aField['imageMinWidth']) && empty($aField['imageMinHeight'])) {
 					continue;
 				}
+
+
 				// TODO: Check process if thumbnails will be generated
+
 
 				$sFileType  = (!empty($aField['imageConvertTo']) ? ltrim($aField['imageConvertTo'], '.') : '');
 				$aOptions   = array(

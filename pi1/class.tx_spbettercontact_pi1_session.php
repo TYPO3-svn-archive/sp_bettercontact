@@ -80,10 +80,11 @@
 		/**
 		 * Check session if form was already sent
 		 *
-		 * @param array $paErrorData Will be filled with error details in case of error
+		 * @param integer $piCount Will be filled with sendings count in case of error
+		 * @param integer $piTime Will be filled with waiting time in case of error
 		 * @return TRUE if current fe user has already sent a lot of emails
 		 */
-		public function bHasAlreadySent (array &$paErrorData) {
+		public function bHasAlreadySent (&$piCount, &$piTime) {
 			if (empty($this->aSessionContent) || !is_array($this->aSessionContent)) {
 				return FALSE;
 			}
@@ -105,9 +106,8 @@
 			// User is locked
 			if ($GLOBALS['SIM_EXEC_TIME'] < $iLockEnd) {
 				$this->iWaitingTime = ($iLockEnd - $GLOBALS['SIM_EXEC_TIME']);
-				$iTime  = ($this->iWaitingTime > 60 ? ($this->iWaitingTime / 60) : 1);
-				$iCount = ($this->iCount <= $this->aConfig['messageCount'] ? $this->iCount : $this->aConfig['messageCount']);
-				$paErrorData = array($iCount, $iTime);
+				$piTime  = ($this->iWaitingTime > 60 ? ($this->iWaitingTime / 60) : 1);
+				$piCount = ($this->iCount <= $this->aConfig['messageCount'] ? $this->iCount : $this->aConfig['messageCount']);
 				return TRUE;
 			}
 

@@ -42,6 +42,10 @@
     ###IMAGE_<FIELDNAME>###
 
 
+    // Show the full tag of the thumbnail of an uploaded image
+    ###THUMB_<FIELDNAME>###
+
+
     // Set state of a checkbox (radio and select do not need this)
     ###CHECKED_<FIELDNAME>###
 
@@ -134,6 +138,7 @@
 ###LABEL_STREET### ###VALUE_STREET###
 ###LABEL_CITY### ###VALUE_CITY###
 ###LABEL_EMAIL### ###VALUE_EMAIL###
+###LABEL_PICTURE### ###THUMB_PICTURE###
 
 ###VALUE_MESSAGE###
 
@@ -174,6 +179,10 @@
         <td width="80"><strong>###LABEL_EMAIL###</strong></td>
         <td>###VALUE_EMAIL###</td>
     </tr>
+    <tr>
+        <td width="80"><strong>###LABEL_PICTURE###</strong></td>
+        <td>###THUMB_PICTURE###</td>
+    </tr>
 </table>
 <p>###VALUE_MESSAGE###<br />
 <br />
@@ -212,6 +221,7 @@
 ###LLL:street### ###VALUE_STREET###
 ###LLL:city### ###VALUE_CITY###
 ###LLL:email### ###VALUE_EMAIL###
+###LLL:picture### ###VALUE_PICTURE###
 ###LLL:message### ###VALUE_MESSAGE###
 
 =============================================
@@ -223,6 +233,7 @@
 ###LLL:street### ###SPAM_VALUE_STREET###
 ###LLL:city### ###SPAM_VALUE_CITY###
 ###LLL:email### ###SPAM_VALUE_EMAIL###
+###LLL:picture### ###SPAM_VALUE_PICTURE###
 ###LLL:message### ###SPAM_VALUE_MESSAGE###
 
 
@@ -297,6 +308,10 @@
         <td>###VALUE_EMAIL###</td>
     </tr>
     <tr>
+        <td width="80"><strong>###LLL:picture###</strong></td>
+        <td>###VALUE_PICTURE###</td>
+    </tr>
+    <tr>
         <td width="80"><strong>###LLL:message###</strong></td>
         <td>###VALUE_MESSAGE###</td>
     </tr>
@@ -326,6 +341,10 @@
     <tr>
         <td width="80"><strong>###LLL:email###</strong></td>
         <td>###SPAM_VALUE_EMAIL###</td>
+    </tr>
+    <tr>
+        <td width="80"><strong>###LLL:picture###</strong></td>
+        <td>###SPAM_VALUE_PICTURE###</td>
     </tr>
     <tr>
         <td width="80"><strong>###LLL:message###</strong></td>

@@ -59,10 +59,10 @@
 		/**
 		 * Log a valid request
 		 *
-		 * @param string $psError Will be set with an error if occurs
+		 * @param string $psInfo Will be set with an info message if an error occurs
 		 * @return Integer with ID of last inserted table row
 		 */
-		public function iLog (&$psError) {
+		public function iLog (&$psInfo) {
 			if (empty($this->aConfig['enableLog'])) {
 				return 0;
 			}
@@ -100,7 +100,7 @@
 				return $GLOBALS['TYPO3_DB']->sql_insert_id();
 			}
 
-			$psError = $GLOBALS['TYPO3_DB']->sql_error();
+			$psInfo = $GLOBALS['TYPO3_DB']->sql_error();
 			return 0;
 		}
 
@@ -108,10 +108,11 @@
 		/**
 		 * Save values into a user specified table
 		 *
-		 * @param string $psError Will be set with an error if occurs
+		 * @param string $psInfo Will be set with an info message if an error occurs
+		 * @param array $paErrors Will be filled with field errors if an error occurs
 		 * @return Integer with ID of last inserted row
 		 */
-		public function iSave (&$psError) {
+		public function iSave (&$psInfo, array &$paErrors) {
 			if (empty($this->aConfig['database.']['table'])) {
 				return 0;
 			}
@@ -139,8 +140,11 @@
 			}
 
 			// Check for unique fields
-			if ($this->bHasDuplicates($aFields)) {
-				$psError = 'Duplicate entries found';
+			if ($aDuplicates = $this->aGetDuplicates($aFields)) {
+				$psInfo = 'Duplicate entries found';
+				foreach ($aDuplicates as $sFieldName) {
+					$paErrors[$sFieldName] = array('msg_' . $sFieldName . '_not_unique');
+				}
 				return 0;
 			}
 
@@ -149,7 +153,7 @@
 				return (int) $GLOBALS['TYPO3_DB']->sql_insert_id();
 			}
 
-			$psError = $GLOBALS['TYPO3_DB']->sql_error();
+			$psInfo = $GLOBALS['TYPO3_DB']->sql_error();
 			return 0;
 		}
 
@@ -157,10 +161,11 @@
 		/**
 		 * Save values into an external database
 		 *
-		 * @param string $psError Will be set with an error if occurs
+		 * @param string $psInfo Will be set with an info message if an error occurs
+		 * @param array $paErrors Will be filled with field errors if an error occurs
 		 * @return Integer with ID of the last inserted row
 		 */
-		protected function iSaveExternal (&$psError) {
+		protected function iSaveExternal (&$psInfo, array &$paErrors) {
 			if (!t3lib_extMgm::isLoaded('adodb')) {
 				return 0;
 			}
@@ -212,18 +217,21 @@
 			}
 
 			// Check for unique fields
-			if ($this->bHasDuplicates($aFields, $oDB)) {
-				$psError = 'Duplicate entries found';
+			if ($aDuplicates = $this->aGetDuplicates($aFields)) {
+				$psInfo = 'Duplicate entries found';
+				foreach ($aDuplicates as $sFieldName) {
+					$paErrors[$sFieldName] = array('key' => 'msg_' . $sFieldName . '_not_unique');
+				}
 			}
 
 			// Insert
-			if (!$iReturn && !$psError && $oDB->AutoExecute($aDBConf['table'], $aFields, 'INSERT')) {
+			if (!$iReturn && !$psInfo && $oDB->AutoExecute($aDBConf['table'], $aFields, 'INSERT')) {
 				$iReturn = (int) $oDB->Insert_ID($aDBConf['table']);
 			}
 
 			// Check result
-			if (!$iReturn && !$psError) {
-				$psError = $oDB->ErrorMsg();
+			if (!$iReturn && !$psInfo) {
+				$psInfo = $oDB->ErrorMsg();
 			}
 
 			// Close db connection and revert global quoting variable
@@ -296,21 +304,22 @@
 
 
 		/**
-		 * Check for unique fields
+		 * Get not unique fields
 		 *
 		 * @param array $paFields Array with field configuration
 		 * @param object $poConnection External DB Connection
-		 * @return boolean TRUE if any duplicated value was found
+		 * @return array Duplicated field names
 		 */
-		protected function bHasDuplicates (array $paFields, &$poDB = NULL) {
+		protected function aGetDuplicates (array $paFields, &$poDB = NULL) {
 			if (empty($paFields) || empty($this->aConfig['database.']['uniqueFields'])) {
-				return FALSE;
+				return array();
 			}
 
 			$aWhere        = array();
 			$aUniqueFields = t3lib_div::trimExplode(',', $this->aConfig['database.']['uniqueFields'], TRUE);
 			$sColumns      = implode(',', array_keys($paFields));
 			$sTable        = $this->aConfig['database.']['table'];
+			$aDuplicates   = array();
 
 			// Get WHERE statement
 			foreach ($aUniqueFields as $sFieldName) {
@@ -325,7 +334,7 @@
 				}
 			}
 			if (empty($aWhere)) {
-				return FALSE;
+				return array();
 			}
 
 			// Get existing rows
@@ -341,7 +350,7 @@
 				}
 			}
 			if (empty($aRows)) {
-				return FALSE;
+				return array();
 			}
 
 			// Get not unique fields
@@ -352,13 +361,13 @@
 					}
 					foreach ($this->aFields as $sFieldName => $aField) {
 						if ($sFieldName == $sKey || $aField['dbField'] == $sKey) {
-							$this->aUniqueErrors[$sFieldName] = array('key' => 'msg_' . $sFieldName . '_not_unique');
+							$aDuplicates[] = $sFieldName;
 						}
 					}
 				}
 			}
 
-			return !empty($this->aUniqueErrors);
+			return $aDuplicates;
 		}
 
 

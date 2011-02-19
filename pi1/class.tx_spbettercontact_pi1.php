@@ -203,10 +203,13 @@
 		 * @return string Any content to show
 		 */
 		protected function sProcessSendingsCheck () {
-			if ($this->oSession->bHasAlreadySent($aErrorData)) {
+			$iCount = 0;
+			$iTime  = 0;
+
+			if ($this->oSession->bHasAlreadySent($iCount, $iTime)) {
 				$this->vCheckRedirect('exhausted');
-				if (!empty($aErrorData)) {
-					$this->oTemplate->vAddInfo('msg_already_sent', $aErrorData);
+				if (!empty($iCount) || !empty($iTime)) {
+					$this->oTemplate->vAddInfo('msg_already_sent', array($iCount, $iTime));
 				}
 				return $this->oTemplate->sGetContent();
 			}
@@ -226,10 +229,10 @@
 			}
 
 			// Check uploaded files
+			$aErrors = array();
 			if ($aFiles = $this->oFile->aGetFiles($_FILES)) {
-				if (!$this->oCheck->bCheckFiles($aFiles)) {
-					$this->oTemplate->vAddMarkers($this->oMessages->aGetMarkers());
-
+				if (!$this->oCheck->bCheckFiles($aFiles, $aErrors)) {
+					$this->oTemplate->vAddErrors($aErrors);
 					return $this->oTemplate->sGetContent();
 				}
 
@@ -246,10 +249,11 @@
 				$this->oTemplate->vAddMarkers($aMarkers);
 				$this->oEmail->vAddMarkers($aMarkers);
 
-				// Set file as field value
+				// Set file as field value (will be distributed to other classes by reference)
 				foreach ($this->aFiles as $sKey => $aFile) {
 					if (!empty($this->aFields[$sKey])) {
 						$this->aFields[$sKey]['value'] = $aFile['path'];
+						$this->aGP[$sKey] = $aFile['path'];
 					}
 				}
 			}
@@ -264,14 +268,13 @@
 		 * @return string Any content to show
 		 */
 		protected function sProcessValueCheck () {
-			if (!$this->oCheck->bCheckFields()) {
+			$aErrors = array();
+			if (!$this->oCheck->bCheckFields($aErrors)) {
 				if (!$this->bIsFormEmpty($this->aGP)) {
 					$this->vSendWarning('user');
 				}
-
-				$this->oTemplate->vAddMarkers($this->oMessages->aGetMarkers());
-				$this->oTemplate->vClearFields($this->oMessages->aGetErrorFields());
-
+				$this->oTemplate->vAddErrors($aErrors);
+				$this->oTemplate->vClearFields(array_keys($aErrors));
 				return $this->oTemplate->sGetContent();
 			}
 
@@ -286,27 +289,28 @@
 		 */
 		protected function sProcessDB () {
 			// Add log entry
-			// TODO: Add files to log entries
-			$iLogRowID = $this->oDB->iLog($sError);
-			if (!empty($sError)) {
-				$this->oTemplate->vAddInfo('msg_db_failed', $sError);
+			$sInfo = '';
+			$iLogRowID = $this->oDB->iLog($sInfo);
+			if (!empty($sInfo)) {
+				$this->oTemplate->vAddInfo('msg_db_failed', $sInfo);
 				return $this->oTemplate->sGetContent();
 			}
 			$this->oSession->vAddValue('lastLogRowID', $iLogRowID);
 
 			// Store form data into user defined table
+			$aErrors = array();
 			if (!empty($this->aConfig['enableDBTab'])) {
 				// Get last inserted / updated row ID
 				if (!$this->oDB->bIsExternalDB()) {
-					$iRowID = $this->oDB->iSave($sError);
+					$iRowID = $this->oDB->iSave($sInfo, $aErrors);
 				} else {
-					$iRowID = $this->oDB->iSaveExternal($sError);
+					$iRowID = $this->oDB->iSaveExternal($sInfo, $aErrors);
 				}
 
 				// Check for errors
-				if (!empty($sError)) {
-					$this->oTemplate->vAddInfo('msg_db_failed', $sError);
-					$this->oTemplate->vAddErrors($this->oDB->aGetUniqueErrors());
+				if (!empty($sInfo) || !empty($aErrors)) {
+					$this->oTemplate->vAddInfo('msg_db_failed', $sInfo);
+					$this->oTemplate->vAddErrors($aErrors);
 					return $this->oTemplate->sGetContent();
 				}
 
@@ -404,6 +408,15 @@
 			// Check if default setup is loaded
 			if (!isset($this->aConfig['systems.']) || !isset($this->aConfig['browsers.'])) {
 				return sprintf($sWrap, 'Please include the required static TypoScript setup on root page!');
+			}
+
+			// Check wrap for hidden fields
+			if (!empty($this->aConfig['hiddenWrap'])) {
+				if (strpos($this->aConfig['hiddenWrap'], '<input') === FALSE || strrpos($this->aConfig['hiddenWrap'], '/>') === FALSE) {
+					$aMessages[] = 'Please use a valid input field for the "hiddenWrap"!';
+				} else if (strpos($this->aConfig['hiddenWrap'], 'value=""') === FALSE) {
+					$aMessages[] = 'Please set the value of the "hiddenWrap" input field to an empty value (value="")!';
+				}
 			}
 
 			// Check email field

@@ -99,7 +99,7 @@
 			}
 
 			// Get rows from log table
-			$aRows = $this->oDB->aGetLogTable($iPID, $iPeriod);
+			$aRows = $this->oDB->aGetLogRows($iPID, $iPeriod);
 			$aRows = $this->aPrepareLogTableRows($aRows);
 
 			// Get some markers

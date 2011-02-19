@@ -85,6 +85,7 @@
 			<label index="tt_content.flexform_pi1.adminMails.2">Bot-Spam</label>
 			<label index="tt_content.flexform_pi1.adminMails.3">User-Spam (slow)</label>
 			<label index="tt_content.flexform_pi1.adminMails.4">Both (slow)</label>
+			<label index="tt_content.flexform_pi1.useHiddenFieldsCheck">Check hidden fields:</label>
 			<label index="tt_content.flexform_pi1.useRefererCheck">Check referer (HTTP_REFERER):</label>
 			<label index="tt_content.flexform_pi1.minElapsedTime">Minimum time required to fill out the form (in seconds):</label>
 			<label index="tt_content.flexform_pi1.messageCount">Max count of allowed mailings:</label>
@@ -181,6 +182,7 @@
 			<label index="tt_content.flexform_pi1.adminMails.2">Bot-Spam</label>
 			<label index="tt_content.flexform_pi1.adminMails.3">User-Spam (langsam)</label>
 			<label index="tt_content.flexform_pi1.adminMails.4">Beides (langsam)</label>
+			<label index="tt_content.flexform_pi1.useHiddenFieldsCheck">Versteckte Felder prüfen:</label>
 			<label index="tt_content.flexform_pi1.useRefererCheck">Herkunft prüfen (HTTP_REFERER):</label>
 			<label index="tt_content.flexform_pi1.minElapsedTime">Minimale erforderliche Zeit zum Ausfüllen des Formulars (in Sekunden):</label>
 			<label index="tt_content.flexform_pi1.messageCount">Maximale Anzahl erlaubter Sendungen:</label>
@@ -277,6 +279,7 @@
 			<label index="tt_content.flexform_pi1.adminMails.2">Spam via robot</label>
 			<label index="tt_content.flexform_pi1.adminMails.3">Spam via utilisateur (lent)</label>
 			<label index="tt_content.flexform_pi1.adminMails.4">Les deux (lent)</label>
+			<label index="tt_content.flexform_pi1.useHiddenFieldsCheck">Vérifier les invisible champs:</label>
 			<label index="tt_content.flexform_pi1.useRefererCheck">Vérifier le referer (HTTP_REFERER):</label>
 			<label index="tt_content.flexform_pi1.minElapsedTime">Temps minimum requis pour remplir le formulaire (seconde):</label>
 			<label index="tt_content.flexform_pi1.messageCount">Nombre maximum d'envois autorisés:</label>

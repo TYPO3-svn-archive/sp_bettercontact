@@ -101,6 +101,7 @@
 			$this->vAddDropDown($aTabs['sSPAM'], 'captchaSupport', array('','sr_freecap','jm_recaptcha','captcha','mathguard'));
 			$this->vAddDropDown($aTabs['sSPAM'], 'showMaliciousInput', array('','none','clean','all'));
 			$this->vAddDropDown($aTabs['sSPAM'], 'adminMails', array('','none','bot','user','both'));
+			$this->vAddCheckBox($aTabs['sSPAM'], 'useHiddenFieldsCheck', TRUE);
 			$this->vAddCheckBox($aTabs['sSPAM'], 'useRefererCheck', TRUE);
 			$this->vAddInput($aTabs['sSPAM'], 'minElapsedTime', 5, '1');
 			$this->vAddInput($aTabs['sSPAM'], 'messageCount', 5, '10');
