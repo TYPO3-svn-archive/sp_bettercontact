@@ -55,6 +55,7 @@ plugin.tx_spbettercontact_pi1 {
 	thumbPath              = uploads/tx_spbettercontact/
 	enableImages           =
 	enableThumbnails       =
+	# keepLastFileOnError  = (?) Keep last file if a new one was uploaded with an error using same field
 
 	infoWrapPositive       = <p class="tx_spbettercontact_info tx_spbettercontact_info_positive">|</p>
 	infoWrapNegative       = <p class="tx_spbettercontact_info tx_spbettercontact_info_negative">|</p>
@@ -62,7 +63,7 @@ plugin.tx_spbettercontact_pi1 {
 	messageWrap            = <p class="tx_spbettercontact_message">|</p>
 	# messageListWrap      = (?) Wrap around ###MESSAGES#### if marker is not empty
 	imageWrap              = <img src="###SRC###" height="###HEIGHT###" width="###WIDTH###" title="###TITLE###" alt="###ALT###" />
-	thumbWrap              = <img src="###SRC###" height="###HEIGHT###" width="###WIDTH###" title="###TITLE###" alt="###ALT###" />
+	thumbWrap              = <div class="tx_spbettercontact_thumb"><img src="###SRC###" height="###HEIGHT###" width="###WIDTH###" title="###TITLE###" alt="###ALT###" /></div>
 
 
 
@@ -165,16 +166,16 @@ plugin.tx_spbettercontact_pi1 {
 			fileAllowed    = gif,jpg,jpeg,tif,tiff,bmp,pcx,tga,png
 			fileDisallowed =
 
-			imageMaxWidth  = 120m
-			imageMaxHeight =
+			imageMaxWidth  = 800m
+			imageMaxHeight = 
 			imageMinWidth  =
 			imageMinHeight =
 			imageConvertTo = png
 			imageTitle     =
 			imageAlt       =
 
-			thumbWidth     = 48m
-			thumbHeight    =
+			thumbWidth     = 300m
+			thumbHeight    = 
 			thumbConvertTo = gif
 			thumbTitle     =
 			thumbAlt       =
@@ -241,6 +242,7 @@ plugin.tx_spbettercontact_pi1 {
 		# autoFillDefault  = (?) Automatically fill default fields pid, tstamp, crdate and cruser_id
 		# autoFillExisting = (?) Automatically fill all existing table fields with corresponding values of form fields
 		# uniqueFields     = (?) Values in this fields will be checked to be unique in table
+		# hideUniqueErrors = (?) Do not show errors for fields with not unique content
 
 		## Demo field configuration (see manual for details)
 		fieldconf {

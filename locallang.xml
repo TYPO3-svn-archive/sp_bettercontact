@@ -96,6 +96,7 @@
 			<label index="tt_content.flexform_pi1.database.autoFillExisting">Fill configured fields automatically:</label>
 			<label index="tt_content.flexform_pi1.database.fieldconf">TypoScript field configuration:</label>
 			<label index="tt_content.flexform_pi1.database.uniqueFields">Check content of this fields to be unique in table (separate with ","):</label>
+			<label index="tt_content.flexform_pi1.database.hideUniqueErrors">Hide errors for fields with not unique content:</label>
 			<label index="tt_content.flexform_pi1.sFILE">Files</label>
 			<label index="tt_content.flexform_pi1.filePath">File path:</label>
 			<label index="tt_content.flexform_pi1.imagePath">Image path:</label>
@@ -192,7 +193,8 @@
 			<label index="tt_content.flexform_pi1.database.autoFillDefault">Standard-Felder automatisch befüllen (pid,tstamp,crdate,cruser_id):</label>
 			<label index="tt_content.flexform_pi1.database.autoFillExisting">Konfigurierte Felder automatisch befüllen:</label>
 			<label index="tt_content.flexform_pi1.database.fieldconf">TypoScript Feld-Konfiguration:</label>
-			<label index="tt_content.flexform_pi1.database.uniqueFields">Inhalt dieser Felder auf Einmaligkeit (unique) prüfen (durch "," trennen):</label>
+			<label index="tt_content.flexform_pi1.database.uniqueFields">Inhalt dieser Felder auf Eindeutigkeit (unique) prüfen (durch "," trennen):</label>
+			<label index="tt_content.flexform_pi1.database.hideUniqueErrors">Zeige keine Fehler für Felder mit nicht eindeutigem (unique) Inhalt:</label>
 			<label index="tt_content.flexform_pi1.sFILE">Dateien</label>
 			<label index="tt_content.flexform_pi1.filePath">Dateipfad:</label>
 			<label index="tt_content.flexform_pi1.imagePath">Bildpfad:</label>
@@ -290,6 +292,7 @@
 			<label index="tt_content.flexform_pi1.database.autoFillExisting">Remplir les champs par configuré automatiquement:</label>
 			<label index="tt_content.flexform_pi1.database.fieldconf">Configuration du champ TypoScript:</label>
 			<label index="tt_content.flexform_pi1.database.uniqueFields">Le contenu de ce test sur le terrain pour l'unicité (séparer par ","):</label>
+			<label index="tt_content.flexform_pi1.database.hideUniqueErrors">Voir aucune erreur pour les champs non-unique contenu:</label>
 			<label index="tt_content.flexform_pi1.sFILE">Fichiers</label>
 			<label index="tt_content.flexform_pi1.filePath">Path fichier:</label>
 			<label index="tt_content.flexform_pi1.imagePath">Path Image:</label>

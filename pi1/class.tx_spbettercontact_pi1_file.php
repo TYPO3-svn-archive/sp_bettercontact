@@ -41,6 +41,7 @@
 		protected $aFields      = array();
 		protected $oCObj        = NULL;
 		protected $oCS          = NULL;
+		protected $oImageFunc   = NULL;
 
 
 		/**
@@ -185,68 +186,126 @@
 				return;
 			}
 
+			if (empty($this->aConfig['enableImages']) && empty($this->aConfig['enableThumbnails'])) {
+				return;
+			}
+
 			// Get image upload dir
 			if (!$sImagePath = $this->sGetUploadPath('image')) {
 				return;
 			}
 
 			// Get basic image functions
-			$oImageFunc = t3lib_div::makeInstance('t3lib_stdGraphic');
-			$oImageFunc->init();
-			$oImageFunc->absPrefix = PATH_site;
+			$this->oImageFunc = t3lib_div::makeInstance('t3lib_stdGraphic');
+			$this->oImageFunc->init();
+			$this->oImageFunc->absPrefix = PATH_site;
 
 			// Convert images into new format
 			foreach ($paFiles as $sKey => $aFile) {
-				$aField = $this->aFields[$sKey];
-				if (empty($aField['imageConvertTo']) && empty($aField['imageMaxWidth']) && empty($aField['imageMaxHeight'])
-				 && empty($aField['imageMinWidth']) && empty($aField['imageMinHeight'])) {
-					continue;
-				}
+				$aOptions = $this->aFields[$sKey];
+				$aOptions['imagePath'] = $sImagePath;
 
-
-				// TODO: Check process if thumbnails will be generated
-
-
-				$sFileType  = (!empty($aField['imageConvertTo']) ? ltrim($aField['imageConvertTo'], '.') : '');
-				$aOptions   = array(
-					'maxW' => (!empty($aField['imageMaxWidth'])  ? $aField['imageMaxWidth']  : ''),
-					'maxH' => (!empty($aField['imageMaxHeight']) ? $aField['imageMaxHeight'] : ''),
-					'minW' => (!empty($aField['imageMinWidth'])  ? $aField['imageMinWidth']  : ''),
-					'minH' => (!empty($aField['imageMinHeight']) ? $aField['imageMinHeight'] : ''),
+				// Get image configuration
+				$aOptions['image'] = array(
+					'maxW'   => (!empty($aOptions['imageMaxWidth'])  ? $aOptions['imageMaxWidth']  : ''),
+					'maxH'   => (!empty($aOptions['imageMaxHeight']) ? $aOptions['imageMaxHeight'] : ''),
+					'minW'   => (!empty($aOptions['imageMinWidth'])  ? $aOptions['imageMinWidth']  : ''),
+					'minH'   => (!empty($aOptions['imageMinHeight']) ? $aOptions['imageMinHeight'] : ''),
 				);
 
-				// Convert image ...
-				$aFileInfo = $oImageFunc->imageMagickConvert($aFile['path'], $sFileType, '', '', '', '', $aOptions, TRUE);
-				$sFileName = $sImagePath . $aFile['name'] . '.' . $aFileInfo[2];
+				// Get thumbnail configuration
+				$aOptions['thumb'] = array(
+					'width'  => (!empty($aOptions['thumbWidth'])     ? $aOptions['thumbWidth']     : ''),
+					'height' => (!empty($aOptions['thumbHeight'])    ? $aOptions['thumbHeight']    : ''),
+				);
 
-				// Overwrite current file with new one
-				if (empty($aFileInfo[3]) || !copy($aFileInfo[3], $sFileName)) {
-					continue;
+				// Get image
+				$paFiles[$sKey] = $this->aConvertSingleImage($aFile, $aOptions);
+			}
+
+			unset($this->oImageFunc);
+		}
+
+
+		/**
+		 * Convert a single image
+		 * 
+		 * @param array $paFile File information
+		 * @param array $paOptions Image configuration options
+		 * @return array New file information
+		 */
+		protected function aConvertSingleImage (array $paFile, array $paOptions) {
+			if (empty($paFile) || empty($paOptions)) {
+				return $paFile;
+			}
+
+			$paFile['image'] = array();
+			$paFile['thumb'] = array();
+
+			// Check what to do
+			$bConvertImage = (!empty($paOptions['imageConvertTo']) || !empty($paOptions['imageMaxWidth'])
+			 || !empty($paOptions['imageMaxHeight']) || !empty($paOptions['imageMinWidth']) || !empty($paOptions['imageMinHeight']));
+			$bConvertThumb = (!empty($paOptions['thumbWidth']) || !empty($paOptions['thumbHeight']) || !empty($paOptions['thumbConvertTo']));
+
+			// Get image information for current file if no conversion is required
+			if (!$bConvertImage && !empty($this->aConfig['enableImages'])) {
+				if ($aImageInfo = $this->oImageFunc->getImageDimensions($paFile['path'])) {
+					$paFile['image']['width']  = (int) $aImageInfo[0];
+					$paFile['image']['height'] = (int) $aImageInfo[1];
 				}
-
-				// Remove temp file
-				unlink($aFileInfo[3]);
-
-				// Remove old image if type or folder has changed
-				if ($sFileName != $aFile['path']) {
-					unlink($aFile['path']);
-				}
-
-				// Set new file type / path / link
-				if (!empty($aFileInfo[2])) {
-					$paFiles[$sKey]['type'] = $aFileInfo[2];
-					$paFiles[$sKey]['path'] = $sFileName;
-					$paFiles[$sKey]['link'] = $this->sGetRelativePath($sFileName);
-				}
-
-				// Add image info
-				if (isset($aFileInfo[0], $aFileInfo[1])) {
-					$paFiles[$sKey]['width']  = (int) $aFileInfo[0];
-					$paFiles[$sKey]['height'] = (int) $aFileInfo[1];
+				if (!$bConvertThumb) {
+					return $paFile;
 				}
 			}
 
-			unset($oImageFunc);
+			// Create thumbnail first
+			if ($bConvertThumb && !empty($this->aConfig['enableThumbnails'])) {
+				// Convert and add to image directory
+				$sNewType  = (!empty($paOptions['thumbConvertTo']) ? ltrim($paOptions['thumbConvertTo'], '.') : '');
+				$iWidth    = (int) $paOptions['thumb']['width'];
+				$iHeight   = (int) $paOptions['thumb']['height'];
+				$aFileInfo = $this->oImageFunc->imageMagickConvert($paFile['path'], $sNewType, $iWidth, $iHeight, '', '', '', TRUE);
+				$sFileName = $paOptions['imagePath'] . $paFile['name'] . '_thumb.' . $aFileInfo[2];
+				copy($aFileInfo[3], $sFileName);
+				unlink($aFileInfo[3]);
+
+				// Add thumbnail information
+				$paFile['thumb']['type']   = $aFileInfo[2];
+				$paFile['thumb']['path']   = $sFileName;
+				$paFile['thumb']['link']   = $this->sGetRelativePath($sFileName);
+				$paFile['thumb']['width']  = (int) $aFileInfo[0];
+				$paFile['thumb']['height'] = (int) $aFileInfo[1];
+			}
+
+			// Create image
+			if ($bConvertImage && !empty($this->aConfig['enableImages'])) {
+				// Convert and overwrite existing image
+				$sNewType  = (!empty($paOptions['imageConvertTo']) ? ltrim($paOptions['imageConvertTo'], '.') : '');
+				$aFileInfo = $this->oImageFunc->imageMagickConvert($paFile['path'], $sNewType, '', '', '', '', $paOptions['image'], TRUE);
+				print_r('<pre>');print_r($aFileInfo);die('</pre>');
+				$sFileName = $paOptions['imagePath'] . $paFile['name'] . '.' . $aFileInfo[2];
+				copy($aFileInfo[3], $sFileName);
+				unlink($aFileInfo[3]);
+
+				// Remove old image if type or folder has changed
+				if ($sFileName != $paFile['path']) {
+					unlink($paFile['path']);
+				}
+
+				// Add image information
+				$paFile['type'] = $aFileInfo[2];
+				$paFile['path'] = $sFileName;
+				$paFile['link'] = $this->sGetRelativePath($sFileName);
+				$paFile['image']['width']  = (int) $aFileInfo[0];
+				$paFile['image']['height'] = (int) $aFileInfo[1];
+			}
+
+
+			// print_r('<pre>');print_r($paFile);die('</pre>');
+			// TODO: No ending at image file path ???
+
+
+			return $paFile;
 		}
 
 
@@ -260,6 +319,7 @@
 			$sImageTypes = (!empty($GLOBALS['GFX']['imagefile_ext']) ? $GLOBALS['GFX']['imagefile_ext'] : 'gif,jpg,png');
 			$aImageTypes = t3lib_div::trimExplode(',', $sImageTypes, TRUE);
 			$sImageWrap  = (!empty($this->aConfig['imageWrap']) ? $this->aConfig['imageWrap'] : '<img src="###SRC###" />');
+			$sThumbWrap  = (!empty($this->aConfig['thumbWrap']) ? $this->aConfig['thumbWrap'] : '<img src="###SRC###" />');
 			$aMarkers    = array();
 
 			foreach ($paFiles as $sKey => $aFile) {
@@ -269,9 +329,9 @@
 				$aMarkers[$aField['fileName']] = $aFile['link'];
 
 				// Add image marker
-				if (in_array($aFile['type'], $aImageTypes)) {
-					$sWidth    = (!empty($aFile['width'])  ? $aFile['width']  : '');
-					$sHeight   = (!empty($aFile['height']) ? $aFile['height'] : '');
+				if (!empty($this->aConfig['enableImages']) && in_array($aFile['type'], $aImageTypes)) {
+					$sWidth    = (!empty($aFile['image']['width'])  ? $aFile['image']['width']  : '');
+					$sHeight   = (!empty($aFile['image']['height']) ? $aFile['image']['height'] : '');
 					$sTitle    = $aField['imageTitle'];
 					$sAlt      = (empty($aField['imageAlt']) ? $aField['imageTitle'] : $aField['imageAlt']);
 					$sImageTag = str_replace(
@@ -280,6 +340,20 @@
 						$sImageWrap
 					);
 					$aMarkers[$aField['imageName']] = $sImageTag;
+				}
+
+				// Add thumbnail marker
+				if (!empty($this->aConfig['enableThumbnails']) && !empty($aFile['thumb']['type']) && in_array($aFile['thumb']['type'], $aImageTypes)) {
+					$sWidth    = (!empty($aFile['thumb']['width'])  ? $aFile['thumb']['width']  : '');
+					$sHeight   = (!empty($aFile['thumb']['height']) ? $aFile['thumb']['height'] : '');
+					$sTitle    = $aField['thumbTitle'];
+					$sAlt      = (empty($aField['thumbAlt']) ? $aField['thumbTitle'] : $aField['thumbAlt']);
+					$sThumbTag = str_replace(
+						array('###SRC###', '###HEIGHT###', '###WIDTH###', '###TITLE###', '###ALT###'),
+						array($aFile['thumb']['link'], $sHeight, $sWidth, $sTitle, $sAlt),
+						$sThumbWrap
+					);
+					$aMarkers[$aField['thumbName']] = $sThumbTag;
 				}
 			}
 

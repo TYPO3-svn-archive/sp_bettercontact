@@ -776,6 +776,16 @@
 							</config>
 						</TCEforms>
 					</database.uniqueFields>
+					<database.hideUniqueErrors>
+						<TCEforms>
+							<exclude>1</exclude>
+							<label>LLL:EXT:sp_bettercontact/locallang.php:tt_content.flexform_pi1.database.hideUniqueErrors</label>
+							<config>
+								<type>check</type>
+								<default>0</default>
+							</config>
+						</TCEforms>
+					</database.hideUniqueErrors>
 				</el>
 			</ROOT>
 		</sDB>

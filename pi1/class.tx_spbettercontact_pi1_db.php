@@ -141,9 +141,11 @@
 
 			// Check for unique fields
 			if ($aDuplicates = $this->aGetDuplicates($aFields)) {
-				$psInfo = 'Duplicate entries found';
-				foreach ($aDuplicates as $sFieldName) {
-					$paErrors[$sFieldName] = array('msg_' . $sFieldName . '_not_unique');
+				$psInfo = $this->aLL['msg_db_not_unique'];
+				if (empty($aDBConf['hideUniqueErrors'])) {
+					foreach ($aDuplicates as $sFieldName) {
+						$paErrors[$sFieldName] = array('msg_' . $sFieldName . '_not_unique');
+					}
 				}
 				return 0;
 			}
@@ -218,9 +220,11 @@
 
 			// Check for unique fields
 			if ($aDuplicates = $this->aGetDuplicates($aFields)) {
-				$psInfo = 'Duplicate entries found';
-				foreach ($aDuplicates as $sFieldName) {
-					$paErrors[$sFieldName] = array('key' => 'msg_' . $sFieldName . '_not_unique');
+				$psInfo = $this->aLL['msg_db_not_unique'];
+				if (empty($aDBConf['hideUniqueErrors'])) {
+					foreach ($aDuplicates as $sFieldName) {
+						$paErrors[$sFieldName] = array('key' => 'msg_' . $sFieldName . '_not_unique');
+					}
 				}
 			}
 
@@ -317,6 +321,7 @@
 
 			$aWhere        = array();
 			$aUniqueFields = t3lib_div::trimExplode(',', $this->aConfig['database.']['uniqueFields'], TRUE);
+			$paFields      = array_intersect_key($paFields, array_flip($aUniqueFields));
 			$sColumns      = implode(',', array_keys($paFields));
 			$sTable        = $this->aConfig['database.']['table'];
 			$aDuplicates   = array();
@@ -368,16 +373,6 @@
 			}
 
 			return $aDuplicates;
-		}
-
-
-		/**
-		 * Get errors for duplicated fields
-		 *
-		 * @return array Duplicated field errors
-		 */
-		public function aGetUniqueErrors () {
-			return $this->aUniqueErrors;
 		}
 
 

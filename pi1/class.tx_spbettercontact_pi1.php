@@ -90,6 +90,12 @@
 
 			// Handle file uploads and image creation
 			if ($sContent = $this->sProcessFiles()) {
+				// Check form data before returning file errors
+				// TODO: Maybe a user will not call userFunc in sProcessValueCheck()
+				//       in case of errors from sProcessFiles()
+				if ($sContent = $this->sProcessValueCheck()) {
+					return $this->sWrapContent($sContent);
+				}
 				return $this->sWrapContent($sContent);
 			}
 
@@ -233,6 +239,12 @@
 			if ($aFiles = $this->oFile->aGetFiles($_FILES)) {
 				if (!$this->oCheck->bCheckFiles($aFiles, $aErrors)) {
 					$this->oTemplate->vAddErrors($aErrors);
+					// Cleanup files in session
+					if (empty($this->aConfig['keepLastFileOnError'])) {
+						$this->aFiles = array_diff_key($this->aFiles, $aErrors);
+						$this->oSession->vAddValue('uploadedFiles', $this->aFiles);
+						$this->oSession->vSave();
+					}
 					return $this->oTemplate->sGetContent();
 				}
 
@@ -288,16 +300,8 @@
 		 * @return string Any content to show
 		 */
 		protected function sProcessDB () {
-			// Add log entry
-			$sInfo = '';
-			$iLogRowID = $this->oDB->iLog($sInfo);
-			if (!empty($sInfo)) {
-				$this->oTemplate->vAddInfo('msg_db_failed', $sInfo);
-				return $this->oTemplate->sGetContent();
-			}
-			$this->oSession->vAddValue('lastLogRowID', $iLogRowID);
-
 			// Store form data into user defined table
+			$sInfo = '';
 			$aErrors = array();
 			if (!empty($this->aConfig['enableDBTab'])) {
 				// Get last inserted / updated row ID
@@ -316,6 +320,14 @@
 
 				$this->oSession->vAddValue('lastRowID', $iRowID);
 			}
+
+			// Add log entry
+			$iLogRowID = $this->oDB->iLog($sInfo);
+			if (!empty($sInfo)) {
+				$this->oTemplate->vAddInfo('msg_db_failed', $sInfo);
+				return $this->oTemplate->sGetContent();
+			}
+			$this->oSession->vAddValue('lastLogRowID', $iLogRowID);
 
 			return $this->sProcessUserFunc('dbHandling');
 		}
@@ -608,6 +620,7 @@
 					'labelName'      => 'LABEL_'    . $sUpperName,
 					'fileName'       => 'FILE_'     . $sUpperName,
 					'imageName'      => 'IMAGE_'    . $sUpperName,
+					'thumbName'      => 'THUMB_'    . $sUpperName,
 					'checkedName'    => 'CHECKED_'  . $sUpperName,
 					'requiredName'   => 'REQUIRED_' . $sUpperName,
 					'multiChkName'   => 'CHECKED_'  . $sMultiName,
@@ -629,6 +642,11 @@
 					'imageConvertTo' => (isset($aField['imageConvertTo'])) ? $aField['imageConvertTo'] : '',
 					'imageTitle'     => (isset($aField['imageTitle']))     ? $aField['imageTitle']     : '',
 					'imageAlt'       => (isset($aField['imageAlt']))       ? $aField['imageAlt']       : '',
+					'thumbWidth'     => (isset($aField['thumbWidth']))     ? $aField['thumbWidth']     : 0,
+					'thumbHeight'    => (isset($aField['thumbHeight']))    ? $aField['thumbHeight']    : 0,
+					'thumbConvertTo' => (isset($aField['thumbConvertTo'])) ? $aField['thumbConvertTo'] : '',
+					'thumbTitle'     => (isset($aField['thumbTitle']))     ? $aField['thumbTitle']     : '',
+					'thumbAlt'       => (isset($aField['thumbAlt']))       ? $aField['thumbAlt']       : '',
 					'dbField'        => (isset($aField['dbField']))        ? $aField['dbField']        : '',
 					'dbNoAutofill'   => (isset($aField['dbNoAutofill']))   ? $aField['dbNoAutofill']   : 0,
 					'label'          => (isset($this->aLL[$sName]))        ? $this->aLL[$sName]        : ucfirst($sName),

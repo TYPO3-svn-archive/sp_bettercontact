@@ -114,6 +114,7 @@
 				$this->vAddCheckBox($aTabs['sDB'], 'database.autoFillExisting', FALSE);
 				$this->vAddText($aTabs['sDB'], 'database.fieldconf', 40, 20, '', 'off');
 				$this->vAddInput($aTabs['sDB'], 'database.uniqueFields', 40);
+				$this->vAddCheckBox($aTabs['sDB'], 'database.hideUniqueErrors', FALSE);
 			}
 
 			// Add elements to tab "file"
