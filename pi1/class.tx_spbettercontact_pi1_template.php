@@ -289,6 +289,11 @@
 		public function vClearFields (array $paFields) {
 			foreach ($paFields as $aField) {
 				$this->aMarkers[$aField['valueName']] = '';
+
+				// Fixes issue #30600 (Clear all input fields if form was successfully sent)
+				$this->aMarkers[$aField['checkedName']]  = '';
+				$this->aMarkers[$aField['multiChkName']] = '';
+				$this->aMarkers[$aField['multiSelName']] = '';
 			}
 		}
 

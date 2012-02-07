@@ -285,13 +285,16 @@
 				}
 			}
 
+			// Fixes issue #25750 (Spam fields filled with valid field entries)
+			$aGP = t3lib_div::array_merge_recursive_overrule($_GET, $_POST);
+
 			// Add field markers
 			if (is_array($this->aFields)) {
 				foreach ($this->aFields as $sKey => $aField) {
 					$sName = strtoupper($sKey);
 					$aMarkers['SPAM_CHECKED_' . $sName] = $this->aLL['unchecked'];
-					if (isset($this->aGP[$sKey])) {
-						$aMarkers['SPAM_VALUE_'   . $sName] = $this->sGetCleaned($this->aGP[$sKey]);
+					if (isset($aGP[$sKey])) {
+						$aMarkers['SPAM_VALUE_'   . $sName] = $this->sGetCleaned($aGP[$sKey]);
 						$aMarkers['SPAM_CHECKED_' . $sName] = $this->aLL['checked'];
 					}
 				}
@@ -357,6 +360,19 @@
 				return;
 			}
 
+			// Get recipient list
+			if (is_string($pmRecipients)) {
+				$pmRecipients = t3lib_div::trimExplode(',', $pmRecipients, TRUE);
+			}
+
+			// Fixes issue #12843 (Validation failed)
+			if (class_exists('t3lib_mail_Message')) {
+				$sMessage = (!empty($psMessageHTML) ? $psMessageHTML : $psMessagePlain);
+				$bIsHtml = !empty($psMessageHTML);
+				$this->vSendSwiftMail($psSubject, $sMessage, $bIsHtml, $pmRecipients, $psSender, $psReplyTo, $psReturnPath, $psAttachement);
+				return;
+			}
+
 			// Start email
 			$oMail = t3lib_div::makeInstance('t3lib_htmlmail');
 			$oMail->start();
@@ -391,17 +407,68 @@
 				}
 			}
 
-			// Check for recipient list
-			if (is_string($pmRecipients)) {
-				$pmRecipients = t3lib_div::trimExplode(',', $pmRecipients, TRUE);
-			}
-
 			// Send email to any user in array
 			if (is_array($pmRecipients)) {
 				foreach ($pmRecipients as $sRecipient) {
 					if (!$oMail->send($sRecipient)) {
 						$this->bHasError = TRUE;
 					}
+				}
+			}
+		}
+
+
+		/**
+		 * Send emails via SwiftMailer
+		 *
+		 * @param string  $psSubject      Subject of the mail
+		 * @param string  $psMessage      The email content
+		 * @param boolean $pbIsHtml       Content is HTML
+		 * @param array   $paRecipients   Array of recipients
+		 * @param string  $psSender       Sender email address
+		 * @param string  $psReplyTo      Reply-to email address
+		 * @param string  $psReturnPath   Return-Path
+		 * @param string  $psAttachement  Attachement
+		 */
+		protected function vSendSwiftMail ($psSubject, $psMessage, $pbIsHtml, array $paRecipients, $psSender, $psReplyTo = '',  $psReturnPath = '', $psAttachement = '') {
+			if (empty($paRecipients) || empty($psSender) || empty($psMessage)) {
+				$this->bHasError = TRUE;
+				return;
+			}
+
+				// Build email
+			$oMail = t3lib_div::makeInstance('t3lib_mail_Message');
+			$oMail->setSubject($psSubject);
+			$oMail->setCharset($this->sEmailChar);
+			$oMail->setFrom($psSender);
+
+				// Add reply to
+			$psReplyTo = (!empty($psReplyTo) ? $psReplyTo : $psSender);
+			$oMail->setReplyTo($psReplyTo);
+
+				// Add return path
+			$psReturnPath = (!empty($psReturnPath) ? $psReturnPath : $psSender);
+			$oMail->setReturnPath($psReturnPath);
+
+				// Add content
+			$sFormat = ($pbIsHtml ? 'html' : 'plain');
+			$oMail->setBody($psMessage, 'text/' . $sFormat);
+
+			// Add attachement
+			if (!empty($psAttachement)) {
+				$psAttachement = t3lib_div::getFileAbsFileName($psAttachement);
+				if (file_exists($psAttachement)) {
+					$oMail->attach($psAttachement);
+				}
+			}
+
+			// Send email to any user in array
+			foreach ($paRecipients as $sRecipient) {
+				$oMail->setTo($sRecipient);
+				$oMail->send();
+				if (!$oMail->isSent()) {
+					$this->bHasError = TRUE;
+					return;
 				}
 			}
 		}

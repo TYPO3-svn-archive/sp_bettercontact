@@ -361,6 +361,13 @@
 				}
 			}
 
+			// Fixes issue #31884 (Language markers broken in TYPO3 4.6.0)
+			foreach ($aLocalLang as $key => $label) {
+				if (isset($label[0]['target'])) {
+					$aLocalLang[$key] = $label[0]['target'];
+				}
+			}
+
 			return $aLocalLang;
 		}
 
@@ -420,6 +427,10 @@
 		protected function sGetCharset ($psType = 'form') {
 			$sType    = strtolower(trim($psType)) . 'Charset';
 			$sCharset = 'iso-8859-1';
+
+			if (t3lib_div::int_from_ver(TYPO3_version) >= 4005000) {
+				$sCharset = 'utf-8';
+			}
 
 			if (!empty($GLOBALS['LANG']->charSet)) {
 				$sCharset = $GLOBALS['LANG']->charSet;
