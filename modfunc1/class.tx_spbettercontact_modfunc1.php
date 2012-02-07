@@ -38,7 +38,7 @@
 		public $modName     = 'tx_spbettercontact_modfunc1';
 		public $extKey      = 'sp_bettercontact';
 		public $LLkey       = 'default';
-		public $sCharset    = '';
+		public $sCharset    = 'iso-8859-1';
 		public $sDateFormat = '';
 		public $thisPath    = '';
 		public $aLL         = array();
@@ -99,7 +99,7 @@
 			}
 
 			// Get rows from log table
-			$aRows = $this->oDB->aGetLogRows($iPID, $iPeriod);
+			$aRows = $this->oDB->aGetLogTable($iPID, $iPeriod);
 			$aRows = $this->aPrepareLogTableRows($aRows);
 
 			// Get some markers

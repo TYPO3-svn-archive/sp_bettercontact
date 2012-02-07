@@ -56,7 +56,7 @@
 		 * @param  integer $piPeriod Period to show
 		 * @return Array with table rows
 		 */
-		public function aGetLogRows ($piPID = 0, $piPeriod = 0) {
+		public function aGetLogTable ($piPID = 0, $piPeriod = 0) {
 			$sWhere  = 'deleted = 0';
 			$sWhere .= ($piPID) ? ' AND pid = ' . (int) $piPID : '';
 			$sWhere .= ($piPeriod) ? ' AND tstamp > ' . (int) $piPeriod : '';

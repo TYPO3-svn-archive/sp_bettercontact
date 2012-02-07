@@ -117,7 +117,6 @@
 					</errorRedirectPage>
 					<enableLog>
 						<TCEforms>
-							<exclude>1</exclude>
 							<label>LLL:EXT:sp_bettercontact/locallang.php:tt_content.flexform_pi1.enableLog</label>
 							<config>
 								<type>check</type>
@@ -127,7 +126,6 @@
 					</enableLog>
 					<enableIPLog>
 						<TCEforms>
-							<exclude>1</exclude>
 							<label>LLL:EXT:sp_bettercontact/locallang.php:tt_content.flexform_pi1.enableIPLog</label>
 							<config>
 								<type>check</type>
@@ -251,7 +249,6 @@
 					</locallangFile>
 					<disableAutoTemplates>
 						<TCEforms>
-							<exclude>1</exclude>
 							<label>LLL:EXT:sp_bettercontact/locallang.php:tt_content.flexform_pi1.disableAutoTemplates</label>
 							<config>
 								<type>check</type>
@@ -273,7 +270,6 @@
 					</fieldPrefix>
 					<redirectToAnchor>
 						<TCEforms>
-							<exclude>1</exclude>
 							<label>LLL:EXT:sp_bettercontact/locallang.php:tt_content.flexform_pi1.redirectToAnchor</label>
 							<config>
 								<type>check</type>
@@ -283,7 +279,6 @@
 					</redirectToAnchor>
 					<highlightFields>
 						<TCEforms>
-							<exclude>1</exclude>
 							<label>LLL:EXT:sp_bettercontact/locallang.php:tt_content.flexform_pi1.highlightFields</label>
 							<config>
 								<type>check</type>
@@ -293,7 +288,6 @@
 					</highlightFields>
 					<clearOnSuccess>
 						<TCEforms>
-							<exclude>1</exclude>
 							<label>LLL:EXT:sp_bettercontact/locallang.php:tt_content.flexform_pi1.clearOnSuccess</label>
 							<config>
 								<type>check</type>
@@ -653,19 +647,8 @@
 							</config>
 						</TCEforms>
 					</adminMails>
-					<useHiddenFieldsCheck>
-						<TCEforms>
-							<exclude>1</exclude>
-							<label>LLL:EXT:sp_bettercontact/locallang.php:tt_content.flexform_pi1.useHiddenFieldsCheck</label>
-							<config>
-								<type>check</type>
-								<default>1</default>
-							</config>
-						</TCEforms>
-					</useHiddenFieldsCheck>
 					<useRefererCheck>
 						<TCEforms>
-							<exclude>1</exclude>
 							<label>LLL:EXT:sp_bettercontact/locallang.php:tt_content.flexform_pi1.useRefererCheck</label>
 							<config>
 								<type>check</type>
@@ -712,87 +695,5 @@
 				</el>
 			</ROOT>
 		</sSPAM>
-		<sFILE>
-			<ROOT>
-				<TCEforms>
-					<sheetTitle>LLL:EXT:sp_bettercontact/locallang.php:tt_content.flexform_pi1.sFILE</sheetTitle>
-				</TCEforms>
-				<type>array</type>
-				<el>
-					<filePath>
-						<TCEforms>
-							<exclude>1</exclude>
-							<label>LLL:EXT:sp_bettercontact/locallang.php:tt_content.flexform_pi1.filePath</label>
-							<config>
-								<type>input</type>
-								<size>40</size>
-								<eval>trim</eval>
-								<default></default>
-								<wizards type="array">
-									<_PADDING>2</_PADDING>
-									<link type="array">
-										<type>popup</type>
-										<title>Link</title>
-										<icon>link_popup.gif</icon>
-										<script>browse_links.php?mode=wizard&amp;act=folder</script>
-										<params type="array">
-											<blindLinkOptions>mail,page,spec,url,file</blindLinkOptions>
-											<allowedExtensions></allowedExtensions>
-										</params>
-										<JSopenParams>height=300,width=500,status=0,menubar=0,scrollbars=1</JSopenParams>
-									</link>
-								</wizards>
-							</config>
-						</TCEforms>
-					</filePath>
-					<imagePath>
-						<TCEforms>
-							<exclude>1</exclude>
-							<label>LLL:EXT:sp_bettercontact/locallang.php:tt_content.flexform_pi1.imagePath</label>
-							<config>
-								<type>input</type>
-								<size>40</size>
-								<eval>trim</eval>
-								<default></default>
-								<wizards type="array">
-									<_PADDING>2</_PADDING>
-									<link type="array">
-										<type>popup</type>
-										<title>Link</title>
-										<icon>link_popup.gif</icon>
-										<script>browse_links.php?mode=wizard&amp;act=folder</script>
-										<params type="array">
-											<blindLinkOptions>mail,page,spec,url,file</blindLinkOptions>
-											<allowedExtensions></allowedExtensions>
-										</params>
-										<JSopenParams>height=300,width=500,status=0,menubar=0,scrollbars=1</JSopenParams>
-									</link>
-								</wizards>
-							</config>
-						</TCEforms>
-					</imagePath>
-					<enableImages>
-						<TCEforms>
-							<exclude>1</exclude>
-							<label>LLL:EXT:sp_bettercontact/locallang.php:tt_content.flexform_pi1.enableImages</label>
-							<config>
-								<type>check</type>
-								<default>0</default>
-							</config>
-						</TCEforms>
-					</enableImages>
-					<enableThumbnails>
-						<TCEforms>
-							<exclude>1</exclude>
-							<label>LLL:EXT:sp_bettercontact/locallang.php:tt_content.flexform_pi1.enableThumbnails</label>
-							<config>
-								<type>check</type>
-								<default>0</default>
-							</config>
-						</TCEforms>
-					</enableThumbnails>
-				</el>
-			</ROOT>
-		</sFILE>
 	</sheets>
 </T3DataStructure>

@@ -2,7 +2,7 @@
 	/***************************************************************
 	*  Copyright notice
 	*
-	*  (c) 2011 Kai Vogel <kai.vogel ( at ) speedprogs.de>
+	*  (c) 2010 Kai Vogel <kai.vogel ( at ) speedprogs.de>
 	*  All rights reserved
 	*
 	*  This script is part of the TYPO3 project. The TYPO3 project is
@@ -37,20 +37,17 @@
 		public $prefixId      = 'tx_spbettercontact_pi1';
 		public $scriptRelPath = 'pi1/class.tx_spbettercontact_pi1.php';
 		public $extKey        = 'sp_bettercontact';
-		public $sEmailCharset = '';
-		public $sFormCharset  = '';
+		public $sEmailCharset = 'iso-8859-1';
+		public $sFormCharset  = 'iso-8859-1';
 		public $sFieldPrefix  = '';
 		public $aLL           = array();
 		public $aGP           = array();
 		public $aConfig       = array();
 		public $aFields       = array();
-		public $aMarkers      = array();
-		public $aFiles        = array();
 		public $oTemplate     = NULL;
 		public $oSession      = NULL;
 		public $oCheck        = NULL;
 		public $oEmail        = NULL;
-		public $oFile         = NULL;
 		public $cObj          = NULL;
 		public $oCS           = NULL;
 
@@ -58,324 +55,96 @@
 		/**
 		 * The main method of the PlugIn
 		 *
-		 * @param  string $psContent The PlugIn content
-		 * @param  array  $paConf    The PlugIn configuration
+		 * @param  string $content The PlugIn content
+		 * @param  array  $conf    The PlugIn configuration
 		 * @return The content that is displayed on the website
 		 */
 		public function main ($psContent, array $paConf) {
-			// Init required attributes and objects
-			if ($sContent = $this->sInit($paConf)) {
-				return $this->sWrapContent($sContent);
-			}
-
-			// Check configuration
-			if ($sContent = $this->sCheckConfiguration()) {
-				return $this->sWrapContent($sContent);
-			}
-
-			// Stop here if form was not submitted
-			if ($sContent = $this->sProcessSubmit()) {
-				return $this->sWrapContent($sContent);
-			}
-
-			// Check if a bot tries to send spam
-			if ($sContent = $this->sProcessSpamCheck()) {
-				return $this->sWrapContent($sContent);
-			}
-
-			// Check if the user has already sent multiple emails
-			if ($sContent = $this->sProcessSendingsCheck()) {
-				return $this->sWrapContent($sContent);
-			}
-
-			// Handle file uploads and image creation
-			if ($sContent = $this->sProcessFiles()) {
-				// Check form data before returning file errors
-				// TODO: Maybe a user will not call userFunc in sProcessValueCheck()
-				//       in case of errors from sProcessFiles()
-				if ($sContent = $this->sProcessValueCheck()) {
-					return $this->sWrapContent($sContent);
-				}
-				return $this->sWrapContent($sContent);
-			}
-
-			// Check form data
-			if ($sContent = $this->sProcessValueCheck()) {
-				return $this->sWrapContent($sContent);
-			}
-
-			// Handle DB storing and logging
-			if ($sContent = $this->sProcessDB()) {
-				return $this->sWrapContent($sContent);
-			}
-
-			// Send emails
-			if ($sContent = $this->sProcessEmails()) {
-				return $this->sWrapContent($sContent);
-			}
-
-			// Finalize request and return main content
-			if ($sContent = $this->sFinalize()) {
-				return $this->sWrapContent($sContent);
-			}
-
-			return $psContent;
-		}
-
-
-		/**
-		 * Init required attributes and objects
-		 *
-		 * @return string Any content to show
-		 */
-		protected function sInit (array $paConf) {
 			$this->pi_USER_INT_obj = 1;
 
 			// Get merged config from TS and Flexform
 			$oTS = $this->oMakeInstance('ts');
 			$this->aConfig = $oTS->aGetConfig($paConf);
 
+			// Call preUserFunc to do something before checks and rendering
+			$this->vCheckUserFunc('preUserFunc');
+
 			// Set default templates if not configured
 			$this->vSetDefaultTemplates();
 
-			// Set default attributes
-			$this->sFieldPrefix  = $this->sGetPrefix();
-			$this->oCS           = $this->oGetCSObject();
-			$this->aGP           = $this->aGetGP();
-			$this->aLL           = $this->aGetLL();
-			$this->aFields       = $this->aGetFields();
-			$this->aMarkers      = $this->aGetMarkers();
-			$this->sEmailCharset = $this->sGetCharset('email');
-			$this->sFormCharset  = $this->sGetCharset('form');
-			$this->sBECharset    = $this->sGetBECharset();
+			// Check configuration
+			if ($sMessage = $this->sCheckConfiguration()) {
+				return $this->pi_wrapInBaseClass($sMessage);
+			}
 
-			// Load required objects
-			$this->oTemplate     = $this->oMakeInstance('template');
-			$this->oSession      = $this->oMakeInstance('session');
-			$this->oCheck        = $this->oMakeInstance('check');
-			$this->oEmail        = $this->oMakeInstance('email');
-			$this->oDB           = $this->oMakeInstance('db');
-			$this->oFile         = $this->oMakeInstance('file');
+			// Init required attributes and objects
+			$this->vInit();
 
-			// Load stored files from session
-			$this->aFiles = $this->oSession->mGetValue('uploadedFiles');
-
-			return $this->sProcessUserFunc('init');
-		}
-
-
-		/**
-		 * Handle submit and return empty form if not submitted
-		 *
-		 * @return string Any content to show
-		 */
-		protected function sProcessSubmit () {
+			// Stop here if form was not submitted
 			if ((!empty($this->aConfig['postOnly']) && empty($_POST)) || !isset($this->aGP['submit'])) {
 				// Add timestamp to session for elapsed time check
 				$this->oSession->vAddValue('start', $GLOBALS['SIM_EXEC_TIME']);
-
-				// Clear uploaded files
-				$this->oSession->vAddValue('uploadedFiles', array());
-				$this->aFiles = array();
 				$this->oSession->vSave();
-
-				return $this->oTemplate->sGetContent();
+				return $this->sGetContent();
 			}
 
-			return $this->sProcessUserFunc('submit');
-		}
+			// Call submitUserFunc to do something if form was submitted
+			$this->vCheckUserFunc('submitUserFunc');
 
-
-		/**
-		 * Check if a bot tries to send spam
-		 *
-		 * @return string Any content to show
-		 */
-		protected function sProcessSpamCheck () {
+			// Check if a bot tries to send spam
 			if ($this->oCheck->bIsSpam($this->oSession->mGetValue('start'))) {
 				$this->vSendWarning('bot');
 				$this->vCheckRedirect('spam');
-
-				return $this->aLL['msg_not_allowed'];
+				return $this->pi_wrapInBaseClass($this->aLL['msg_not_allowed']);
 			}
 
-			return $this->sProcessUserFunc('spamCheck');
-		}
-
-
-		/**
-		 * Check if the user has already sent multiple emails
-		 *
-		 * @return string Any content to show
-		 */
-		protected function sProcessSendingsCheck () {
-			$iCount = 0;
-			$iTime  = 0;
-
-			if ($this->oSession->bHasAlreadySent($iCount, $iTime)) {
-				$this->vCheckRedirect('exhausted');
-				if (!empty($iCount) || !empty($iTime)) {
-					$this->oTemplate->vAddInfo('msg_already_sent', array($iCount, $iTime));
-				}
-				return $this->oTemplate->sGetContent();
-			}
-
-			return $this->sProcessUserFunc('sendingsCheck');
-		}
-
-
-		/**
-		 * Handle file uploads and image creation
-		 *
-		 * @return string Any content to show
-		 */
-		protected function sProcessFiles () {
-			if (empty($this->aConfig['enableFileTab'])) {
-				return '';
-			}
-
-			// Check uploaded files
-			$aErrors = array();
-			if ($aFiles = $this->oFile->aGetFiles($_FILES)) {
-				if (!$this->oCheck->bCheckFiles($aFiles, $aErrors)) {
-					$this->oTemplate->vAddErrors($aErrors);
-					// Cleanup files in session
-					if (empty($this->aConfig['keepLastFileOnError'])) {
-						$this->aFiles = array_diff_key($this->aFiles, $aErrors);
-						$this->oSession->vAddValue('uploadedFiles', $this->aFiles);
-						$this->oSession->vSave();
-					}
-					return $this->oTemplate->sGetContent();
-				}
-
-				// Convert images and add files to global array
-				$this->oFile->vConvertImages($aFiles);
-				$this->aFiles = t3lib_div::array_merge_recursive_overrule($this->aFiles, $aFiles);
-				$this->oSession->vAddValue('uploadedFiles', $this->aFiles);
-				$this->oSession->vSave();
-			}
-
-			// Add file markers to templates
-			if (!empty($this->aFiles)) {
-				$aMarkers = $this->oFile->aGetMarkers($this->aFiles);
-				$this->oTemplate->vAddMarkers($aMarkers);
-				$this->oEmail->vAddMarkers($aMarkers);
-
-				// Set file as field value (will be distributed to other classes by reference)
-				foreach ($this->aFiles as $sKey => $aFile) {
-					if (!empty($this->aFields[$sKey])) {
-						$this->aFields[$sKey]['value'] = $aFile['path'];
-						$this->aGP[$sKey] = $aFile['path'];
-					}
-				}
-			}
-
-			return $this->sProcessUserFunc('fileHandling');
-		}
-
-
-		/**
-		 * Check form values
-		 *
-		 * @return string Any content to show
-		 */
-		protected function sProcessValueCheck () {
-			$aErrors = array();
-			if (!$this->oCheck->bCheckFields($aErrors)) {
+			// Check form data
+			if (!$this->oCheck->bCheckFields()) {
 				if (!$this->bIsFormEmpty($this->aGP)) {
 					$this->vSendWarning('user');
 				}
-				$this->oTemplate->vAddErrors($aErrors);
-				$this->oTemplate->vClearFields(array_keys($aErrors));
-				return $this->oTemplate->sGetContent();
+				$this->oTemplate->vAddMarkers($this->oCheck->aGetMessages());
+				$this->oTemplate->vClearFields($this->oCheck->aGetMaliciousFields());
+				return $this->sGetContent();
 			}
 
-			return $this->sProcessUserFunc('valueCheck');
-		}
-
-
-		/**
-		 * Add new entry in log table and save values into specified table
-		 *
-		 * @return string Any content to show
-		 */
-		protected function sProcessDB () {
-			// Store form data into user defined table
-			$sInfo = '';
-			$aErrors = array();
-			if (!empty($this->aConfig['enableDBTab'])) {
-				// Get last inserted / updated row ID
-				if (!$this->oDB->bIsExternalDB()) {
-					$iRowID = $this->oDB->iSave($sInfo, $aErrors);
-				} else {
-					$iRowID = $this->oDB->iSaveExternal($sInfo, $aErrors);
-				}
-
-				// Check for errors
-				if (!empty($sInfo) || !empty($aErrors)) {
-					$this->oTemplate->vAddInfo('msg_db_failed', $sInfo);
-					$this->oTemplate->vAddErrors($aErrors);
-					return $this->oTemplate->sGetContent();
-				}
-
-				$this->oSession->vAddValue('lastRowID', $iRowID);
+			// Check if the user has already sent multiple emails
+			if ($this->oSession->bHasAlreadySent()) {
+				$this->vCheckRedirect('exhausted');
+				$this->oTemplate->vAddMarkers($this->oSession->aGetMessages());
+				return $this->sGetContent();
 			}
 
-			// Add log entry
-			$iLogRowID = $this->oDB->iLog($sInfo);
-			if (!empty($sInfo)) {
-				$this->oTemplate->vAddInfo('msg_db_failed', $sInfo);
-				return $this->oTemplate->sGetContent();
+			// Add new entry in log table and save values into specified table
+			$this->oSession->vAddValue('lastLogRowID', $this->oDB->iLog());
+			$this->oSession->vAddValue('lastRowID', $this->oDB->iSave());
+			if ($sMessage = $this->oDB->sGetError()) {
+				return $this->pi_wrapInBaseClass($sMessage);
 			}
-			$this->oSession->vAddValue('lastLogRowID', $iLogRowID);
 
-			return $this->sProcessUserFunc('dbHandling');
-		}
-
-
-		/**
-		 * Handle emailing
-		 *
-		 * @return string Any content to show
-		 */
-		protected function sProcessEmails () {
-			if (!$this->oEmail->bSendMails()) {
-				$this->oTemplate->vAddInfo('msg_email_failed');
+			// Send emails
+			$this->oEmail->vSendMails();
+			$this->oTemplate->vAddMarkers($this->oEmail->aGetMessages());
+			if ($this->oEmail->bHasError()) {
 				$this->vCheckRedirect('error');
-
-				return $this->oTemplate->sGetContent();
+				return $this->sGetContent();
 			}
 
-			$this->oTemplate->vAddInfo('msg_email_passed', TRUE);
-
-			return $this->sProcessUserFunc('emailHandling');
-		}
-
-
-		/**
-		 * Save values, clear fields, check redirect
-		 *
-		 * @return string Any content to show
-		 */
-		protected function sFinalize () {
 			// Save timestamp into session for multiple mails check
 			$this->oSession->vAddSubmitData();
 			$this->oSession->vSave();
+
+			// Call saveUserFunc to do something before redirect or output
+			$this->vCheckUserFunc('postUserFunc');
 
 			// Clear all input fields if configured
 			if (!empty($this->aConfig['clearOnSuccess'])) {
 				$this->oTemplate->vClearFields($this->aFields);
 			}
 
-			// Call finalizeUserFunc to do something before redirect or final output
-			if ($sContent = $this->sProcessUserFunc('finalize')) {
-				return $sContent;
-			}
-
-			// Redirect if configured
+			// Redirect if configured or return content
 			$this->vCheckRedirect('success');
-
-			return $this->oTemplate->sGetContent();
+			return $this->sGetContent();
 		}
 
 
@@ -390,8 +159,8 @@
 
 			// Get filenames
 			$aFiles = array(
-				'formTemplate'  => 'EXT:' . $this->extKey . '/res/templates/frontend/form.html',
-				'emailTemplate' => 'EXT:' . $this->extKey . '/res/templates/frontend/email.html',
+				'formTemplate'   => 'EXT:' . $this->extKey . '/res/templates/frontend/form.html',
+				'emailTemplate'  => 'EXT:' . $this->extKey . '/res/templates/frontend/email.html',
 			);
 
 			// Add stylesheet only if formTemplate is empty (will only be used if also not configured)
@@ -415,21 +184,6 @@
 		 */
 		protected function sCheckConfiguration () {
 			$aMessages = array();
-			$sWrap     = '<strong>Configuration of "Better Contact" is incorrect:</strong><br /><ul><li>%s</li></ul>';
-
-			// Check if default setup is loaded
-			if (!isset($this->aConfig['systems.']) || !isset($this->aConfig['browsers.'])) {
-				return sprintf($sWrap, 'Please include the required static TypoScript setup on root page!');
-			}
-
-			// Check wrap for hidden fields
-			if (!empty($this->aConfig['hiddenWrap'])) {
-				if (strpos($this->aConfig['hiddenWrap'], '<input') === FALSE || strrpos($this->aConfig['hiddenWrap'], '/>') === FALSE) {
-					$aMessages[] = 'Please use a valid input field for the "hiddenWrap"!';
-				} else if (strpos($this->aConfig['hiddenWrap'], 'value=""') === FALSE) {
-					$aMessages[] = 'Please set the value of the "hiddenWrap" input field to an empty value (value="")!';
-				}
-			}
 
 			// Check email field
 			if (empty($this->aConfig['fields.']['email.']) || !is_array($this->aConfig['fields.']['email.'])) {
@@ -478,10 +232,30 @@
 
 			// Return a list of error messages
 			if (count($aMessages)) {
-				return sprintf($sWrap, implode('</li><li>', $aMessages));
+				return '<strong>Configuration of "Better Contact" is incorrect:</strong><br /><ul><li>' . implode('</li><li>', $aMessages) . '</li></ul>';
 			}
 
 			return '';
+		}
+
+
+		/**
+		 * Init required attributes and objects
+		 *
+		 */
+		protected function vInit () {
+			$this->sFieldPrefix  = $this->sGetPrefix();
+			$this->oCS           = $this->oGetCSObject();
+			$this->aGP           = $this->aGetGP();
+			$this->aLL           = $this->aGetLL();
+			$this->aFields       = $this->aGetFields();
+			$this->sEmailCharset = $this->sGetCharset('email');
+			$this->sFormCharset  = $this->sGetCharset('form');
+			$this->oTemplate     = $this->oMakeInstance('template');
+			$this->oSession      = $this->oMakeInstance('session');
+			$this->oCheck        = $this->oMakeInstance('check');
+			$this->oEmail        = $this->oMakeInstance('email');
+			$this->oDB           = $this->oMakeInstance('db');
 		}
 
 
@@ -611,96 +385,29 @@
 				$sUpperName = strtoupper($sName);
 				$sMultiName = $sUpperName . '_' . md5($sValue);
 
-				// Build the basic field
+				// Build the field
 				$aFields[$sName] = array (
-					'markerName'     => $sUpperName,
-					'messageName'    => 'MSG_'      . $sUpperName,
-					'errClassName'   => 'ERR_'      . $sUpperName,
-					'valueName'      => 'VALUE_'    . $sUpperName,
-					'labelName'      => 'LABEL_'    . $sUpperName,
-					'fileName'       => 'FILE_'     . $sUpperName,
-					'imageName'      => 'IMAGE_'    . $sUpperName,
-					'thumbName'      => 'THUMB_'    . $sUpperName,
-					'checkedName'    => 'CHECKED_'  . $sUpperName,
-					'requiredName'   => 'REQUIRED_' . $sUpperName,
-					'multiChkName'   => 'CHECKED_'  . $sMultiName,
-					'multiSelName'   => 'SELECTED_' . $sMultiName,
-					'regex'          => (isset($aField['regex']))          ? $aField['regex']          : '',
-					'disallowed'     => (isset($aField['disallowed']))     ? $aField['disallowed']     : '',
-					'allowed'        => (isset($aField['allowed']))        ? $aField['allowed']        : '',
-					'required'       => (isset($aField['required']))       ? $aField['required']       : 0,
-					'minLength'      => (isset($aField['minLength']))      ? $aField['minLength']      : 0,
-					'maxLength'      => (isset($aField['maxLength']))      ? $aField['maxLength']      : 0,
-					'fileMaxSize'    => (isset($aField['fileMaxSize']))    ? $aField['fileMaxSize']    : 0,
-					'fileMinSize'    => (isset($aField['fileMinSize']))    ? $aField['fileMinSize']    : 0,
-					'fileAllowed'    => (isset($aField['fileAllowed']))    ? $aField['fileAllowed']    : '',
-					'fileDisallowed' => (isset($aField['fileDisallowed'])) ? $aField['fileDisallowed'] : '',
-					'imageMaxWidth'  => (isset($aField['imageMaxWidth']))  ? $aField['imageMaxWidth']  : 0,
-					'imageMaxHeight' => (isset($aField['imageMaxHeight'])) ? $aField['imageMaxHeight'] : 0,
-					'imageMinWidth'  => (isset($aField['imageMinWidth']))  ? $aField['imageMinWidth']  : 0,
-					'imageMinHeight' => (isset($aField['imageMinHeight'])) ? $aField['imageMinHeight'] : 0,
-					'imageConvertTo' => (isset($aField['imageConvertTo'])) ? $aField['imageConvertTo'] : '',
-					'imageTitle'     => (isset($aField['imageTitle']))     ? $aField['imageTitle']     : '',
-					'imageAlt'       => (isset($aField['imageAlt']))       ? $aField['imageAlt']       : '',
-					'thumbWidth'     => (isset($aField['thumbWidth']))     ? $aField['thumbWidth']     : 0,
-					'thumbHeight'    => (isset($aField['thumbHeight']))    ? $aField['thumbHeight']    : 0,
-					'thumbConvertTo' => (isset($aField['thumbConvertTo'])) ? $aField['thumbConvertTo'] : '',
-					'thumbTitle'     => (isset($aField['thumbTitle']))     ? $aField['thumbTitle']     : '',
-					'thumbAlt'       => (isset($aField['thumbAlt']))       ? $aField['thumbAlt']       : '',
-					'dbField'        => (isset($aField['dbField']))        ? $aField['dbField']        : '',
-					'dbNoAutofill'   => (isset($aField['dbNoAutofill']))   ? $aField['dbNoAutofill']   : 0,
-					'label'          => (isset($this->aLL[$sName]))        ? $this->aLL[$sName]        : ucfirst($sName),
-					'value'          => $sValue,
+					'markerName'   => $sUpperName,
+					'messageName'  => 'MSG_'      . $sUpperName,
+					'errClassName' => 'ERR_'      . $sUpperName,
+					'valueName'    => 'VALUE_'    . $sUpperName,
+					'labelName'    => 'LABEL_'    . $sUpperName,
+					'checkedName'  => 'CHECKED_'  . $sUpperName,
+					'requiredName' => 'REQUIRED_' . $sUpperName,
+					'multiChkName' => 'CHECKED_'  . $sMultiName,
+					'multiSelName' => 'SELECTED_' . $sMultiName,
+					'regex'        => (isset($aField['regex']))      ? $aField['regex']      : '',
+					'disallowed'   => (isset($aField['disallowed'])) ? $aField['disallowed'] : '',
+					'allowed'      => (isset($aField['allowed']))    ? $aField['allowed']    : '',
+					'required'     => (isset($aField['required']))   ? $aField['required']   : 0,
+					'minLength'    => (isset($aField['minLength']))  ? $aField['minLength']  : 0,
+					'maxLength'    => (isset($aField['maxLength']))  ? $aField['maxLength']  : 0,
+					'label'        => (isset($this->aLL[$sName]))    ? $this->aLL[$sName]    : ucfirst($sName),
+					'value'        => $sValue,
 				);
 			}
 
 			return $aFields;
-		}
-
-
-		/**
-		 * Get basic markers for templates
-		 *
-		 * @return Array with markers
-		 */
-		protected function aGetMarkers () {
-			$aMarkers = array();
-
-			// Page info
-			if (!empty($GLOBALS['TSFE']->page) && is_array($GLOBALS['TSFE']->page)) {
-				foreach ($GLOBALS['TSFE']->page as $sKey => $sValue) {
-					$aMarkers['PAGE:' . $sKey] = $sValue;
-				}
-			}
-
-			// Plugin info
-			if (!empty($this->cObj->data) && is_array($this->cObj->data)) {
-				foreach ($this->cObj->data as $sKey => $sValue) {
-					$aMarkers['PLUGIN:' . $sKey] = $sValue;
-				}
-			}
-
-			// FE-User info
-			if (!empty($GLOBALS['TSFE']->fe_user->user) && is_array($GLOBALS['TSFE']->fe_user->user)) {
-				$aUserData = $GLOBALS['TSFE']->fe_user->user;
-				foreach ($aUserData as $sKey => $sValue) {
-					$aMarkers['USER:' . $sKey] = $sValue;
-				}
-			}
-
-			// Locallang labels
-			foreach ($this->aLL as $sKey => $sValue) {
-				$aMarkers['LLL:' . $sKey] = $sValue;
-			}
-
-			// User defined markers
-			if (!empty($this->aConfig['markers.']) && is_array($this->aConfig['markers.'])) {
-				foreach ($this->aConfig['markers.'] as $sKey => $sValue) {
-					$aMarkers[strtoupper($sKey)] = $sValue;
-				}
-			}
-
-			return $aMarkers;
 		}
 
 
@@ -712,7 +419,7 @@
 		 */
 		protected function sGetCharset ($psType = 'form') {
 			$sType    = strtolower(trim($psType)) . 'Charset';
-			$sCharset = (t3lib_div::compat_version('4.5') ? 'utf-8' : 'iso-8859-1');
+			$sCharset = 'iso-8859-1';
 
 			if (!empty($GLOBALS['LANG']->charSet)) {
 				$sCharset = $GLOBALS['LANG']->charSet;
@@ -724,24 +431,6 @@
 
 			if (!empty($this->aConfig[$sType])) {
 				$sCharset = $this->aConfig[$sType];
-			}
-
-			return strtolower($sCharset);
-		}
-
-
-		/**
-		 * Get backend charset
-		 *
-		 * @return Charset of the ts configuration
-		 */
-		protected function sGetBECharset () {
-			$sCharset = (t3lib_div::compat_version('4.5') ? 'utf-8' : 'iso-8859-1');
-
-			if (!empty($GLOBALS['TYPO3_CONF_VARS']['BE']['forceCharset'])) {
-				$sCharset = $GLOBALS['TYPO3_CONF_VARS']['BE']['forceCharset'];
-			} else if (isset($GLOBALS['LANG'])) {
-				$sCharset = $GLOBALS['LANG']->charSet;
 			}
 
 			return strtolower($sCharset);
@@ -811,7 +500,7 @@
 				return;
 			}
 
-			$this->oEmail->bSendSpamWarning();
+			$this->oEmail->vSendSpamWarning();
 		}
 
 
@@ -819,26 +508,15 @@
 		 * Execute a given userFunc if configured
 		 *
 		 * @param string $psName Name of the userFunc option
-		 * @return string Any result of the userFunc
 		 */
-		protected function sProcessUserFunc ($psName) {
-			if (empty($psName)) {
-				return '';
+		protected function vCheckUserFunc ($psName) {
+			if (!is_string($psName) || !strlen($psName) || empty($this->aConfig[$psName])) {
+				return;
 			}
 
-			if (empty($this->aConfig['hooks.'][$psName])) {
-				return '';
-			}
+			$aConfig = (!empty($this->aConfig[$psName . '.'])) ? $this->aConfig[$psName . '.'] : array();
 
-			$aConfig = (!empty($this->aConfig['hooks.'][$psName . '.'])) ? $this->aConfig['hooks.'][$psName . '.'] : array();
-			$aConfig['parentObj'] = &$this;
-
-			$mContent = $this->cObj->callUserFunction($this->aConfig['hooks.'][$psName], $aConfig, '');
-			if (!empty($mContent) && is_string($mContent)) {
-				return $mContent;
-			}
-
-			return '';
+			t3lib_div::callUserFunction($this->aConfig[$psName], $aConfig, $this, '');
 		}
 
 
@@ -863,11 +541,12 @@
 		/**
 		 * Get content
 		 *
-		 * @param string $psContent Content to wrap
-		 * @return Wrapped content
+		 * @return Whole content
 		 */
-		protected function sWrapContent ($psContent) {
-			return $this->pi_wrapInBaseClass($psContent);
+		protected function sGetContent () {
+			$sContent = $this->oTemplate->sGetContent();
+
+			return $this->pi_wrapInBaseClass($sContent);
 		}
 
 	}

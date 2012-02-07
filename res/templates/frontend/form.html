@@ -37,18 +37,6 @@
     ###VALUE_<FIELDNAME>###
 
 
-    // Show the path to an uploaded file
-    ###FILE_<FIELDNAME>###
-
-
-    // Show the full tag of an uploaded image
-    ###IMAGE_<FIELDNAME>###
-
-
-    // Show the full tag of the thumbnail of an uploaded image
-    ###THUMB_<FIELDNAME>###
-
-
     // Set state of a checkbox
     ###CHECKED_<FIELDNAME>###
 
@@ -106,67 +94,59 @@
 
 <!-- ###TEMPLATE### begin -->
 	###ANCHOR###
-	<form action="###URL_SELF###" method="post" name="###FORM_NAME###" id="###FORM_ID###" accept-charset="###CHARSET###" enctype="multipart/form-data">
+	<form action="###URL_SELF###" method="post" name="###FORM_NAME###" id="###FORM_ID###" accept-charset="###CHARSET###">
 		<!--
-			Show message whether email was sent or not
+			Show message if mail is sent
 		-->
-		###INFO###
+		<p class="tx_spbettercontact_info">###INFO###</p>
 		<!--
 			Field for name
 		-->
-		###MSG_NAME###
+		<p class="tx_spbettercontact_message">###MSG_NAME###</p>
 		<label for="###NAME###" class="tx_spbettercontact_label">###LABEL_NAME### ###REQUIRED_NAME###</label>
 		<input type="text" name="###NAME###" value="###VALUE_NAME###" class="###ERR_NAME###" />
 		<br />
 		<!--
 			Field for phone
 		-->
-		###MSG_TEL###
+		<p class="tx_spbettercontact_message">###MSG_TEL###</p>
 		<label for="###TEL###" class="tx_spbettercontact_label">###LABEL_TEL### ###REQUIRED_TEL###</label>
 		<input type="text" name="###TEL###" value="###VALUE_TEL###" class="###ERR_TEL###" />
 		<br />
 		<!--
 			Field for fax
 		-->
-		###MSG_FAX###
+		<p class="tx_spbettercontact_message">###MSG_FAX###</p>
 		<label for="###FAX###" class="tx_spbettercontact_label">###LABEL_FAX### ###REQUIRED_FAX###</label>
 		<input type="text" name="###FAX###" value="###VALUE_FAX###" class="###ERR_FAX###" />
 		<br />
 		<!--
 			Field for street
 		-->
-		###MSG_STREET###
+		<p class="tx_spbettercontact_message">###MSG_STREET###</p>
 		<label for="###STREET###" class="tx_spbettercontact_label">###LABEL_STREET### ###REQUIRED_STREET###</label>
 		<input type="text" name="###STREET###" value="###VALUE_STREET###" class="###ERR_STREET###" />
 		<br />
 		<!--
 			Field for city
 		-->
-		###MSG_CITY###
+		<p class="tx_spbettercontact_message">###MSG_CITY###</p>
 		<label for="###CITY###" class="tx_spbettercontact_label">###LABEL_CITY### ###REQUIRED_CITY###</label>
 		<input type="text" name="###CITY###" value="###VALUE_CITY###" class="###ERR_CITY###" />
 		<br />
 		<!--
 			Field for email
 		-->
-		###MSG_EMAIL###
+		<p class="tx_spbettercontact_message">###MSG_EMAIL###</p>
 		<label for="###EMAIL###" class="tx_spbettercontact_label">###LABEL_EMAIL### ###REQUIRED_EMAIL###</label>
 		<input type="text" name="###EMAIL###" value="###VALUE_EMAIL###" class="###ERR_EMAIL###" />
 		<br />
 		<!--
 			Field for message
 		-->
-		###MSG_MESSAGE###
+		<p class="tx_spbettercontact_message">###MSG_MESSAGE###</p>
 		<label for="###MESSAGE###" class="tx_spbettercontact_label">###LABEL_MESSAGE### ###REQUIRED_MESSAGE###</label>
 		<textarea name="###MESSAGE###" rows="10" cols="30" class="###ERR_MESSAGE###">###VALUE_MESSAGE###</textarea>
-		<br />
-		<!--
-			Field for picture
-		-->
-		###MSG_PICTURE###
-		<label for="###PICTURE###" class="tx_spbettercontact_label">###LABEL_PICTURE### ###REQUIRED_PICTURE###</label>
-		<input type="file" name="###PICTURE###" class="###ERR_PICTURE###" />
-		###THUMB_PICTURE###
 		<br />
 		<!--
 			Add captcha from sub-templates below if configured

@@ -1,0 +1,221 @@
+# ==============================================================================
+# Default configuration for extension "sp_bettercontact"
+# ==============================================================================
+plugin.tx_spbettercontact_pi1 {
+
+
+	# ====================================================================
+	# Basic configuration (see manual for details)
+	# ====================================================================
+	successRedirectPage    =
+	spamRedirectPage       =
+	exhaustedRedirectPage  =
+	errorRedirectPage      =
+	formTemplate           =
+	stylesheetFile         =
+	locallangFile          =
+	# formCharset          = (?) If not set -> auto detection (default "iso-8859-1")
+	# disableAutoTemplates = (?) If "1" default templates will not be used for missing ones
+	# fieldPrefix          = (?) Define your own field name prefix (default "tx_spbettercontact_pi1-<plugin_uid>")
+	# clearOnSuccess       = (?) Activate with "1" to clear all input fields if request was successfully sent
+
+	emailTemplate          =
+	emailRecipients        =
+	emailSender            =
+	emailAdmin             =
+	emailReturnPath        =
+	sendTo                 = both
+	replyTo                = user
+	sendFrom               = sender
+	emailCharset           = utf-8
+	emailFormat            = html
+	allowReturnPath        = 1
+
+	showMaliciousInput     = clean
+	adminMails             = bot
+	messageCount           = 10
+	waitingTime            = 60
+	minElapsedTime         = 1
+	postOnly               = 1
+	useRefererCheck        =
+	# captchaSupport       = (?) Supported are: sr_freecap, jm_recaptcha, captcha and mathguard
+	# spamDateFormat       = (?) Use a valid "strftime" format to display date in spam notification
+	# spamTimeFormat       = (?) Use a valid "strftime" format to display time in spam notification
+
+	enableLog              =
+	enableIPLog            =
+	forceLogPID            =
+	# highlightFields      = (?) Activate with "1" to add the "classError" class to malicious fields
+	# classError           = (?) Define own class name for malicious fields
+	# classNoError         = (?) Define a class for fields without an error
+
+	infoWrapPositive       = <span class="tx_spbettercontact_info_positive">|</span>
+	infoWrapNegative       = <span class="tx_spbettercontact_info_negative">|</span>
+
+	# preUserFunc          = (?) Define a userFunc which will be called before checks and rendering
+	# submitUserFunc       = (?) Define a userFunc which will be called if form was submitted
+	# postUserFunc         = (?) Define a userFunc which will be called before redirect and output
+
+
+
+	# ====================================================================
+	# Basic input fields
+	# ====================================================================
+	fields {
+		name {
+			required    = 1
+			minLength   = 3
+			maxLength   = 70
+			regex       =
+			disallowed  = 0123456789<>(){}!?%&§$/*+-\
+			allowed     =
+			default     =
+		}
+
+		tel {
+			required    = 0
+			minLength   = 3
+			maxLength   = 30
+			regex       =
+			disallowed  =
+			allowed     = 0123456789()/+-
+			default     =
+		}
+
+		fax {
+			required    = 0
+			minLength   = 3
+			maxLength   = 30
+			regex       =
+			disallowed  =
+			allowed     = 0123456789()/+-
+			default     =
+		}
+
+		street {
+			required    = 0
+			minLength   = 3
+			maxLength   = 70
+			regex       =
+			disallowed  = <>&
+			allowed     =
+			default     =
+		}
+
+		city {
+			required    = 0
+			minLength   = 3
+			maxLength   = 70
+			regex       =
+			disallowed  = <>&
+			allowed     =
+			default     =
+		}
+
+		## Required email field (!)
+		email {
+			required    = 1
+			minLength   = 5
+			maxLength   = 70
+			regex       = /^[\w-]+(?:\.[\w-]+)*@(?:[\w-]+\.)+[a-zA-Z]{2,7}/
+			disallowed  =
+			allowed     =
+			default     =
+		}
+
+		message {
+			required    = 1
+			minLength   = 10
+			maxLength   = 2000
+			regex       =
+			disallowed  = <>&
+			allowed     =
+			default     =
+		}
+
+		## Required dummy configuration if captcha is activated (!)
+		captcha {
+			required    =
+			minLength   =
+			maxLength   =
+			regex       =
+			disallowed  =
+			allowed     =
+			default     =
+		}
+	}
+
+
+
+	# ====================================================================
+	# User defined template markers
+	# ====================================================================
+	markers {
+		# static_marker= I am a static marker
+
+		# dynamic_marker = TEXT
+		# dynamic_marker.field = title
+	}
+
+
+
+	# ====================================================================
+	# Database configuration
+	# ====================================================================
+	database {
+		# driver           = (?) Use only for external database (default "mysql")
+		# host             = (?) Use only for external database
+		# port             = (?) Use only for external database
+		# username         = (?) Use only for external database
+		# password         = (?) Use only for external database
+		# database         = (?) Use only for external database
+		# force_charset    = (?) Use only for external database
+		# table            = (?) Internal or external table (e.g. tt_news, tt_address, ...)
+		# idField          = (?) Field name to identify and update a row (default "uid")
+		# useDefaultValues = (?) Automatically fill default fields pid, tstamp, crdate and cruser_id
+
+		## Demo field configuration (see manual for details)
+		fieldconf {
+			# pid = TEXT
+			# pid.data = TSFE : id
+
+			# crdate = TEXT
+			# crdate.data = date : U
+
+			# hidden  = 0
+			# deleted = 0
+
+			# name = TEXT
+			# name.data = GPvar : tx_spbettercontact_pi1-9|name
+		}
+	}
+
+
+
+	# ====================================================================
+	# Overwrite / add locallang labels (better use your own locallang.xml)
+	# ====================================================================
+	_LOCAL_LANG.default {
+		# msg_email_passed = Message was sent. Thank you.
+	}
+
+
+
+	# ====================================================================
+	# Default piVars
+	# ====================================================================
+	_DEFAULT_PI_VARS {
+		# email = user@domain.com
+	}
+
+
+
+}
+
+
+
+## Include TypoScript configuration for systems
+<INCLUDE_TYPOSCRIPT: source="FILE:EXT:sp_bettercontact/res/setup/systems.txt">
+
+## Include TypoScript configuration for browsers
+<INCLUDE_TYPOSCRIPT: source="FILE:EXT:sp_bettercontact/res/setup/browsers.txt">

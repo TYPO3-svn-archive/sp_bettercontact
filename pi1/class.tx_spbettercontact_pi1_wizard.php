@@ -2,7 +2,7 @@
 	/***************************************************************
 	*  Copyright notice
 	*
-	*  (c) 2011 Kai Vogel <kai.vogel ( at ) speedprogs.de>
+	*  (c) 2010 Kai Vogel <kai.vogel ( at ) speedprogs.de>
 	*  All rights reserved
 	*
 	*  This script is part of the TYPO3 project. The TYPO3 project is
@@ -53,7 +53,6 @@
 
 			unset($oWizard);
 		}
-
 	}
 
 

@@ -2,7 +2,7 @@
 	/***************************************************************
 	*  Copyright notice
 	*
-	*  (c) 2011 Kai Vogel <kai.vogel ( at ) speedprogs.de>
+	*  (c) 2010 Kai Vogel <kai.vogel ( at ) speedprogs.de>
 	*  All rights reserved
 	*
 	*  This script is part of the TYPO3 project. The TYPO3 project is
@@ -46,8 +46,8 @@
 		protected $oCObj        = NULL;
 		protected $oCS          = NULL;
 		protected $bHasError    = FALSE;
-		protected $sEmailChar   = '';
-		protected $sFormChar    = '';
+		protected $sEmailChar   = 'iso-8859-1';
+		protected $sFormChar    = 'iso-8859-1';
 		protected $sEmailFormat = 'plain';
 
 
@@ -57,15 +57,15 @@
 		 * @param object $poParent Instance of the parent object
 		 */
 		public function __construct ($poParent) {
-			$this->oCObj        = &$poParent->cObj;
-			$this->oCS          = &$poParent->oCS;
-			$this->aConfig      = &$poParent->aConfig;
-			$this->aFields      = &$poParent->aFields;
-			$this->aLL          = &$poParent->aLL;
-			$this->aGP          = &$poParent->aGP;
-			$this->sEmailChar   = &$poParent->sEmailCharset;
-			$this->sFormChar    = &$poParent->sFormCharset;
-			$this->aMarkers     = &$poParent->aMarkers;
+			$this->oCObj        = $poParent->cObj;
+			$this->oCS          = $poParent->oCS;
+			$this->aConfig      = $poParent->aConfig;
+			$this->aFields      = $poParent->aFields;
+			$this->aLL          = $poParent->aLL;
+			$this->aGP          = $poParent->aGP;
+			$this->aUserMarkers = $poParent->aUserMarkers;
+			$this->sEmailChar   = $poParent->sEmailCharset;
+			$this->sFormChar    = $poParent->sFormCharset;
 
 			// Set email type
 			if (!empty($this->aConfig['emailFormat']) && $this->aConfig['emailFormat'] == 'html') {
@@ -76,10 +76,11 @@
 			$this->aAddresses = $this->aGetMailAddresses();
 
 			// Set default markers
-			$this->vAddMarkers($this->aGetDefaultMarkers());
+			$this->aMarkers = $this->aGetDefaultMarkers();
 
 			// Add additional remote user information for spam notifications
-			$this->vAddMarkers($this->aGetSpamMarkers());
+			$aSpamMarkers   = $this->aGetSpamMarkers();
+			$this->aMarkers = $aSpamMarkers + $this->aMarkers;
 
 			// Encode marker array
 			$this->oCS->convArray($this->aMarkers, $this->sFormChar, $this->sEmailChar);
@@ -157,6 +158,8 @@
 		 */
 		protected function aGetDefaultMarkers () {
 			$aMarkers = array();
+			$sName    = '';
+			$sType    = '';
 
 			// Get fields
 			foreach ($this->aFields as $sKey => $aField) {
@@ -168,16 +171,43 @@
 				$aMarkers[$aField['requiredName']] = (!empty($aField['required'])) ? $this->aLL['required'] : '';
 			}
 
+			// Page info
+			if (!empty($GLOBALS['TSFE']->page) && is_array($GLOBALS['TSFE']->page)) {
+				foreach ($GLOBALS['TSFE']->page as $sKey => $sValue) {
+					$aMarkers['PAGE:' . $sKey] = $sValue;
+				}
+			}
+
+			// Plugin info
+			if (!empty($this->oCObj->data) && is_array($this->oCObj->data)) {
+				foreach ($this->oCObj->data as $sKey => $sValue) {
+					$aMarkers['PLUGIN:' . $sKey] = $sValue;
+				}
+			}
+
+			// FE-User info
+			if (!empty($GLOBALS['TSFE']->fe_user->user) && is_array($GLOBALS['TSFE']->fe_user->user)) {
+				$aUserData = $GLOBALS['TSFE']->fe_user->user;
+				foreach ($aUserData as $sKey => $sValue) {
+					$aMarkers['USER:' . $sKey] = $sValue;
+				}
+			}
+
+			// Locallang labels
+			if (is_array($this->aLL)) {
+				foreach ($this->aLL as $sKey => $sValue) {
+					$aMarkers['LLL:' . $sKey] = $sValue;
+				}
+			}
+
+			// User defined markers
+			if (!empty($this->aConfig['markers.']) && is_array($this->aConfig['markers.'])) {
+				foreach ($this->aConfig['markers.'] as $sKey => $sValue) {
+					$aMarkers[strtoupper($sKey)] = $sValue;
+				}
+			}
+
 			return $aMarkers;
-		}
-
-
-		/**
-		 * Merge given markers with global marker array
-		 *
-		 */
-		public function vAddMarkers (array $paMarkers) {
-			$this->aMarkers = $paMarkers + $this->aMarkers;
 		}
 
 
@@ -319,12 +349,12 @@
 		 * @param string $psMessagePlain Plain message
 		 * @param string $psMessageHTML  HTML message
 		 * @param string $psReturnPath   Return-Path
-		 * @param mixed  $pmAttachements List or array of attachements
-		 * @return boolean TRUE if all mails were sent
+		 * @param string $psAttachement  Attachement
 		 */
-		protected function bMail ($pmRecipients, $psSender, $psReplyTo = '', $psSubject = '', $psMessagePlain = '', $psMessageHTML = '', $psReturnPath = '', $pmAttachements = '') {
+		protected function vMail ($pmRecipients, $psSender, $psReplyTo = '', $psSubject = '', $psMessagePlain = '', $psMessageHTML = '', $psReturnPath = '', $psAttachement = '') {
 			if (empty($pmRecipients) || !strlen($psSender) || (!strlen($psMessagePlain) && !strlen($psMessageHTML))) {
-				return FALSE;
+				$this->bHasError = TRUE;
+				return;
 			}
 
 			// Start email
@@ -341,7 +371,7 @@
 
 			// Set addresses
 			$oMail->from_email    = $psSender;
-			$oMail->replyto_email = (!empty($psReplyTo) ? $psReplyTo : $psSender);
+			$oMail->replyto_email = (strlen($psReplyTo)) ? $psReplyTo : $psSender;
 			$oMail->returnPath    = $psReturnPath;
 
 			// Set subject and plain content
@@ -350,28 +380,14 @@
 
 			// Set HTML content
 			if ($this->sEmailFormat == 'html' && strlen($psMessageHTML)) {
-				// Parse HTML content. Thanks to Jens Schmietendorf
-				$oMail->theParts['html']['content'] = $psMessageHTML;
-				$oMail->extractMediaLinks();
-				$oMail->extractHyperLinks();
-				$oMail->fetchHTMLMedia();
-				$oMail->substMediaNamesInHTML(0); // 0 = relative
-				$oMail->substHREFsInHTML();
-				$oMail->setHtml($oMail->encodeMsg($oMail->theParts['html']['content']));
+				$oMail->setHTML($oMail->encodeMsg($psMessageHTML));
 			}
 
-			// Add attachements if given
-			if (!empty($pmAttachements)) {
-				if (is_string($pmAttachements)) {
-					$pmAttachements = t3lib_div::trimExplode(',', $pmAttachements);
-				}
-				if (is_array($pmAttachements)) {
-					foreach ($pmAttachements as $sAttachement) {
-						$sAttachement = t3lib_div::getFileAbsFileName($sAttachement);
-						if (file_exists($sAttachement)) {
-							$oMail->addAttachment($sAttachement);
-						}
-					}
+			// Add attachement if given
+			if (strlen($psAttachement)) {
+				$psAttachement = t3lib_div::getFileAbsFileName($psAttachement);
+				if (file_exists($psAttachement)) {
+					$oMail->addAttachment($psAttachement);
 				}
 			}
 
@@ -384,13 +400,10 @@
 			if (is_array($pmRecipients)) {
 				foreach ($pmRecipients as $sRecipient) {
 					if (!$oMail->send($sRecipient)) {
-						return FALSE;
+						$this->bHasError = TRUE;
 					}
 				}
 			}
-
-			// All done
-			return TRUE;
 		}
 
 
@@ -416,15 +429,14 @@
 		/**
 		 * Send bot warning mail
 		 *
-		 * @return boolean TRUE if spam warning was sent
 		 */
-		public function bSendSpamWarning () {
+		public function vSendSpamWarning () {
 			if (!$this->bCheckMailAddresses('admin', 'sender')) {
-				return FALSE;
+				return;
 			}
 
 			// Send mail to admin
-			return $this->bMail(
+			$this->vMail(
 				$this->aAddresses['admin'],
 				$this->aAddresses['sender'],
 				$this->aAddresses['sender'],
@@ -439,9 +451,8 @@
 		/**
 		 * Send notification mails
 		 *
-		 * @return boolean TRUE if all mails were sent
 		 */
-		public function bSendMails () {
+		public function vSendMails () {
 			// Get configuration
 			$sSendTo   = (!empty($this->aConfig['sendTo']))   ? strtolower($this->aConfig['sendTo'])   : 'both';
 			$sSendFrom = (!empty($this->aConfig['sendFrom'])) ? strtolower($this->aConfig['sendFrom']) : 'sender';
@@ -450,7 +461,7 @@
 
 			// Send emails to all recipients
 			if (($sSendTo == 'both' || $sSendTo == 'recipients') && $this->bCheckMailAddresses('recipients', 'sender', $sReplyTo)) {
-				$bRecipientResult = $this->bMail(
+				$this->vMail(
 					$this->aAddresses['recipients'],
 					$this->aAddresses[$sSendFrom],
 					$this->aAddresses[$sReplyTo],
@@ -463,7 +474,7 @@
 
 			// Send email to user
 			if (($sSendTo == 'both' || $sSendTo == 'user') && $this->bCheckMailAddresses('user', 'sender')) {
-				$bUserResult = $this->bMail(
+				$this->vMail(
 					$this->aAddresses['user'],
 					$this->aAddresses['sender'],
 					$this->aAddresses['sender'],
@@ -473,14 +484,41 @@
 					$this->aAddresses['return']
 				);
 			}
-
-			return ($bRecipientResult && $bUserResult);
 		}
 
+
+		/**
+		 * Get messages
+		 *
+		 * @return Array with info message
+		 */
+		public function aGetMessages () {
+			$sWrapNegative  = (!empty($this->aConfig['infoWrapNegative'])) ? $this->aConfig['infoWrapNegative'] : '|';
+			$sWrapPositive  = (!empty($this->aConfig['infoWrapPositive'])) ? $this->aConfig['infoWrapPositive'] : '|';
+			$aMarkers       = array();
+
+			if ($this->bHasError) {
+				$aMarkers['INFO'] = str_replace('|', $this->aLL['msg_email_failed'], $sWrapNegative);
+			} else {
+				$aMarkers['INFO'] = str_replace('|', $this->aLL['msg_email_passed'], $sWrapPositive);
+			}
+
+			return $aMarkers;
+		}
+
+
+		/**
+		 * Get error state
+		 *
+		 * @return TRUE if emailing results in an error
+		 */
+		public function bHasError() {
+			return $this->bHasError;
+		}
 	}
 
 
-	if (defined('TYPO3_MODE') && $TYPO3_CONF_VARS[TYPO3_MODE]['XCLASS']['ext/sp_bettercontact/pi1/class.tx_spbettercontact_pi1_email.php']) {
+	if (defined('TYPO3_MODE') && $TYPO3_CONF_VARS[TYPO3_MODE]['XCLASS']['ext/sp_bettercontact/pi1/class.tx_spbettercontact_pi1_email.php'])	{
 		include_once($TYPO3_CONF_VARS[TYPO3_MODE]['XCLASS']['ext/sp_bettercontact/pi1/class.tx_spbettercontact_pi1_email.php']);
 	}
 ?>

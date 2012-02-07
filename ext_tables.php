@@ -2,7 +2,7 @@
 	/***************************************************************
 	*  Copyright notice
 	*
-	*  (c) 2011 Kai Vogel <kai.vogel ( at ) speedprogs.de>
+	*  (c) 2010 Kai Vogel <kai.vogel ( at ) speedprogs.de>
 	*  All rights reserved
 	*
 	*  This script is part of the TYPO3 project. The TYPO3 project is
@@ -30,28 +30,22 @@
 	if (TYPO3_MODE == 'BE') {
 
 		// Check if DB tab is visible in Flexform
-		$bShowDBTab   = FALSE;
-		$bShowFileTab = FALSE;
+		$bShowDBTab = FALSE;
 		if (isset($GLOBALS['TYPO3_CONF_VARS']['EXT']['extConf']['sp_bettercontact'])) {
-			$aExtConf     = unserialize($GLOBALS['TYPO3_CONF_VARS']['EXT']['extConf']['sp_bettercontact']);
-			$bShowDBTab   = !empty($aExtConf['enableDBTab']);
-			$bShowFileTab = !empty($aExtConf['enableFileTab']);
+			$aConfig    = unserialize($GLOBALS['TYPO3_CONF_VARS']['EXT']['extConf']['sp_bettercontact']);
+			$bShowDBTab = !empty($aConfig['enableDBTab']);
 		}
 
 		// Check for required SimpleXML and get flexform
 		if (class_exists('SimpleXMLElement')) {
 			t3lib_div::requireOnce(t3lib_extMgm::extPath('sp_bettercontact') . 'pi1/class.tx_spbettercontact_pi1_flexform.php');
 			$oFlexForm = t3lib_div::makeInstance('tx_spbettercontact_pi1_flexform');
-			$sFlexData = $oFlexForm->sGetFlexForm($bShowDBTab, $bShowFileTab);
+			$sFlexData = $oFlexForm->sGetFlexForm($bShowDBTab);
 			unset($oFlexForm);
-		} else if ($bShowDBTab && $bShowFileTab) {
-			$sFlexData = 'FILE:EXT:sp_bettercontact/res/fallback/flexform.xml';
 		} else if ($bShowDBTab) {
-			$sFlexData = 'FILE:EXT:sp_bettercontact/res/fallback/flexform_no_file.xml';
-		} else if ($bShowFileTab) {
-			$sFlexData = 'FILE:EXT:sp_bettercontact/res/fallback/flexform_no_db.xml';
+			$sFlexData = 'FILE:EXT:sp_bettercontact/res/fallback/flexform.xml';
 		} else {
-			$sFlexData = 'FILE:EXT:sp_bettercontact/res/fallback/flexform_no_additional.xml';
+			$sFlexData = 'FILE:EXT:sp_bettercontact/res/fallback/flexform_no_db.xml';
 		}
 
 		// Get plugin data
@@ -110,7 +104,5 @@
 			'LLL:EXT:sp_bettercontact/locallang.xml:moduleFunction.tx_spbettercontact_modfunc1'
 		);
 
-		// Add plugin configuration
-		t3lib_extMgm::addStaticFile($_EXTKEY, 'res/setup/', 'Better Contact: Default Configuration');
 	}
 ?>

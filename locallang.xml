@@ -85,23 +85,14 @@
 			<label index="tt_content.flexform_pi1.adminMails.2">Bot-Spam</label>
 			<label index="tt_content.flexform_pi1.adminMails.3">User-Spam (slow)</label>
 			<label index="tt_content.flexform_pi1.adminMails.4">Both (slow)</label>
-			<label index="tt_content.flexform_pi1.useHiddenFieldsCheck">Check hidden fields:</label>
 			<label index="tt_content.flexform_pi1.useRefererCheck">Check referer (HTTP_REFERER):</label>
 			<label index="tt_content.flexform_pi1.minElapsedTime">Minimum time required to fill out the form (in seconds):</label>
 			<label index="tt_content.flexform_pi1.messageCount">Max count of allowed mailings:</label>
 			<label index="tt_content.flexform_pi1.waitingTime">Waiting time if max count was reached (in minutes):</label>
 			<label index="tt_content.flexform_pi1.sDB">DB</label>
 			<label index="tt_content.flexform_pi1.database.table">Save user input into this table (see manual for external table):</label>
-			<label index="tt_content.flexform_pi1.database.autoFillDefault">Fill default fields automatically (pid,tstamp,crdate,cruser_id):</label>
-			<label index="tt_content.flexform_pi1.database.autoFillExisting">Fill configured fields automatically:</label>
+			<label index="tt_content.flexform_pi1.database.useDefaultValues">Fill default fields automatically (pid,tstamp,crdate,cruser_id):</label>
 			<label index="tt_content.flexform_pi1.database.fieldconf">TypoScript field configuration:</label>
-			<label index="tt_content.flexform_pi1.database.uniqueFields">Check content of this fields to be unique in table (separate with ","):</label>
-			<label index="tt_content.flexform_pi1.database.hideUniqueErrors">Hide errors for fields with not unique content:</label>
-			<label index="tt_content.flexform_pi1.sFILE">Files</label>
-			<label index="tt_content.flexform_pi1.filePath">File path:</label>
-			<label index="tt_content.flexform_pi1.imagePath">Image path:</label>
-			<label index="tt_content.flexform_pi1.enableImages">Generate images:</label>
-			<label index="tt_content.flexform_pi1.enableThumbnails">Generate thumbnails:</label>
 		</languageKey>
 		<languageKey index="de" type="array">
 			<label index="pi1_title">Kontaktformular</label>
@@ -183,23 +174,14 @@
 			<label index="tt_content.flexform_pi1.adminMails.2">Bot-Spam</label>
 			<label index="tt_content.flexform_pi1.adminMails.3">User-Spam (langsam)</label>
 			<label index="tt_content.flexform_pi1.adminMails.4">Beides (langsam)</label>
-			<label index="tt_content.flexform_pi1.useHiddenFieldsCheck">Versteckte Felder prüfen:</label>
 			<label index="tt_content.flexform_pi1.useRefererCheck">Herkunft prüfen (HTTP_REFERER):</label>
 			<label index="tt_content.flexform_pi1.minElapsedTime">Minimale erforderliche Zeit zum Ausfüllen des Formulars (in Sekunden):</label>
 			<label index="tt_content.flexform_pi1.messageCount">Maximale Anzahl erlaubter Sendungen:</label>
 			<label index="tt_content.flexform_pi1.waitingTime">Wartezeit wenn maximale Anzahl erreicht wurde (in Minuten):</label>
 			<label index="tt_content.flexform_pi1.sDB">DB</label>
 			<label index="tt_content.flexform_pi1.database.table">Eingaben in in diese Tabelle speichern (siehe Manual für externe Tabelle):</label>
-			<label index="tt_content.flexform_pi1.database.autoFillDefault">Standard-Felder automatisch befüllen (pid,tstamp,crdate,cruser_id):</label>
-			<label index="tt_content.flexform_pi1.database.autoFillExisting">Konfigurierte Felder automatisch befüllen:</label>
+			<label index="tt_content.flexform_pi1.database.useDefaultValues">Standard-Felder automatisch befüllen (pid,tstamp,crdate,cruser_id):</label>
 			<label index="tt_content.flexform_pi1.database.fieldconf">TypoScript Feld-Konfiguration:</label>
-			<label index="tt_content.flexform_pi1.database.uniqueFields">Inhalt dieser Felder auf Eindeutigkeit (unique) prüfen (durch "," trennen):</label>
-			<label index="tt_content.flexform_pi1.database.hideUniqueErrors">Zeige keine Fehler für Felder mit nicht eindeutigem (unique) Inhalt:</label>
-			<label index="tt_content.flexform_pi1.sFILE">Dateien</label>
-			<label index="tt_content.flexform_pi1.filePath">Dateipfad:</label>
-			<label index="tt_content.flexform_pi1.imagePath">Bildpfad:</label>
-			<label index="tt_content.flexform_pi1.enableImages">Bilder erzeugen:</label>
-			<label index="tt_content.flexform_pi1.enableThumbnails">Thumbnails erzeugen:</label>
 		</languageKey>
 		<languageKey index="fr" type="array">
 			<label index="pi1_title">Formulaire de Contact</label>
@@ -281,23 +263,14 @@
 			<label index="tt_content.flexform_pi1.adminMails.2">Spam via robot</label>
 			<label index="tt_content.flexform_pi1.adminMails.3">Spam via utilisateur (lent)</label>
 			<label index="tt_content.flexform_pi1.adminMails.4">Les deux (lent)</label>
-			<label index="tt_content.flexform_pi1.useHiddenFieldsCheck">Vérifier les invisible champs:</label>
 			<label index="tt_content.flexform_pi1.useRefererCheck">Vérifier le referer (HTTP_REFERER):</label>
 			<label index="tt_content.flexform_pi1.minElapsedTime">Temps minimum requis pour remplir le formulaire (seconde):</label>
 			<label index="tt_content.flexform_pi1.messageCount">Nombre maximum d'envois autorisés:</label>
 			<label index="tt_content.flexform_pi1.waitingTime">Temps (minutes):</label>
 			<label index="tt_content.flexform_pi1.sDB">Base de données</label>
 			<label index="tt_content.flexform_pi1.database.table">Sauvegarder les données saisies par l'utilisateur dans cette table (cf. manuel pour configurer une table externe):</label>
-			<label index="tt_content.flexform_pi1.database.autoFillDefault">Remplir les champs par défaut automatiquement (pid, tstamp, crdate, cruser_id):</label>
-			<label index="tt_content.flexform_pi1.database.autoFillExisting">Remplir les champs par configuré automatiquement:</label>
+			<label index="tt_content.flexform_pi1.database.useDefaultValues">Remplir les champs par défaut automatiquement (pid, tstamp, crdate, cruser_id):</label>
 			<label index="tt_content.flexform_pi1.database.fieldconf">Configuration du champ TypoScript:</label>
-			<label index="tt_content.flexform_pi1.database.uniqueFields">Le contenu de ce test sur le terrain pour l'unicité (séparer par ","):</label>
-			<label index="tt_content.flexform_pi1.database.hideUniqueErrors">Voir aucune erreur pour les champs non-unique contenu:</label>
-			<label index="tt_content.flexform_pi1.sFILE">Fichiers</label>
-			<label index="tt_content.flexform_pi1.filePath">Path fichier:</label>
-			<label index="tt_content.flexform_pi1.imagePath">Path Image:</label>
-			<label index="tt_content.flexform_pi1.enableImages">Générer des images:</label>
-			<label index="tt_content.flexform_pi1.enableThumbnails">Générer des vignettes:</label>
 		</languageKey>
 	</data>
 </T3locallang>

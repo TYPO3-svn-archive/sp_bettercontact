@@ -2,7 +2,7 @@
 	/***************************************************************
 	*  Copyright notice
 	*
-	*  (c) 2011 Kai Vogel <kai.vogel ( at ) speedprogs.de>
+	*  (c) 2010 Kai Vogel <kai.vogel ( at ) speedprogs.de>
 	*  All rights reserved
 	*
 	*  This script is part of the TYPO3 project. The TYPO3 project is
@@ -31,7 +31,8 @@
 	 * @subpackage tx_spbettercontact
 	 */
 	class tx_spbettercontact_pi1_ts {
-		protected $oCObj = NULL;
+		protected $oCObj   = NULL;
+		protected $aConfig = array();
 
 
 		/**
@@ -40,7 +41,8 @@
 		 * @param object $poParent Instance of the parent object
 		 */
 		public function __construct ($poParent) {
-			$this->oCObj = &$poParent->cObj;
+			$this->oCObj   = $poParent->cObj;
+			$this->aConfig = $poParent->aConfig;
 		}
 
 
@@ -53,12 +55,6 @@
 			// Parse TypoScript configuration
 			$aResult = $this->aParseTS($paConfig);
 
-			// Merge extension configuration into config array
-			if (isset($GLOBALS['TYPO3_CONF_VARS']['EXT']['extConf']['sp_bettercontact'])) {
-				$aExtConf = unserialize($GLOBALS['TYPO3_CONF_VARS']['EXT']['extConf']['sp_bettercontact']);
-				$aResult  = array_merge($aResult, $aExtConf);
-			}
-
 			// Stop here if no Flexform found
 			if (empty($this->oCObj->data['pi_flexform'])) {
 				return $aResult;
@@ -70,6 +66,13 @@
 				return $aResult;
 			}
 
+			// Check if DB tab is visible in Flexform
+			$bShowDBTab = FALSE;
+			if (isset($GLOBALS['TYPO3_CONF_VARS']['EXT']['extConf']['sp_bettercontact'])) {
+				$aConfig    = unserialize($GLOBALS['TYPO3_CONF_VARS']['EXT']['extConf']['sp_bettercontact']);
+				$bShowDBTab = !empty($aConfig['enableDBTab']);
+			}
+
 			// Override TS with FlexForm values
 			foreach ($mFlex['data'] as $sTab => $aData) {
 				if (empty($aData['lDEF']) && !is_array($aData['lDEF'])) {
@@ -77,12 +80,7 @@
 				}
 
 				// Exclude DB tab if disabled
-				if (empty($aResult['enableDBTab']) && $sTab == 'sDB') {
-					continue;
-				}
-
-				// Exclude file tab if disabled
-				if (empty($aResult['enableFileTab']) && $sTab == 'sFile') {
+				if (!$bShowDBTab && $sTab == 'sDB') {
 					continue;
 				}
 
@@ -138,7 +136,7 @@
 
 		/**
 		 * Parse TypoScript configuration from a FlexForm field
-		 *
+		 * 
 		 * This method finds include lines at any level of the
 		 * configuration and merges them with the other setup.
 		 *
@@ -210,7 +208,6 @@
 
 			return $paBaseArray;
 		}
-
 	}
 
 

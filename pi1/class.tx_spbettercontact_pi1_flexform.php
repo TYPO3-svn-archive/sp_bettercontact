@@ -2,7 +2,7 @@
 	/***************************************************************
 	*  Copyright notice
 	*
-	*  (c) 2011 Kai Vogel <kai.vogel ( at ) speedprogs.de>
+	*  (c) 2010 Kai Vogel <kai.vogel ( at ) speedprogs.de>
 	*  All rights reserved
 	*
 	*  This script is part of the TYPO3 project. The TYPO3 project is
@@ -38,11 +38,10 @@
 		/**
 		 * Get flexform appropriate server configuration
 		 *
-		 * @param boolean $pbShowDBTab   Enable additional DB tab in Flexform
-		 * @param boolean $pbShowFileTab Enable additional file upload tab in Flexform
+		 * @param  boolean $pbShowDBTab Enable additional DB tab in Flexform
 		 * @return String with flexform content
 		 */
-		public function sGetFlexForm ($pbShowDBTab = FALSE, $pbShowFileTab = FALSE) {
+		public function sGetFlexForm ($pbShowDBTab = FALSE) {
 			// Begin document
 			$oXML = new SimpleXMLElement('<T3DataStructure></T3DataStructure>');
 
@@ -56,9 +55,6 @@
 			$aTabs = array('sDEF','sTEMPLATE','sEMAIL','sSPAM');
 			if ($pbShowDBTab) {
 				$aTabs[] = 'sDB';
-			}
-			if ($pbShowFileTab) {
-				$aTabs[] = 'sFILE';
 			}
 			$aTabs = array_flip($aTabs);
 			foreach($aTabs as $sKey => $sValue) {
@@ -101,7 +97,6 @@
 			$this->vAddDropDown($aTabs['sSPAM'], 'captchaSupport', array('','sr_freecap','jm_recaptcha','captcha','mathguard'));
 			$this->vAddDropDown($aTabs['sSPAM'], 'showMaliciousInput', array('','none','clean','all'));
 			$this->vAddDropDown($aTabs['sSPAM'], 'adminMails', array('','none','bot','user','both'));
-			$this->vAddCheckBox($aTabs['sSPAM'], 'useHiddenFieldsCheck', TRUE);
 			$this->vAddCheckBox($aTabs['sSPAM'], 'useRefererCheck', TRUE);
 			$this->vAddInput($aTabs['sSPAM'], 'minElapsedTime', 5, '1');
 			$this->vAddInput($aTabs['sSPAM'], 'messageCount', 5, '10');
@@ -110,19 +105,8 @@
 			// Add elements to tab "db"
 			if ($pbShowDBTab) {
 				$this->vAddInput($aTabs['sDB'], 'database.table', 40);
-				$this->vAddCheckBox($aTabs['sDB'], 'database.autoFillDefault', FALSE);
-				$this->vAddCheckBox($aTabs['sDB'], 'database.autoFillExisting', FALSE);
-				$this->vAddText($aTabs['sDB'], 'database.fieldconf', 40, 20, '', 'off');
-				$this->vAddInput($aTabs['sDB'], 'database.uniqueFields', 40);
-				$this->vAddCheckBox($aTabs['sDB'], 'database.hideUniqueErrors', FALSE);
-			}
-
-			// Add elements to tab "file"
-			if ($pbShowFileTab) {
-				$this->vAddInput($aTabs['sFILE'], 'filePath', 40, '', TRUE, 'folder');
-				$this->vAddInput($aTabs['sFILE'], 'imagePath', 40, '', TRUE, 'folder');
-				$this->vAddCheckBox($aTabs['sFILE'], 'enableImages', FALSE);
-				$this->vAddCheckBox($aTabs['sFILE'], 'enableThumbnails', FALSE);
+				$this->vAddCheckBox($aTabs['sDB'], 'database.useDefaultValues', FALSE);
+				$this->vAddText($aTabs['sDB'], 'database.fieldconf', 40, 20, $this->sGetDefaultTS(), 'off');
 			}
 
 			return $oXML->asXML();
@@ -162,7 +146,6 @@
 		protected function vAddInput ($poTab, $psName, $piWidth = 40, $psDefault = '', $pbWizard = FALSE, $psType = 'file', $psExtensions = '', $psEval = 'trim') {
 			$oElement = $poTab->addChild($psName);
 			$oTCEforms = $oElement->addChild('TCEforms');
-			$oTCEforms->addChild('exclude', '1');
 			$oTCEforms->addChild('label', 'LLL:' . $this->sLabelFile . ':tt_content.flexform_pi1.' . $psName);
 			$oConfig = $oTCEforms->addChild('config');
 			$oConfig->addChild('type', 'input');
@@ -200,7 +183,6 @@
 		protected function vAddCheckBox ($poTab, $psName, $pbDefault = TRUE) {
 			$oElement = $poTab->addChild($psName);
 			$oTCEforms = $oElement->addChild('TCEforms');
-			$oTCEforms->addChild('exclude', '1');
 			$oTCEforms->addChild('label', 'LLL:' . $this->sLabelFile . ':tt_content.flexform_pi1.' . $psName);
 			$oConfig = $oTCEforms->addChild('config');
 			$oConfig->addChild('type', 'check');
@@ -218,7 +200,6 @@
 		protected function vAddDropDown ($poTab, $psName, array $paItems) {
 			$oElement = $poTab->addChild($psName);
 			$oTCEforms = $oElement->addChild('TCEforms');
-			$oTCEforms->addChild('exclude', '1');
 			$oTCEforms->addChild('label', 'LLL:' . $this->sLabelFile . ':tt_content.flexform_pi1.' . $psName);
 			$oConfig = $oTCEforms->addChild('config');
 			$oConfig->addChild('type', 'select');
@@ -254,7 +235,6 @@
 		protected function vAddText ($poTab, $psName, $piWidth = 40, $piHeight = 1, $psDefault = '', $psWrap = 'virtual') {
 			$oElement = $poTab->addChild($psName);
 			$oTCEforms = $oElement->addChild('TCEforms');
-			$oTCEforms->addChild('exclude', '1');
 			$oTCEforms->addChild('label', 'LLL:' . $this->sLabelFile . ':tt_content.flexform_pi1.' . $psName);
 			$oConfig = $oTCEforms->addChild('config');
 			$oConfig->addChild('type', 'text');
@@ -262,6 +242,40 @@
 			$oConfig->addChild('rows', $piHeight);
 			$oConfig->addChild('default', $psDefault);
 			$oConfig->addChild('wrap', $psWrap);
+		}
+
+
+		/**
+		 * Get default TypoScript configuration for fieldconf
+		 *
+		 * @return String with configuration
+		 */
+		protected function sGetDefaultTS () {
+			$sDefaultTS = <<< END
+### Demo configuration (see manual for details) ###
+
+# Add current page id as pid of the new dataset
+# pid = TEXT
+# pid.data = TSFE : id
+
+# Add creation date automatically
+# crdate = TEXT
+# crdate.data = date : U
+
+# Set default values for some fields
+# hidden  = 0
+# deleted = 0
+
+# Save submitted name in field "name"
+# name = TEXT
+# name.data = GPvar : tx_spbettercontact_pi1-9|name
+
+# Include external TypoScript configuration
+# <INCLUDE_TYPOSCRIPT: source="FILE:fileadmin/my_setup.txt">
+
+END;
+
+			return $sDefaultTS;
 		}
 
 	}

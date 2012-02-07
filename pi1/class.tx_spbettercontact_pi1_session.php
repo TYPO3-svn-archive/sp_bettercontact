@@ -2,7 +2,7 @@
 	/***************************************************************
 	*  Copyright notice
 	*
-	*  (c) 2011 Kai Vogel <kai.vogel ( at ) speedprogs.de>
+	*  (c) 2010 Kai Vogel <kai.vogel ( at ) speedprogs.de>
 	*  All rights reserved
 	*
 	*  This script is part of the TYPO3 project. The TYPO3 project is
@@ -40,8 +40,6 @@
 		protected $sSessionName    = '';
 		protected $iCount          = 0;
 		protected $iWaitingTime    = 0;
-		protected $iPluginID       = 0;
-
 
 		/**
 		 * Set configuration for session object
@@ -49,12 +47,12 @@
 		 * @param object $poParent Instance of the parent object
 		 */
 		public function __construct ($poParent) {
-			$this->aConfig   = &$poParent->aConfig;
-			$this->aFields   = &$poParent->aFields;
-			$this->aGP       = &$poParent->aGP;
-			$this->aLL       = &$poParent->aLL;
-			$this->sExtKey   = &$poParent->extKey;
-			$this->iPluginID = &$poParent->cObj->data['uid'];
+			$this->aConfig   = $poParent->aConfig;
+			$this->aFields   = $poParent->aFields;
+			$this->aGP       = $poParent->aGP;
+			$this->aLL       = $poParent->aLL;
+			$this->sExtKey   = $poParent->extKey;
+			$this->iPluginID = $poParent->cObj->data['uid'];
 
 			// Load session content
 			$this->aSessionContent = $this->aLoad();
@@ -80,11 +78,9 @@
 		/**
 		 * Check session if form was already sent
 		 *
-		 * @param integer $piCount Will be filled with sendings count in case of error
-		 * @param integer $piTime Will be filled with waiting time in case of error
 		 * @return TRUE if current fe user has already sent a lot of emails
 		 */
-		public function bHasAlreadySent (&$piCount, &$piTime) {
+		public function bHasAlreadySent () {
 			if (empty($this->aSessionContent) || !is_array($this->aSessionContent)) {
 				return FALSE;
 			}
@@ -103,12 +99,9 @@
 			// Check waiting time
 			$iLockEnd = $this->aSessionContent['tstmp'] + ($this->aConfig['waitingTime'] * 60); // minutes
 
-			// User is locked
 			if ($GLOBALS['SIM_EXEC_TIME'] < $iLockEnd) {
 				$this->iWaitingTime = ($iLockEnd - $GLOBALS['SIM_EXEC_TIME']);
-				$piTime  = ($this->iWaitingTime > 60 ? ($this->iWaitingTime / 60) : 1);
-				$piCount = ($this->iCount <= $this->aConfig['messageCount'] ? $this->iCount : $this->aConfig['messageCount']);
-				return TRUE;
+    			return TRUE;
 			}
 
 			// Reset counter
@@ -171,6 +164,22 @@
 			// Update session content
 			$GLOBALS['TSFE']->fe_user->setKey('ses', $this->sExtKey, $aContent);
 			$GLOBALS['TSFE']->storeSessionData();
+		}
+
+
+		/**
+		 * Get messages
+		 *
+		 * @return Array of messages form session check
+		 */
+		public function aGetMessages () {
+			$sWrapNegative = $this->aConfig['infoWrapNegative'] ? $this->aConfig['infoWrapNegative'] : '|';
+			$iTime         = ($this->iWaitingTime > 60) ? ($this->iWaitingTime / 60) : 1;
+			$iCount        = ($this->iCount <= $this->aConfig['messageCount']) ? $this->iCount : $this->aConfig['messageCount']; // bugfix
+			$sMessage      = sprintf($this->aLL['msg_already_sent'], $iCount, $iTime);
+			$sMessage      = str_replace('|', $sMessage, $sWrapNegative);
+
+			return array('INFO' => $sMessage);
 		}
 
 	}

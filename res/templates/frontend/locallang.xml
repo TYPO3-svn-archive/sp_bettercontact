@@ -54,26 +54,11 @@
 			<label index="msg_email_allowed">Please enter a valid email address.</label>
 			<label index="msg_message_allowed">Please enter a message which contains only these characters: %s.</label>
 
-			<label index="msg_name_not_unique">An row with this name already exists in table.</label>
-			<label index="msg_tel_not_unique">An row with this phone number already exists in table.</label>
-			<label index="msg_fax_not_unique">An row with this fax number already exists in table.</label>
-			<label index="msg_street_not_unique">An row with this street already exists in table.</label>
-			<label index="msg_city_not_unique">An row with this city already exists in table.</label>
-			<label index="msg_email_not_unique">An row with this email address already exists in table.</label>
-			<label index="msg_message_not_unique">An row with this message already exists in table.</label>
-
-			<label index="msg_picture_file_invalid">Please select a valid file.</label>
-			<label index="msg_picture_file_big">Please select a file with at most %d KB.</label>
-			<label index="msg_picture_file_small">Please select a file with at least %d KB.</label>
-			<label index="msg_picture_file_allowed">Please select a file with one of this types: %s.</label>
-			<label index="msg_picture_file_disallowed">Please select a file with a type other than: %s.</label>
-
 			<label index="msg_email_passed">Your message was sent. Thank you!</label>
 			<label index="msg_email_failed">Message could not be sent. Please try again.</label>
 			<label index="msg_check_passed"></label>
 			<label index="msg_check_failed">A problem has occurred, your input contains errors.</label>
 			<label index="msg_db_failed">A database problem has occurred: "%s"</label>
-			<label index="msg_db_not_unique">Duplicate entries found</label>
 			<label index="msg_not_allowed">This process is not allowed!</label>
 			<label index="msg_already_sent">You have already sent %d messages. Please wait %d minute(s).</label>
 			<label index="msg_captcha">Please enter the sequence of characters shown in the captcha image.</label>
@@ -85,7 +70,6 @@
 			<label index="city">City:</label>
 			<label index="email">Email:</label>
 			<label index="message">Message:</label>
-			<label index="picture">Picture:</label>
 			<label index="submit">Submit</label>
 			<label index="date">Date:</label>
 			<label index="time">Time:</label>
@@ -170,26 +154,11 @@
 			<label index="msg_email_allowed">Bitte geben Sie eine gültige E-Mail Adresse ein.</label>
 			<label index="msg_message_allowed">Bitte geben Sie eine Nachricht ein, die nur diese Zeichen beinhaltet: %s.</label>
 
-			<label index="msg_name_not_unique">An row with this name already exists in table.</label>
-			<label index="msg_tel_not_unique">An row with this phone number already exists in table.</label>
-			<label index="msg_fax_not_unique">An row with this fax number already exists in table.</label>
-			<label index="msg_street_not_unique">An row with this street already exists in table.</label>
-			<label index="msg_city_not_unique">An row with this city already exists in table.</label>
-			<label index="msg_email_not_unique">An row with this email address already exists in table.</label>
-			<label index="msg_message_not_unique">An row with this message already exists in table.</label>
-
-			<label index="msg_picture_file_invalid">Bitte wählen Sie eine gültige Datei.</label>
-			<label index="msg_picture_file_big">Bitte wählen Sie eine Datei mit maximal %d KB.</label>
-			<label index="msg_picture_file_small">Bitte wählen Sie eine Datei mit mindestens %d KB.</label>
-			<label index="msg_picture_file_allowed">Bitte wählen Sie eine Datei mit einem der folgenden Typen: %s.</label>
-			<label index="msg_picture_file_disallowed">Bitte wählen Sie eine Datei mit keinem der folgenden Typen: %s.</label>
-
 			<label index="msg_email_passed">Ihre Nachricht wurde erfolgreich versandt. Vielen Dank.</label>
 			<label index="msg_email_failed">Ihre Nachricht konnte nicht versandt werden. Bitte versuchen Sie es erneut.</label>
 			<label index="msg_check_passed"></label>
 			<label index="msg_check_failed">Bei den Formulareingaben ist ein Problem aufgetreten.</label>
 			<label index="msg_db_failed">Es ist ein Datenbank-Problem aufgetreten: "%s"</label>
-			<label index="msg_db_not_unique">Doppelte Einträge gefunden</label>
 			<label index="msg_not_allowed">Dieser Prozess ist nicht erlaubt!</label>
 			<label index="msg_already_sent">Sie haben bereits %d Nachrichten versandt. Bitte warten Sie %d Minute(n).</label>
 			<label index="msg_captcha">Bitte übertragen Sie die Zeichen des Captcha-Bildes in das Textfeld.</label>
@@ -201,7 +170,6 @@
 			<label index="city">Stadt:</label>
 			<label index="email">E-Mail:</label>
 			<label index="message">Nachricht:</label>
-			<label index="picture">Bild:</label>
 			<label index="submit">Absenden</label>
 			<label index="date">Datum:</label>
 			<label index="time">Uhrzeit:</label>
@@ -236,114 +204,6 @@
 			<label index="email_spam_headline1">Allgemeine Informationen:</label>
 			<label index="email_spam_headline2">Sichtbare Felder:</label>
 			<label index="email_spam_headline3">Versteckte Felder:</label>
-		</languageKey>
-		<languageKey index="fi" type="array">
-			<label index="msg_name_empty">Kirjoita tähän nimesi.</label>
-			<label index="msg_tel_empty">Kirjoita tähän puhelinnumerosi.</label>
-			<label index="msg_fax_empty">Kirjoita tähän faksinumerosi.</label>
-			<label index="msg_street_empty">Kirjoita tähän kadun nimi.</label>
-			<label index="msg_city_empty">Kirjoita tähän kaupungin nimi.</label>
-			<label index="msg_email_empty">Kirjoita tähän em@il-osoitteesi.</label>
-			<label index="msg_message_empty">Kirjoita tähän viesti.</label>
-
-			<label index="msg_name_short">Kirjoita tähän nimi, jossa on enemmän kuin %d merkkiä.</label>
-			<label index="msg_tel_short">Kirjoita tähän puhelinnumero, jossa on enemmän kuin %d merkkiä.</label>
-			<label index="msg_fax_short">Kirjoita tähän faksinumero, jossa on enemmän kuin %d merkkiä.</label>
-			<label index="msg_street_short">Kirjoita tähän kadunnimi, jossa on enemmän kuin %d merkkiä.</label>
-			<label index="msg_city_short">Kirjoita tähän kaupungin nimi, jossa on enemmän kuin %d merkkiä.</label>
-			<label index="msg_email_short">Kirjoita tähän em@il-osoite, jossa on enemmän kuin %d merkkiä.</label>
-			<label index="msg_message_short">Kirjoita tähän viesti, jossa on enemmän kuin %d merkkiä.</label>
-
-			<label index="msg_name_long">Kirjoita tähän nimi, jossa on vähemmän kuin %d merkkiä.</label>
-			<label index="msg_tel_long">Kirjoita tähän puhelinnumero, jossa on vähemmän kuin %d merkkiä.</label>
-			<label index="msg_fax_long">Kirjoita tähän faksinumero, jossa on vähemmän kuin %d merkkiä.</label>
-			<label index="msg_street_long">Kirjoita tähän kadunnimi, jossa on vähemmän kuin %d merkkiä.</label>
-			<label index="msg_city_long">Kirjoita tähän kaupungin nimi, jossa on vähemmän kuin %d merkkiä.</label>
-			<label index="msg_email_long">Kirjoita tähän em@il-osoite, jossa on vähemmän kuin %d merkkiä.</label>
-			<label index="msg_message_long">Kirjoita tähän viesti, jossa on vähemmän kuin %d merkkiä.</label>
-
-			<label index="msg_name_regex">Kirjoita tähän nimi, jossa ei %s-merkkiä lukuunottamatta ole muita erikoismerkkejä.</label>
-			<label index="msg_tel_regex">Kirjoita tähän puhelinnumero, jossa ei %s-merkkiä lukuunottamatta ole muita erikoismerkkejä.</label>
-			<label index="msg_fax_regex">Kirjoita tähän faksinumero, jossa ei %s-merkkiä lukuunottamatta ole muita erikoismerkkejä.</label>
-			<label index="msg_street_regex">Kirjoita tähän voimassa oleva kadunnimi.</label>
-			<label index="msg_city_regex">Kirjoita tähän voimassa oleva kaupunginnimi.</label>
-			<label index="msg_email_regex">Kirjoita tähän voimassa oleva em@il-osoite.</label>
-			<label index="msg_message_regex">Kirjoita tähän viesti, jossa ei %s-merkkiä lukuunottamatta ole muita erikoismerkkejä.</label>
-
-			<label index="msg_name_disallowed">Kirjoita tähän nimi, jossa ei ole mitään näistä merkeistä: %s.</label>
-			<label index="msg_tel_disallowed">Kirjoita tähän puhelinnumero, jossa ei ole mitään näistä merkeistä: %s.</label>
-			<label index="msg_fax_disallowed">Kirjoita tähän faksinumero ein, jossa ei ole mitään näistä merkeistä: %s.</label>
-			<label index="msg_street_disallowed">Kirjoita tähän kadunnimi ein, jossa ei ole mitään näistä merkeistä: %s.</label>
-			<label index="msg_city_disallowed">Kirjoita tähän kaupungin nimi, jossa ei ole mitään näistä merkeistä: %s.</label>
-			<label index="msg_email_disallowed">Kirjoita tähän voimassa oleva em@il-osoite.</label>
-			<label index="msg_message_disallowed">Kirjoita tähän viesti, jossa ei ole mitään näistä merkeistä: %s.</label>
-
-			<label index="msg_name_allowed">Kirjoita tähän nimi, jossa on vain nämä merkit: %s.</label>
-			<label index="msg_tel_allowed">Kirjoita tähän puhelinnumero, jossa on vain nämä merkit: %s.</label>
-			<label index="msg_fax_allowed">Kirjoita tähän faksinumero, jossa on vain nämä merkit: %s.</label>
-			<label index="msg_street_allowed">Kirjoita tähän kadunnimi, jossa on vain nämä merkit: %s.</label>
-			<label index="msg_city_allowed">Kirjoita tähän kaupungin nimi, jossa on vain nämä merkit: %s.</label>
-			<label index="msg_email_allowed">Kirjoita tähän voimassa oleva em@il-osoite.</label>
-			<label index="msg_message_allowed">Kirjoita tähän viesti, jossa on vain nämä merkit: %s.</label>
-
-			<label index="msg_email_passed">Viestisi lähettäminen onnistui. Kiitos.</label>
-			<label index="msg_email_failed">Viestiäsi ei voitu lähettää. Ole hyvä ja yritä uudelleen.</label>
-			<label index="msg_check_passed"></label>
-			<label index="msg_check_failed">Lomaketta täytettäessä tuli ongelmia.</label>
-			<label index="msg_db_failed">Tietokantaongelma: "%s"</label>
-			<label index="msg_db_not_unique">Les entrées dupliquées trouvé</label>
-			<label index="msg_not_allowed">Tämä prosessi ei ole sallittu!</label>
-			<label index="msg_already_sent">Lähetit jo %d viestin/viestiä. Ole hyvä ja odota %d minuutti(a).</label>
-			<label index="msg_captcha">Ole hyvä ja kirjoita kuvavarmennuksessa olevat merkit tekstikenttään.</label>
-
-			<label index="msg_picture_file_invalid"></label>
-			<label index="msg_picture_file_big"></label>
-			<label index="msg_picture_file_small"></label>
-			<label index="msg_picture_file_allowed"></label>
-			<label index="msg_picture_file_disallowed"></label>
-
-			<label index="name">Nimi:</label>
-			<label index="tel">Puhelin:</label>
-			<label index="fax">Fax:</label>
-			<label index="street">Katu:</label>
-			<label index="city">Kaupunki:</label>
-			<label index="email">Sähköposti:</label>
-			<label index="message">Viesti:</label>
-			<label index="picture">Kuva:</label>
-			<label index="submit">Lähetä</label>
-			<label index="date">Päivämäärä:</label>
-			<label index="time">Kellonaika:</label>
-			<label index="ip">IP:</label>
-			<label index="browser">Selain:</label>
-			<label index="system">Systeemi:</label>
-			<label index="referer">Viittaus:</label>
-			<label index="method">Metodi:</label>
-			<label index="checked">kyllä</label>
-			<label index="unchecked">ei</label>
-			<label index="required">*</label>
-			<label index="required_info">Kaikki (*) merkityt kentät ovat pakollisia.</label>
-
-			<label index="email_sender_subject">Kiitos viestistä</label>
-			<label index="email_sender_dear">Hei</label>
-			<label index="email_sender_greetings">Parhain terveisin,</label>
-			<label index="email_sender_sender">Yritys</label>
-			<label index="email_sender_body1">Kiitos viestistä.</label>
-			<label index="email_sender_body2">Vastaamme kysymykseesi mahdollisimman pian.</label>
-
-			<label index="email_admin_subject">lähetti viestin</label>
-			<label index="email_admin_dear">Hei,</label>
-			<label index="email_admin_greetings">Parhain terveisin,</label>
-			<label index="email_admin_sender">Yhteydenottolomake</label>
-			<label index="email_admin_body1">Joku lähetti viestin:</label>
-
-			<label index="email_spam_subject">Joku yritti lähettää viestin</label>
-			<label index="email_spam_dear">Hei,</label>
-			<label index="email_spam_gretings">Parhain terveisin,</label>
-			<label index="email_spam_sender">Yhteydenottolomake</label>
-			<label index="email_spam_body1">Joku yritti lähettää viestin:</label>
-			<label index="email_spam_headline1">Yleistä:</label>
-			<label index="email_spam_headline2">Näkyvät kentät:</label>
-			<label index="email_spam_headline3">Näkymättömät kentät:</label>
 		</languageKey>
 		<languageKey index="fr" type="array">
 			<label index="msg_name_empty">Veuillez saisir votre nom.</label>
@@ -403,12 +263,6 @@
 			<label index="msg_already_sent">Vous avez déjà envoyé %d messages. Veuillez à présent patienter pendant %d minute(s).</label>
 			<label index="msg_captcha">Veuillez saisir la séquence de caractères affichée sur l'image.</label>
 
-			<label index="msg_picture_file_invalid"></label>
-			<label index="msg_picture_file_big"></label>
-			<label index="msg_picture_file_small"></label>
-			<label index="msg_picture_file_allowed"></label>
-			<label index="msg_picture_file_disallowed"></label>
-
 			<label index="name">Nom:</label>
 			<label index="tel">Téléphone:</label>
 			<label index="fax">Fax:</label>
@@ -416,7 +270,6 @@
 			<label index="city">Ville:</label>
 			<label index="email">Mail:</label>
 			<label index="message">Message:</label>
-			<label index="picture">Image:</label>
 			<label index="submit">Envoyer</label>
 			<label index="date">Date:</label>
 			<label index="time">Temps:</label>
