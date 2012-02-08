@@ -96,19 +96,60 @@
 		 * @return String with first email address
 		 */
 		protected function sGetSingleAddress ($psAddress) {
-			if (!strlen($psAddress)) {
+			if (empty($psAddress)) {
 				return 'webmaster@' . $_SERVER['SERVER_ADDR'];
 			}
+			$aAddresses = $this->sGetExplodedAddress($psAddress);
+			return reset($aAddresses);
+		}
 
-			$aSigns = array(',', '&', ' ', chr(9), "\r\n", "\n\r", "\n", "\r");
+
+		/**
+		 * Get multiple email addresses
+		 *
+		 * @return array All email addresses
+		 */
+		protected function sGetExplodedAddress ($pmAddress) {
+			if (empty($pmAddress)) {
+				return array();
+			}
+
+			if (is_array($pmAddress)) {
+				return $pmAddress;
+			}
+
+			$pmAddress = trim($pmAddress);
+			$aSigns = array(',', ';', '&', chr(9), "\r\n", "\n\r", "\n", "\r");
+			if (str_replace($aSigns, '|', $pmAddress) === $pmAddress) {
+				return array($pmAddress);
+			}
+
 			foreach ($aSigns as $sSign) {
-				if (str_replace($sSign, '', $psAddress) !== $psAddress) {
-					$aAddresses = explode($sSign, $psAddress);
-					return reset($aAddresses);
+				if (strpos($pmAddress, $sSign) !== FALSE) {
+					return t3lib_div::trimExplode($sSign, $pmAddress, TRUE);
 				}
 			}
 
-			return $psAddress;
+			return array();
+		}
+
+
+		/**
+		 * Normalize email address
+		 * 
+		 * @param string $psAddress The address
+		 * @param boolean $bAllowName Allow name in email
+		 * @return string Normalized address
+		 */
+		protected function aGetNormalized($psAddress, $bAllowName = FALSE) {
+			$psAddress = t3lib_div::normalizeMailAddress(trim($psAddress));
+			if (strpos($psAddress, '<') === FALSE || $bAllowName) {
+				return $psAddress;
+			}
+			preg_match('/<(.*?)>/', $psAddress, $aMatches);
+			if (!empty($aMatches[1])) {
+				$psAddress = $aMatches[1];
+			}
 		}
 
 
@@ -128,23 +169,28 @@
 
 			// Get E-Mail addresses
 			foreach ($aMailAddresses as $sKey => $sValue) {
-				$sIdent   = ($sKey == 'return') ? 'ReturnPath' : ucfirst($sKey);
-				$sName    = 'email' . $sIdent;
-				$sReplace = ($sKey == 'sender') ? '/[^a-z0-9_\-,\.@<> ]/i' : '/[^a-z0-9_\-,\.@]/i';
-
-				if ($sKey != 'user') {
-					$aMailAddresses[$sKey] = $this->aConfig[$sName];
+				if ($sKey !== 'user') {
+					$sIdent = ($sKey == 'return') ? 'ReturnPath' : ucfirst($sKey);
+					$sValue = $this->aConfig['email' . $sIdent];
 				} else {
-					$aMailAddresses[$sKey] = $this->sGetSingleAddress($this->aGP['email']);
+					$sValue = $this->aGP['email'];
 				}
 
-				// Set sender to default if empty
-				if ($sKey == 'sender' && !strlen($aMailAddresses[$sKey])) {
-					$aMailAddresses[$sKey] = 'webmaster@' . $_SERVER['SERVER_ADDR'];
+				if ($sKey === 'sender' || $sKey === 'return' || $sKey === 'user') {
+					$sValue = $this->aGetNormalized($this->sGetSingleAddress($sValue), ($sKey === 'sender'));
+				} else {
+					$aAddresses = $this->sGetExplodedAddress($sValue);
+					foreach($aAddresses as $iKey => $sAddress) {
+						$aAddresses[$iKey] = $this->aGetNormalized($sAddress);
+					}
+					$sValue = implode(',', $aAddresses);
 				}
 
-				// Cleanup
-				$aMailAddresses[$sKey] = preg_replace($sReplace, '', $aMailAddresses[$sKey]);
+				if (strpos($sValue, '@') === FALSE) {
+					$sValue = 'webmaster@' . $_SERVER['SERVER_ADDR'];
+				}
+
+				$aMailAddresses[$sKey] = $sValue;
 			}
 
 			return $aMailAddresses;
@@ -365,11 +411,10 @@
 				$pmRecipients = t3lib_div::trimExplode(',', $pmRecipients, TRUE);
 			}
 
-			// Fixes issue #12843 (Validation failed)
-			if (class_exists('t3lib_mail_Message')) {
+			// Use SwiftMailer
+			if (!empty($GLOBALS['TYPO3_CONF_VARS']['MAIL']['substituteOldMailAPI']) && class_exists('t3lib_mail_Message')) {
 				$sMessage = (!empty($psMessageHTML) ? $psMessageHTML : $psMessagePlain);
-				$bIsHtml = !empty($psMessageHTML);
-				$this->vSendSwiftMail($psSubject, $sMessage, $bIsHtml, $pmRecipients, $psSender, $psReplyTo, $psReturnPath, $psAttachement);
+				$this->vSendSwiftMail($psSubject, $sMessage, !empty($psMessageHTML), $pmRecipients, $psSender, $psReplyTo, $psReturnPath, $psAttachement);
 				return;
 			}
 
