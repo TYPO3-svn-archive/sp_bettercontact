@@ -422,7 +422,7 @@
 			$oMail = t3lib_div::makeInstance('t3lib_htmlmail');
 			$oMail->start();
 			$oMail->charset = $this->sEmailChar;
-			$oMail->mailer  = 'TYPO3'; // Do not show version because it is a security issue
+			$oMail->mailer  = 'TYPO3';
 			$oMail->useQuotedPrintable();
 
 			// Enable returnPath (if $TYPO3_CONF_VARS['SYS']['forceReturnPath'] was not enabled)
