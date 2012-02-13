@@ -136,7 +136,7 @@
 
 		/**
 		 * Normalize email address
-		 * 
+		 *
 		 * @param string $psAddress The address
 		 * @param boolean $bAllowName Allow name in email
 		 * @return string Normalized address
@@ -481,7 +481,7 @@
 				return;
 			}
 
-				// Build email
+				// Build mail
 			$oMail = t3lib_div::makeInstance('t3lib_mail_Message');
 			$oMail->setSubject($psSubject);
 			$oMail->setCharset($this->sEmailChar);
@@ -499,19 +499,20 @@
 			$sFormat = ($pbIsHtml ? 'html' : 'plain');
 			$oMail->setBody($psMessage, 'text/' . $sFormat);
 
-			// Add attachement
-			if (!empty($psAttachement)) {
+				// Add attachement
+			if (!empty($psAttachement) && class_exists('Swift_Attachment')) {
 				$psAttachement = t3lib_div::getFileAbsFileName($psAttachement);
 				if (file_exists($psAttachement)) {
-					$oMail->attach($psAttachement);
+					$oMail->attach(Swift_Attachment::fromPath($psAttachement));
 				}
 			}
 
-			// Send email to any user in array
+				// Send email to any user in array
 			foreach ($paRecipients as $sRecipient) {
+				$oMail->getHeaders()->removeAll('To');
 				$oMail->setTo($sRecipient);
-				$oMail->send();
-				if (!$oMail->isSent()) {
+				$iCount = $oMail->send();
+				if (!$oMail->isSent() || $iCount === 0) {
 					$this->bHasError = TRUE;
 					return;
 				}
