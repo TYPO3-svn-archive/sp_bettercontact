@@ -31,21 +31,33 @@ div.tx_spbettercontact_log_top img {
 	cursor: pointer;
 }
 
-#tx_spbettercontact_log_csv img {
+#tx_spbettercontact_log_csv {
+	display: inline-block;
+	height: 16px;
+	width: 16px;
 	background: url(../../images/csv.gif) center center no-repeat;
+	cursor: pointer;
+	margin-top: 4px
 }
 
-#tx_spbettercontact_log_delete img {
+#tx_spbettercontact_log_delete {
+	display: inline-block;
+	height: 16px;
+	width: 16px;
 	background: url(../../images/delete.gif) center center no-repeat;
+	cursor: pointer;
+	margin-top: 4px
 }
 
 div.tx_spbettercontact_log_top_menu1,
 div.tx_spbettercontact_log_top_menu2,
-div.tx_spbettercontact_log_top_menu3 {
+div.tx_spbettercontact_log_top_menu3,
+div.tx_spbettercontact_log_top_menu4 {
 	display: inline;
 	height: 24px;
 	line-height: 24px;
 	color: #FFFFFF;
+	vertical-align: top;
 }
 
 div.tx_spbettercontact_log_top_menu1,
@@ -142,8 +154,12 @@ tr.tx_spbettercontact_log_expanded td div.tx_spbettercontact_log_expand {
 	background-position: -22px 0;
 }
 
+tr.tx_spbettercontact_log_expanded {
+	background: #E9E9E9;
+}
+
 tr.tx_spbettercontact_log_hover {
-	background: #EFEFEF;
+	background: #DADADA;
 }
 
 div.tx_spbettercontact_log_bottom {

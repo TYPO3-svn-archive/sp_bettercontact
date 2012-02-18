@@ -125,7 +125,7 @@
 			// Create CSV if param "csv" exists
 			if (!empty($this->aGP['csv'])) {
 				// Filter rows
-				$aRows = $this->aFilterLogTableRows($aRows, $aSelected); 
+				$aRows = $this->aFilterLogTableRows($aRows, $aSelected);
 				$aMarkers['###SUB_TEMPLATE_LOG_TABLE_ROWS###'] = $aRows;
 				$aMarkers['###SUB_TEMPLATE_CSV_ROWS###']       = $aRows;
 				$aMarkers['###ROW_COUNT###']                   = count($aRows);
@@ -234,6 +234,13 @@
 					if (!empty($mSource[$sLang]) && is_array($mSource[$sLang])) {
 						$aLocalLang = $mSource[$sLang] + $aLocalLang;
 					}
+				}
+			}
+
+			// Fixes issue #31884 (Language markers broken in TYPO3 4.6.0)
+			foreach ($aLocalLang as $key => $label) {
+				if (isset($label[0]['target'])) {
+					$aLocalLang[$key] = $label[0]['target'];
 				}
 			}
 
