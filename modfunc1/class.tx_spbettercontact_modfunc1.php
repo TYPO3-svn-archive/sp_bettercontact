@@ -1,38 +1,33 @@
 <?php
-	/***************************************************************
-	*  Copyright notice
-	*
-	*  (c) 2010 Kai Vogel <kai.vogel ( at ) speedprogs.de>
-	*  All rights reserved
-	*
-	*  This script is part of the TYPO3 project. The TYPO3 project is
-	*  free software; you can redistribute it and/or modify
-	*  it under the terms of the GNU General Public License as published by
-	*  the Free Software Foundation; either version 2 of the License, or
-	*  (at your option) any later version.
-	*
-	*  The GNU General Public License can be found at
-	*  http://www.gnu.org/copyleft/gpl.html.
-	*
-	*  This script is distributed in the hope that it will be useful,
-	*  but WITHOUT ANY WARRANTY; without even the implied warranty of
-	*  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-	*  GNU General Public License for more details.
-	*
-	*  This copyright notice MUST APPEAR in all copies of the script!
-	***************************************************************/
-
+	/*********************************************************************
+	 *  Copyright notice
+	 *
+	 *  (c) 2007-2012 Kai Vogel <kai.vogel@speedprogs.de>, Speedprogs.de
+	 *
+	 *  All rights reserved
+	 *
+	 *  This script is part of the TYPO3 project. The TYPO3 project is
+	 *  free software; you can redistribute it and/or modify
+	 *  it under the terms of the GNU General Public License as published
+	 *  by the Free Software Foundation; either version 3 of the License,
+	 *  or (at your option) any later version.
+	 *
+	 *  The GNU General Public License can be found at
+	 *  http://www.gnu.org/copyleft/gpl.html.
+	 *
+	 *  This script is distributed in the hope that it will be useful,
+	 *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+	 *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+	 *  GNU General Public License for more details.
+	 *
+	 *  This copyright notice MUST APPEAR in all copies of the script!
+	 ********************************************************************/
 
 	t3lib_div::requireOnce(PATH_t3lib . 'class.t3lib_extobjbase.php');
 	t3lib_div::requireOnce(PATH_t3lib . 'class.t3lib_befunc.php');
 
-
 	/**
-	 * Module Extension 'Better Contact Log' for the 'sp_bettercontact' extension.
-	 *
-	 * @author     Kai Vogel <kai.vogel ( at ) speedprogs.de>
-	 * @package    TYPO3
-	 * @subpackage tx_spbettercontact
+	 * Info module
 	 */
 	class tx_spbettercontact_modfunc1 extends t3lib_extobjbase {
 		public $modName     = 'tx_spbettercontact_modfunc1';
@@ -391,13 +386,7 @@
 
 			if (@file_exists($sFileName)) {
 				t3lib_div::requireOnce($sFileName);
-
-				if (t3lib_div::int_from_ver(TYPO3_version) >= 4003000) {
-					return t3lib_div::makeInstance($sClassName, $this);
-				}
-
-				$sClass = t3lib_div::makeInstanceClassName($sClassName);
-				return new $sClass($this);
+				return t3lib_div::makeInstance($sClassName, $this);
 			}
 
 			return NULL;

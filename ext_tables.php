@@ -1,28 +1,4 @@
 <?php
-	/***************************************************************
-	*  Copyright notice
-	*
-	*  (c) 2010 Kai Vogel <kai.vogel ( at ) speedprogs.de>
-	*  All rights reserved
-	*
-	*  This script is part of the TYPO3 project. The TYPO3 project is
-	*  free software; you can redistribute it and/or modify
-	*  it under the terms of the GNU General Public License as published by
-	*  the Free Software Foundation; either version 2 of the License, or
-	*  (at your option) any later version.
-	*
-	*  The GNU General Public License can be found at
-	*  http://www.gnu.org/copyleft/gpl.html.
-	*
-	*  This script is distributed in the hope that it will be useful,
-	*  but WITHOUT ANY WARRANTY; without even the implied warranty of
-	*  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-	*  GNU General Public License for more details.
-	*
-	*  This copyright notice MUST APPEAR in all copies of the script!
-	***************************************************************/
-
-
 	if (!defined ('TYPO3_MODE')) {
 		die ('Access denied.');
 	}
@@ -78,23 +54,19 @@
 		$GLOBALS['TCA']['tt_content']['columns']['CType']['config']['items'] = $aNewItems;
 
 		// Add wizard icon
-		if (t3lib_div::int_from_ver(TYPO3_version) >= 4003000) {
-			t3lib_extMgm::addPageTSConfig("
-				mod.wizards.newContentElement.wizardItems.forms {\n
-					elements.contact {\n
-						icon        = " . t3lib_extMgm::extRelPath('sp_bettercontact') . "res/images/wizard.gif\n
-						title       = LLL:EXT:sp_bettercontact/locallang.xml:pi1_title\n
-						description = LLL:EXT:sp_bettercontact/locallang.xml:pi1_plus_wiz_description\n\n
-						tt_content_defValues {\n
-							CType = sp_bettercontact_pi1\n
-						}\n
-					}\n\n
-					show := addToList(contact)\n
-				}
-			");
-		} else {
-			$GLOBALS['TBE_MODULES_EXT']['xMOD_db_new_content_el']['addElClasses']['tx_spbettercontact_pi1_wizicon'] = t3lib_extMgm::extPath('sp_bettercontact').'pi1/class.tx_spbettercontact_pi1_wizicon.php';
-		}
+		t3lib_extMgm::addPageTSConfig("
+			mod.wizards.newContentElement.wizardItems.forms {\n
+				elements.contact {\n
+					icon        = " . t3lib_extMgm::extRelPath('sp_bettercontact') . "res/images/wizard.gif\n
+					title       = LLL:EXT:sp_bettercontact/locallang.xml:pi1_title\n
+					description = LLL:EXT:sp_bettercontact/locallang.xml:pi1_plus_wiz_description\n\n
+					tt_content_defValues {\n
+						CType = sp_bettercontact_pi1\n
+					}\n
+				}\n\n
+				show := addToList(contact)\n
+			}
+		");
 
 		// Add backend module to web->info
 		t3lib_extMgm::insertModuleFunction(
