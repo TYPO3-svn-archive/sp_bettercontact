@@ -91,65 +91,35 @@
 
 
 		/**
-		 * Check string for multiple email addresses and return only the first
+		 * Explode and filter a list of email addresses
 		 *
-		 * @return String with first email address
+		 * @param string $sAddress The email address
+		 * @return array Cleaned up addresses
 		 */
-		protected function sGetSingleAddress ($psAddress) {
-			if (empty($psAddress)) {
-				return 'webmaster@' . $_SERVER['SERVER_ADDR'];
-			}
-			$aAddresses = $this->sGetExplodedAddress($psAddress);
-			return reset($aAddresses);
-		}
+		protected function getFilteredAddresses($sAddress) {
+			$aAddresses = t3lib_div::trimExplode(',', $sAddress, TRUE);
+			$aResult = array();
 
-
-		/**
-		 * Get multiple email addresses
-		 *
-		 * @return array All email addresses
-		 */
-		protected function sGetExplodedAddress ($pmAddress) {
-			if (empty($pmAddress)) {
-				return array();
-			}
-
-			if (is_array($pmAddress)) {
-				return $pmAddress;
-			}
-
-			$pmAddress = trim($pmAddress);
-			$aSigns = array(',', ';', '&', chr(9), "\r\n", "\n\r", "\n", "\r");
-			if (str_replace($aSigns, '|', $pmAddress) === $pmAddress) {
-				return array($pmAddress);
-			}
-
-			foreach ($aSigns as $sSign) {
-				if (strpos($pmAddress, $sSign) !== FALSE) {
-					return t3lib_div::trimExplode($sSign, $pmAddress, TRUE);
+			foreach ($aAddresses as $sAddress) {
+				// Format: Name <emai@domain.tld>
+				$mName = NULL;
+				if (strpos($sAddress, '<') !== FALSE) {
+					$sAddress = rtrim($sAddress, ' >');
+					list($mName, $sAddress) = t3lib_div::trimExplode('<', $sAddress);
+					if (!ctype_alnum(str_replace(' ', '', $mName))) {
+						$mName = NULL;
+					}
 				}
+
+				// Check address
+				if (!t3lib_div::validEmail($sAddress)) {
+					continue;
+				}
+
+				$aResult[] = array($sAddress => $mName);
 			}
 
-			return array();
-		}
-
-
-		/**
-		 * Normalize email address
-		 *
-		 * @param string $psAddress The address
-		 * @param boolean $bAllowName Allow name in email
-		 * @return string Normalized address
-		 */
-		protected function aGetNormalized($psAddress, $bAllowName = FALSE) {
-			$psAddress = t3lib_div::normalizeMailAddress(trim($psAddress));
-			if (strpos($psAddress, '<') === FALSE || $bAllowName) {
-				return $psAddress;
-			}
-			preg_match('/<(.*?)>/', $psAddress, $aMatches);
-			if (!empty($aMatches[1])) {
-				$psAddress = $aMatches[1];
-			}
+			return $aResult;
 		}
 
 
@@ -159,7 +129,7 @@
 		 * @return Array of email addesses
 		 */
 		protected function aGetMailAddresses () {
-			$aMailAddresses = array(
+			$aResult = array(
 				'recipients' => '',
 				'sender'     => '',
 				'admin'      => '',
@@ -167,33 +137,23 @@
 				'user'       => '',
 			);
 
-			// Get E-Mail addresses
-			foreach ($aMailAddresses as $sKey => $sValue) {
+			foreach ($aResult as $sKey => $sValue) {
 				if ($sKey !== 'user') {
-					$sIdent = ($sKey == 'return') ? 'ReturnPath' : ucfirst($sKey);
-					$sValue = $this->aConfig['email' . $sIdent];
+					$sName = 'email' . ($sKey == 'return' ? 'ReturnPath' : ucfirst($sKey));
+					$sValue = $this->aConfig[$sName];
 				} else {
 					$sValue = $this->aGP['email'];
 				}
 
-				if ($sKey === 'sender' || $sKey === 'return' || $sKey === 'user') {
-					$sValue = $this->aGetNormalized($this->sGetSingleAddress($sValue), ($sKey === 'sender'));
+				$aAddresses = $this->getFilteredAddresses($sValue);
+				if ($sKey !== 'recipients') {
+					$aResult[$sKey] = reset($aAddresses);
 				} else {
-					$aAddresses = $this->sGetExplodedAddress($sValue);
-					foreach($aAddresses as $iKey => $sAddress) {
-						$aAddresses[$iKey] = $this->aGetNormalized($sAddress);
-					}
-					$sValue = implode(',', $aAddresses);
+					$aResult[$sKey] = $aAddresses;
 				}
-
-				if (strpos($sValue, '@') === FALSE) {
-					$sValue = 'webmaster@' . $_SERVER['SERVER_ADDR'];
-				}
-
-				$aMailAddresses[$sKey] = $sValue;
 			}
 
-			return $aMailAddresses;
+			return $aResult;
 		}
 
 
@@ -391,30 +351,22 @@
 		/**
 		 * Send emails
 		 *
-		 * @param mixed  $pmRecipients   List or array of recipients
-		 * @param string $psSender       Sender email address
-		 * @param string $psReplyTo      Reply-to email address
+		 * @param array  $paAddresses    All addresses
 		 * @param string $psSubject      Subject of the mail
 		 * @param string $psMessagePlain Plain message
 		 * @param string $psMessageHTML  HTML message
-		 * @param string $psReturnPath   Return-Path
 		 * @param string $psAttachement  Attachement
 		 */
-		protected function vMail ($pmRecipients, $psSender, $psReplyTo = '', $psSubject = '', $psMessagePlain = '', $psMessageHTML = '', $psReturnPath = '', $psAttachement = '') {
-			if (empty($pmRecipients) || !strlen($psSender) || (!strlen($psMessagePlain) && !strlen($psMessageHTML))) {
+		protected function vMail (array $paAddresses, $psSubject, $psMessagePlain = '', $psMessageHTML = '', $psAttachement = '') {
+			if (empty($paAddresses)  || (empty($psMessagePlain) && empty($psMessageHTML))) {
 				$this->bHasError = TRUE;
 				return;
-			}
-
-			// Get recipient list
-			if (is_string($pmRecipients)) {
-				$pmRecipients = t3lib_div::trimExplode(',', $pmRecipients, TRUE);
 			}
 
 			// Use SwiftMailer
 			if (!empty($GLOBALS['TYPO3_CONF_VARS']['MAIL']['substituteOldMailAPI']) && class_exists('t3lib_mail_Message')) {
 				$sMessage = (!empty($psMessageHTML) ? $psMessageHTML : $psMessagePlain);
-				$this->vSendSwiftMail($psSubject, $sMessage, !empty($psMessageHTML), $pmRecipients, $psSender, $psReplyTo, $psReturnPath, $psAttachement);
+				$this->vSendSwiftMail($paAddresses, $psSubject, $sMessage, !empty($psMessageHTML), $psAttachement);
 				return;
 			}
 
@@ -431,9 +383,9 @@
 			}
 
 			// Set addresses
-			$oMail->from_email    = $psSender;
-			$oMail->replyto_email = (strlen($psReplyTo)) ? $psReplyTo : $psSender;
-			$oMail->returnPath    = $psReturnPath;
+			$oMail->from_email = $this->mGetMailAddress($paAddresses, 'sender', TRUE);
+			$oMail->replyto_email = $this->mGetMailAddress($paAddresses, 'reply', TRUE);
+			$oMail->returnPath = $this->mGetMailAddress($paAddresses, 'return', TRUE);
 
 			// Set subject and plain content
 			$oMail->subject = $psSubject;
@@ -453,11 +405,15 @@
 			}
 
 			// Send email to any user in array
-			if (is_array($pmRecipients)) {
-				foreach ($pmRecipients as $sRecipient) {
-					if (!$oMail->send($sRecipient)) {
-						$this->bHasError = TRUE;
-					}
+			$aRecipients = $this->mGetMailAddress($paAddresses, 'recipients');
+			foreach ($aRecipients as $aAddress) {
+				$sAddress = key($aAddress);
+				$mName = reset($aAddress);
+				if (is_string($mName)) {
+					$sAddress = $mName . ' <' . $sAddress . '>';
+				}
+				if (!$oMail->send($sAddress)) {
+					$this->bHasError = TRUE;
 				}
 			}
 		}
@@ -466,40 +422,35 @@
 		/**
 		 * Send emails via SwiftMailer
 		 *
+		 * @param array   $paAddresses    All addresses
 		 * @param string  $psSubject      Subject of the mail
 		 * @param string  $psMessage      The email content
 		 * @param boolean $pbIsHtml       Content is HTML
-		 * @param array   $paRecipients   Array of recipients
-		 * @param string  $psSender       Sender email address
-		 * @param string  $psReplyTo      Reply-to email address
-		 * @param string  $psReturnPath   Return-Path
 		 * @param string  $psAttachement  Attachement
 		 */
-		protected function vSendSwiftMail ($psSubject, $psMessage, $pbIsHtml, array $paRecipients, $psSender, $psReplyTo = '',  $psReturnPath = '', $psAttachement = '') {
-			if (empty($paRecipients) || empty($psSender) || empty($psMessage)) {
+		protected function vSendSwiftMail (array $paAddresses, $psSubject, $psMessage, $pbIsHtml, $psAttachement = '') {
+			if (empty($paAddresses) || empty($psMessage)) {
 				$this->bHasError = TRUE;
 				return;
 			}
 
-				// Build mail
+			// Build mail
 			$oMail = t3lib_div::makeInstance('t3lib_mail_Message');
 			$oMail->setSubject($psSubject);
 			$oMail->setCharset($this->sEmailChar);
-			$oMail->setFrom($psSender);
+			$oMail->setFrom($this->mGetMailAddress($paAddresses, 'sender'));
 
-				// Add reply to
-			$psReplyTo = (!empty($psReplyTo) ? $psReplyTo : $psSender);
-			$oMail->setReplyTo($psReplyTo);
+			// Add reply to
+			$oMail->setReplyTo($this->mGetMailAddress($paAddresses, 'reply', TRUE));
 
-				// Add return path
-			$psReturnPath = (!empty($psReturnPath) ? $psReturnPath : $psSender);
-			$oMail->setReturnPath($psReturnPath);
+			// Add return path
+			$oMail->setReturnPath($this->mGetMailAddress($paAddresses, 'return', TRUE));
 
-				// Add content
+			// Add content
 			$sFormat = ($pbIsHtml ? 'html' : 'plain');
 			$oMail->setBody($psMessage, 'text/' . $sFormat);
 
-				// Add attachement
+			// Add attachement
 			if (!empty($psAttachement) && class_exists('Swift_Attachment')) {
 				$psAttachement = t3lib_div::getFileAbsFileName($psAttachement);
 				if (file_exists($psAttachement)) {
@@ -507,10 +458,11 @@
 				}
 			}
 
-				// Send email to any user in array
-			foreach ($paRecipients as $sRecipient) {
+			// Send email to any user in array
+			$aRecipients = $this->mGetMailAddress($paAddresses, 'recipients');
+			foreach ($aRecipients as $aAddress) {
 				$oMail->getHeaders()->removeAll('To');
-				$oMail->setTo($sRecipient);
+				$oMail->setTo($aAddress);
 				$iCount = $oMail->send();
 				if (!$oMail->isSent() || $iCount === 0) {
 					$this->bHasError = TRUE;
@@ -521,16 +473,45 @@
 
 
 		/**
+		 * Returns a mail address from given address pool
+		 *
+		 * @param array $paAddresses The address pool
+		 * @param string $psKey The key to search for
+		 * @param boolean $pbPlain Return plain result
+		 */
+		protected function mGetMailAddress (array $paAddresses, $psKey, $pbPlain = FALSE) {
+			if (empty($paAddresses[$psKey])) {
+				if (($psKey === 'reply' || $psKey === 'return') && !empty($paAddresses['sender'])) {
+					$paAddresses[$psKey] = $paAddresses['sender'];
+				} else {
+					return ($pbPlain ? '' : array('' => NULL));
+				}
+			}
+
+			$mKey = key($paAddresses[$psKey]);
+			if (!is_numeric($mKey) && $pbPlain) {
+				return $mKey;
+			}
+
+			return $paAddresses[$psKey];
+		}
+
+
+		/**
 		 * Check email addresses
 		 *
 		 * @param  All addresses to check
 		 * @return TRUE if the email addresses are ok
 		 */
 		protected function bCheckMailAddresses () {
-			$aAddresses = func_get_args();
+			$aKeys = func_get_args();
+			$aAddresses = array_intersect_key($this->aAddresses, array_flip($aKeys));
 
-			foreach ($aAddresses as $sValue) {
-				if (empty($this->aAddresses[$sValue])) {
+			foreach ($aAddresses as $mKey => $aAddress) {
+				if (is_numeric($mKey)) {
+					$mKey = key(reset($aAddress));
+				}
+				if (empty($mKey)) {
 					return FALSE;
 				}
 			}
@@ -545,18 +526,23 @@
 		 */
 		public function vSendSpamWarning () {
 			if (!$this->bCheckMailAddresses('admin', 'sender')) {
+				$this->bHasError = TRUE;
 				return;
 			}
 
+			$aAddresses = array(
+				'recipients' => array($this->aAddresses['admin']),
+				'sender'     => $this->aAddresses['sender'],
+				'reply'      => $this->aAddresses['sender'],
+				'return'     => $this->aAddresses['return'],
+			);
+
 			// Send mail to admin
 			$this->vMail(
-				$this->aAddresses['admin'],
-				$this->aAddresses['sender'],
-				$this->aAddresses['sender'],
+				$aAddresses,
 				$this->aTemplates['subject_spam'],
 				$this->aTemplates['message_spam_plain'],
-				$this->aTemplates['message_spam_html'],
-				$this->aAddresses['return']
+				$this->aTemplates['message_spam_html']
 			);
 		}
 
@@ -573,28 +559,42 @@
 			$sReplyTo  = (strtolower($sReplyTo) == 'user') ? 'user' : 'sender';
 
 			// Send emails to all recipients
-			if (($sSendTo == 'both' || $sSendTo == 'recipients') && $this->bCheckMailAddresses('recipients', 'sender', $sReplyTo)) {
+			if ($sSendTo == 'both' || $sSendTo == 'recipients') {
+				if (!$this->bCheckMailAddresses('recipients', 'sender', $sReplyTo)) {
+					$this->bHasError = TRUE;
+					return;
+				}
+				$aAddresses = array(
+					'recipients' => $this->aAddresses['recipients'],
+					'sender'     => $this->aAddresses[$sSendFrom],
+					'reply'      => $this->aAddresses[$sReplyTo],
+					'return'     => $this->aAddresses['return'],
+				);
 				$this->vMail(
-					$this->aAddresses['recipients'],
-					$this->aAddresses[$sSendFrom],
-					$this->aAddresses[$sReplyTo],
+					$aAddresses,
 					$this->aTemplates['subject_admin'],
 					$this->aTemplates['message_admin_plain'],
-					$this->aTemplates['message_admin_html'],
-					$this->aAddresses['return']
+					$this->aTemplates['message_admin_html']
 				);
 			}
 
 			// Send email to user
-			if (($sSendTo == 'both' || $sSendTo == 'user') && $this->bCheckMailAddresses('user', 'sender')) {
+			if ($sSendTo == 'both' || $sSendTo == 'user') {
+				if (!$this->bCheckMailAddresses('user', 'sender')) {
+					$this->bHasError = TRUE;
+					return;
+				}
+				$aAddresses = array(
+					'recipients' => array($this->aAddresses['user']),
+					'sender'     => $this->aAddresses['sender'],
+					'reply'      => $this->aAddresses['sender'],
+					'return'     => $this->aAddresses['return'],
+				);
 				$this->vMail(
-					$this->aAddresses['user'],
-					$this->aAddresses['sender'],
-					$this->aAddresses['sender'],
+					$aAddresses,
 					$this->aTemplates['subject_sender'],
 					$this->aTemplates['message_sender_plain'],
-					$this->aTemplates['message_sender_html'],
-					$this->aAddresses['return']
+					$this->aTemplates['message_sender_html']
 				);
 			}
 		}
