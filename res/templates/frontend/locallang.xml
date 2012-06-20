@@ -305,5 +305,104 @@
 			<label index="email_spam_headline2">Champs visibles:</label>
 			<label index="email_spam_headline3">Champs masqués:</label>
 		</languageKey>
+		<languageKey index="pl" type="array">
+			<label index="msg_name_empty">Proszę wpisać swoje nazwisko.</label>
+			<label index="msg_tel_empty">Proszę wpisać swój numer telefonu.</label>
+			<label index="msg_fax_empty">Proszę wpisać swój numer faksu.</label>
+			<label index="msg_street_empty">Proszę wpisać ulicę.</label>
+			<label index="msg_city_empty">Proszę wpisać miasto.</label>
+			<label index="msg_email_empty">Proszę wpisać swój adres mailowy.</label>
+			<label index="msg_message_empty">Proszę wpisać wiadomość.</label>
+
+			<label index="msg_name_short">Proszę wpisać swoje nazwisko z co najmniej %d znakami.</label>
+			<label index="msg_tel_short">Proszę wpisać swój numer telefonu z co najmniej %d znakami.</label>
+			<label index="msg_fax_short">Proszę wpisać swój numer faksu z co najmniej %d znakami.</label>
+			<label index="msg_street_short">Proszę wpisać nazwę ulicy z co najmniej %d znakami.</label>
+			<label index="msg_city_short">Proszę wpisać nazwę miasta z co najmniej %d znakami.</label>
+			<label index="msg_email_short">Proszę wpisać swój adres mailowy z co najmniej %d znakami.</label>
+			<label index="msg_message_short">Proszę wpisać swoją wiadomość z co najmniej %d znakami.</label>
+
+			<label index="msg_name_long">Proszę wpisać swoje nazwisko z ilością znaków mniej niż %d.</label>
+			<label index="msg_tel_long">Proszę wpisać swój numer telefonu z ilością znaków mniej niż %d.</label>
+			<label index="msg_fax_long">Proszę wpisać swój numer faksu z ilością znaków mniej niż %d.</label>
+			<label index="msg_street_long">Proszę wpisać nazwę ulicy z ilością znaków mniej niż %d.</label>
+			<label index="msg_city_long">Proszę wpisać nazwę miasta z ilością znaków mniej niż %d.</label>
+			<label index="msg_email_long">Proszę wpisać swój adres mailowy z ilością znaków mniej niż %d.</label>
+			<label index="msg_message_long">Proszę wpisać swoją wiadomość z ilością znaków mniej niż %d.</label>
+
+			<label index="msg_name_regex">Proszę wpisać swoje nazwisko, które poza znakami %s nie zawiera innych znaków specjalnych.</label>
+			<label index="msg_tel_regex">Proszę wpisać swój numer telefonu, który poza znakami %s nie zawiera innych znaków specjalnych.</label>
+			<label index="msg_fax_regex">Proszę wpisać swój numer faksu, który poza znakami %s nie zawiera innych znaków specjalnych.</label>
+			<label index="msg_street_regex">Proszę wpisać prawidłową nazwę ulicy.</label>
+			<label index="msg_city_regex">Proszę wpisać prawidłową nazwę miasta.</label>
+			<label index="msg_email_regex">Proszę wpisać prawidłowy adres mailowy.</label>
+			<label index="msg_message_regex">Proszę wpisać swoją wiadomość, która poza znakami %s nie zawiera innych znaków specjalnych.</label>
+
+			<label index="msg_name_disallowed">Proszę wpisać swoje nazwisko, które nie może zawierać żadnych z tych znaków: %s.</label>
+			<label index="msg_tel_disallowed">Proszę wpisać swój numer telefonu, który nie może zawierać żadnych z tych znaków: %s.</label>
+			<label index="msg_fax_disallowed">Proszę wpisać swój numer faksu, który nie może zawierać żadnych z tych znaków: %s.</label>
+			<label index="msg_street_disallowed">Proszę wpisać nazwę ulicy, która nie może zawierać żadnych z tych znaków: %s.</label>
+			<label index="msg_city_disallowed">Proszę wpisać nazwę miasta, która nie może zawierać żadnych z tych znaków: %s.</label>
+			<label index="msg_email_disallowed">Proszę wpisać prawidłowy adres mailowy.</label>
+			<label index="msg_message_disallowed">Proszę wpisać swoją wiadomość, która nie może zawierać żadnych z tych znaków: %s.</label>
+
+			<label index="msg_name_allowed">Proszę wpisać swoje nazwisko, które zawiera tylko następujące znaki: %s.</label>
+			<label index="msg_tel_allowed">Proszę wpisać swój numer telefonu, który zawiera tylko następujące znaki: %s.</label>
+			<label index="msg_fax_allowed">Proszę wpisać swój numer faksu, który zawiera tylko następujące znaki: %s.</label>
+			<label index="msg_street_allowed">Proszę wpisać nazwę ulicy, która zawiera tylko następujące znaki: %s.</label>
+			<label index="msg_city_allowed">Proszę wpisać nazwę miasta, która zawiera tylko następujące znaki: %s.</label>
+			<label index="msg_email_allowed">Proszę wpisać prawidłowy adres mailowy.</label>
+			<label index="msg_message_allowed">Proszę wpisać swoją wiadomość, która zawiera tylko następujące znaki: %s.</label>
+
+			<label index="msg_email_passed">Wasza wiadomośc została z powodzeniem wysłana. Dziękujemy.</label>
+			<label index="msg_email_failed">Wasza wiadomośc nie mogła zostać wysłana. Proszę spróbować jeszcze raz.</label>
+			<label index="msg_check_passed"></label>
+			<label index="msg_check_failed">Nastąpił problem z wprowadzonymi danymi.</label>
+			<label index="msg_db_failed">Nastąpił problem z bazą danych: "%s"</label>
+			<label index="msg_not_allowed">Taki proces jest nie dozwolony!</label>
+			<label index="msg_already_sent">Wysłałeś już %d wiadomości. Proszę czekać %d minut.</label>
+			<label index="msg_captcha">Proszę wpisać znaki z zdjęcia captcha do pola tekstowego.</label>
+
+			<label index="name">Nazwisko:</label>
+			<label index="tel">Telefon:</label>
+			<label index="fax">Faks:</label>
+			<label index="street">Ulica:</label>
+			<label index="city">Miasto:</label>
+			<label index="email">Email:</label>
+			<label index="message">Wiadomość:</label>
+			<label index="submit">Wyślij</label>
+			<label index="date">Data:</label>
+			<label index="time">Czas:</label>
+			<label index="ip">IP:</label>
+			<label index="browser">Browser:</label>
+			<label index="system">System:</label>
+			<label index="referer">Referer:</label>
+			<label index="method">Metoda:</label>
+			<label index="checked">tak</label>
+			<label index="unchecked">nie</label>
+			<label index="required">*</label>
+			<label index="required_info">Wszystkie pola oznaczone (*) są polami obowiązkowymi.</label>
+
+			<label index="email_sender_subject">Dziękujemy za Waszą wiadomość!</label>
+			<label index="email_sender_dear">Witam</label>
+			<label index="email_sender_greetings">Z pozdrowieniami - </label>
+			<label index="email_sender_sender">Wasza firma</label>
+			<label index="email_sender_body1">Dziękujemy za Waszą wiadomość!</label>
+			<label index="email_sender_body2">Postaramy się jak najszybciej odpowiedzieć na Wasze pytania.</label>
+
+			<label index="email_admin_subject">wysłał{a}</label>
+			<label index="email_admin_dear">Witam,</label>
+			<label index="email_admin_greetings">Z pozdrowieniami - </label>
+			<label index="email_admin_sender">Wasz formularz kontaktowy</label>
+			<label index="email_admin_body1">Ktoś wysłał wiadomość:</label>
+
+			<label index="email_spam_subject">Ktoś spróbował wysłać wiadomość</label>
+			<label index="email_spam_dear">Witam,</label>
+			<label index="email_spam_gretings">Z pozdrowieniami - </label>
+			<label index="email_spam_sender">Wasz formularz kontaktowy</label>
+			<label index="email_spam_body1">Jemand hat versucht eine Nachricht zu senden:</label>
+			<label index="email_spam_headline1">Ogolne informacje:</label>
+			<label index="email_spam_headline2">Widoczne pola:</label>
+			<label index="email_spam_headline3">Ukryte pola:</label>
 	</data>
 </T3locallang>

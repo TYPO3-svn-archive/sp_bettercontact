@@ -348,6 +348,7 @@
 		 * @param string $psMessagePlain Plain message
 		 * @param string $psMessageHTML  HTML message
 		 * @param string $psAttachement  Attachement
+		 * @return void
 		 */
 		protected function vMail (array $paAddresses, $psSubject, $psMessagePlain = '', $psMessageHTML = '', $psAttachement = '') {
 			if (empty($paAddresses)  || (empty($psMessagePlain) && empty($psMessageHTML))) {
@@ -356,13 +357,52 @@
 			}
 
 			// Use SwiftMailer
-			if (!empty($GLOBALS['TYPO3_CONF_VARS']['MAIL']['substituteOldMailAPI']) && class_exists('t3lib_mail_Message')) {
+			if (class_exists('t3lib_mail_Message') && empty($this->aConfig['disableSwiftMailer'])) {
 				$sMessage = (!empty($psMessageHTML) ? $psMessageHTML : $psMessagePlain);
 				$this->vSendSwiftMail($paAddresses, $psSubject, $sMessage, !empty($psMessageHTML), $psAttachement);
 				return;
 			}
 
-			// Start email
+			// Use old mail api
+			if (class_exists('t3lib_htmlmail') && empty($this->aConfig['disableOldMailApi'])) {
+				$this->vSendHtmlMail($paAddresses, $psSubject, $psMessagePlain, $psMessageHTML, $psAttachement);
+				return;
+			}
+
+			// Use user defined mailer
+			if (!empty($GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['class.tx_spbettercontact_pi1_email.php']['substituteMailDelivery'])
+			 && is_array($GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['class.tx_spbettercontact_pi1_email.php']['substituteMailDelivery'])) {
+				$parameters = array(
+					'addresses'    => $paAddresses,
+					'subject'      => $psSubject,
+					'plainMessage' => $psMessagePlain,
+					'htmlMessage'  => $psMessageHTML,
+					'attachement'  => $psAttachement,
+				);
+				foreach ($GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['class.tx_spbettercontact_pi1_email.php']['substituteMailDelivery'] as $funcName) {
+					t3lib_div::callUserFunction($funcName, $parameters, $this);
+				}
+				return;
+			}
+
+			// Something went wrong
+			$this->bHasError = TRUE;
+			return;
+		}
+
+
+		/**
+		 * Send emails via t3lib_htmlmail
+		 *
+		 * @param array  $paAddresses    All addresses
+		 * @param string $psSubject      Subject of the mail
+		 * @param string $psMessagePlain Plain message
+		 * @param string $psMessageHTML  HTML message
+		 * @param string $psAttachement  Attachement
+		 * @return void
+		 */
+		protected function vSendHtmlMail(array $paAddresses, $psSubject, $psMessagePlain = '', $psMessageHTML = '', $psAttachement = '') {
+			// Build mail
 			$oMail = t3lib_div::makeInstance('t3lib_htmlmail');
 			$oMail->start();
 			$oMail->charset = $this->sEmailChar;
@@ -412,20 +452,16 @@
 
 
 		/**
-		 * Send emails via SwiftMailer
+		 * Send emails via t3lib_mail_Message
 		 *
 		 * @param array   $paAddresses    All addresses
 		 * @param string  $psSubject      Subject of the mail
 		 * @param string  $psMessage      The email content
 		 * @param boolean $pbIsHtml       Content is HTML
 		 * @param string  $psAttachement  Attachement
+		 * @return void
 		 */
 		protected function vSendSwiftMail (array $paAddresses, $psSubject, $psMessage, $pbIsHtml, $psAttachement = '') {
-			if (empty($paAddresses) || empty($psMessage)) {
-				$this->bHasError = TRUE;
-				return;
-			}
-
 			// Build mail
 			$oMail = t3lib_div::makeInstance('t3lib_mail_Message');
 			$oMail->setSubject($psSubject);

@@ -30,6 +30,8 @@ plugin.tx_spbettercontact_pi1 {
 	emailCharset           = utf-8
 	emailFormat            = html
 	allowReturnPath        = 1
+	disableSwiftMailer     = 0
+	disableOldMailApi      = 0
 
 	showMaliciousInput     = clean
 	adminMails             = bot
