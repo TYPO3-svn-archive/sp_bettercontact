@@ -145,6 +145,15 @@
 				}
 			}
 
+			// Fixes issue #35206 (Hook for changing the recipients)
+			if (!empty($GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['class.tx_spbettercontact_pi1_email.php']['getMailAddresses'])
+			 && is_array($GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['class.tx_spbettercontact_pi1_email.php']['getMailAddresses'])) {
+				$parameters = array('addresses' => $aResult);
+				foreach ($GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['class.tx_spbettercontact_pi1_email.php']['getMailAddresses'] as $funcName) {
+					$aResult = t3lib_div::callUserFunction($funcName, $parameters, $this);
+				}
+			}
+
 			return $aResult;
 		}
 
@@ -369,25 +378,64 @@
 				return;
 			}
 
-			// Use user defined mailer
-			if (!empty($GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['class.tx_spbettercontact_pi1_email.php']['substituteMailDelivery'])
-			 && is_array($GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['class.tx_spbettercontact_pi1_email.php']['substituteMailDelivery'])) {
-				$parameters = array(
-					'addresses'    => $paAddresses,
-					'subject'      => $psSubject,
-					'plainMessage' => $psMessagePlain,
-					'htmlMessage'  => $psMessageHTML,
-					'attachement'  => $psAttachement,
-				);
-				foreach ($GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['class.tx_spbettercontact_pi1_email.php']['substituteMailDelivery'] as $funcName) {
-					t3lib_div::callUserFunction($funcName, $parameters, $this);
-				}
+			// Use user defined mail api
+			if (!empty($GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['class.tx_spbettercontact_pi1_email.php']['substituteMailDelivery'])) {
+				$this->vSendUserMail($paAddresses, $psSubject, $psMessagePlain, $psMessageHTML, $psAttachement);
 				return;
 			}
 
 			// Something went wrong
 			$this->bHasError = TRUE;
 			return;
+		}
+
+
+		/**
+		 * Send emails via t3lib_mail_Message
+		 *
+		 * @param array   $paAddresses    All addresses
+		 * @param string  $psSubject      Subject of the mail
+		 * @param string  $psMessage      The email content
+		 * @param boolean $pbIsHtml       Content is HTML
+		 * @param string  $psAttachement  Attachement
+		 * @return void
+		 */
+		protected function vSendSwiftMail (array $paAddresses, $psSubject, $psMessage, $pbIsHtml, $psAttachement = '') {
+			// Build mail
+			$oMail = t3lib_div::makeInstance('t3lib_mail_Message');
+			$oMail->setSubject($psSubject);
+			$oMail->setCharset($this->sEmailChar);
+			$oMail->setFrom($this->mGetMailAddress($paAddresses, 'sender'));
+
+			// Add reply to
+			$oMail->setReplyTo($this->mGetMailAddress($paAddresses, 'reply', TRUE));
+
+			// Add return path
+			$oMail->setReturnPath($this->mGetMailAddress($paAddresses, 'return', TRUE));
+
+			// Add content
+			$sFormat = ($pbIsHtml ? 'html' : 'plain');
+			$oMail->setBody($psMessage, 'text/' . $sFormat);
+
+			// Add attachement
+			if (!empty($psAttachement) && class_exists('Swift_Attachment')) {
+				$psAttachement = t3lib_div::getFileAbsFileName($psAttachement);
+				if (file_exists($psAttachement)) {
+					$oMail->attach(Swift_Attachment::fromPath($psAttachement));
+				}
+			}
+
+			// Send email to any user in array
+			$aRecipients = $this->mGetMailAddress($paAddresses, 'recipients');
+			foreach ($aRecipients as $aAddress) {
+				$oMail->getHeaders()->removeAll('To');
+				$oMail->setTo($aAddress);
+				$iCount = $oMail->send();
+				if (!$oMail->isSent() || $iCount === 0) {
+					$this->bHasError = TRUE;
+					return;
+				}
+			}
 		}
 
 
@@ -452,49 +500,33 @@
 
 
 		/**
-		 * Send emails via t3lib_mail_Message
-		 *
-		 * @param array   $paAddresses    All addresses
-		 * @param string  $psSubject      Subject of the mail
-		 * @param string  $psMessage      The email content
-		 * @param boolean $pbIsHtml       Content is HTML
-		 * @param string  $psAttachement  Attachement
+		 * Send mail via user defined mailing class
+		 * 
+		 * @param array  $paAddresses    All addresses
+		 * @param string $psSubject      Subject of the mail
+		 * @param string $psMessagePlain Plain message
+		 * @param string $psMessageHTML  HTML message
+		 * @param string $psAttachement  Attachement
 		 * @return void
 		 */
-		protected function vSendSwiftMail (array $paAddresses, $psSubject, $psMessage, $pbIsHtml, $psAttachement = '') {
-			// Build mail
-			$oMail = t3lib_div::makeInstance('t3lib_mail_Message');
-			$oMail->setSubject($psSubject);
-			$oMail->setCharset($this->sEmailChar);
-			$oMail->setFrom($this->mGetMailAddress($paAddresses, 'sender'));
-
-			// Add reply to
-			$oMail->setReplyTo($this->mGetMailAddress($paAddresses, 'reply', TRUE));
-
-			// Add return path
-			$oMail->setReturnPath($this->mGetMailAddress($paAddresses, 'return', TRUE));
-
-			// Add content
-			$sFormat = ($pbIsHtml ? 'html' : 'plain');
-			$oMail->setBody($psMessage, 'text/' . $sFormat);
-
-			// Add attachement
-			if (!empty($psAttachement) && class_exists('Swift_Attachment')) {
-				$psAttachement = t3lib_div::getFileAbsFileName($psAttachement);
-				if (file_exists($psAttachement)) {
-					$oMail->attach(Swift_Attachment::fromPath($psAttachement));
-				}
+		protected function vSendUserMail(array $paAddresses, $psSubject, $psMessagePlain = '', $psMessageHTML = '', $psAttachement = '') {
+			if (!is_array($GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['class.tx_spbettercontact_pi1_email.php']['substituteMailDelivery'])) {
+				return;
 			}
 
-			// Send email to any user in array
-			$aRecipients = $this->mGetMailAddress($paAddresses, 'recipients');
-			foreach ($aRecipients as $aAddress) {
-				$oMail->getHeaders()->removeAll('To');
-				$oMail->setTo($aAddress);
-				$iCount = $oMail->send();
-				if (!$oMail->isSent() || $iCount === 0) {
+			$parameters = array(
+				'addresses'    => $paAddresses,
+				'subject'      => $psSubject,
+				'plainMessage' => $psMessagePlain,
+				'htmlMessage'  => $psMessageHTML,
+				'attachement'  => $psAttachement,
+			);
+
+			foreach ($GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['class.tx_spbettercontact_pi1_email.php']['substituteMailDelivery'] as $funcName) {
+				$bHasError = t3lib_div::callUserFunction($funcName, $parameters, $this);
+				if ($bHasError === TRUE) {
 					$this->bHasError = TRUE;
-					return;
+					break;
 				}
 			}
 		}
