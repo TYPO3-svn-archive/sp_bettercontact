@@ -404,5 +404,6 @@
 			<label index="email_spam_headline1">Ogolne informacje:</label>
 			<label index="email_spam_headline2">Widoczne pola:</label>
 			<label index="email_spam_headline3">Ukryte pola:</label>
+		</languageKey>
 	</data>
 </T3locallang>
